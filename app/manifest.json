@@ -18,7 +18,8 @@
     "pageCapture",
     "tabs",
     "topSites",
-    "webRequest"
+    "webRequest",
+    "downloads"
   ],
   "browser_action": {
     "default_icon": {
