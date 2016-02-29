@@ -3,16 +3,18 @@
         "es6": true
     },
     "globals": {
-        "chrome": true
+        "chrome": true,
+        "$": true
     },
     "ecmaFeatures": {
         "arrowFunctions": true
     },
     "rules": {
-        "no-unused-vars": 2
+        "no-unused-vars": 2,
+        "indent": [2,4]
     },
     "extends": [
         "eslint:recommended",
-        "./node_modules/mobify-code-style/javascript/.eslintrc"
+        "airbnb"
     ]
 }
