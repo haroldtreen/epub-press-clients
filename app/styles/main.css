@@ -1,3 +1,9 @@
 body {
   padding: 20px;
+  width: 500px;
+}
+
+#download {
+    margin-top: 5px;
+    margin-bottom: 10px;
 }

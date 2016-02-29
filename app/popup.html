@@ -1,13 +1,32 @@
 <!doctype html>
 <html>
-  <head>
+<head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="styles/main.css" rel="stylesheet">
-  </head>
-  <body>
-    <h1>Your tabs!</h1>
-    <div id='c-tabs-list'></div>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+</head>
+<body>
+    <h1>Epub Press</h1>
+    <h4>Select the articles to add to your book.</h4>
+    <div id='tab-list' class="checkbox">
+    </div>
+
+    <div class="btn-group btn-group-justified" role="group" aria-label="...">
+        <div class="btn-group" role="group">
+            <button type="button" id="select-all" class="btn btn-default">Select All</button>
+        </div>
+        <div class="btn-group" role="group">
+            <button type="button" id="select-none" class="btn btn-default">Select None</button>
+        </div>
+    </div>
+
+    <button type="button" id="download" class="btn btn-success btn-block">Download</button>
+
     <script src="scripts/jquery.min.js"></script>
     <script src="scripts/popup.js"></script>
-  </body>
+</body>
 </html>
