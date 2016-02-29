@@ -1,5 +1,5 @@
 {
-  "name": "reedly-chrome",
+  "name": "epub-press-chrome",
   "private": true,
   "engines": {
     "node": ">=0.8.0"

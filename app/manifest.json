@@ -11,7 +11,8 @@
   "background": {
     "scripts": [
       "scripts/chromereload.js",
-      "scripts/background.js"
+      "scripts/requestBook.js",
+      "scripts/jquery.min.js"
     ]
   },
   "permissions": [
@@ -19,14 +20,15 @@
     "tabs",
     "topSites",
     "webRequest",
-    "downloads"
+    "downloads",
+    "storage"
   ],
   "browser_action": {
     "default_icon": {
       "19": "images/icon-19.png",
       "38": "images/icon-38.png"
     },
-    "default_title": "reedly chrome",
+    "default_title": "Epub Press",
     "default_popup": "popup.html"
   }
 }
