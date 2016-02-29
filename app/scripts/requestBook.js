@@ -1,0 +1,46 @@
+console.log('Backaground!');
+
+function requestEbook(urls) {
+    return new Promise((resolve, reject) => {
+        $.ajax({
+            url: 'http://localhost:3000/api/books',
+            method: 'POST',
+            data: JSON.stringify({ urls }),
+            contentType: 'application/json',
+        }).done((response) => {
+            console.log(response);
+            resolve(response.id);
+        }).fail((err) => {
+            console.log(err);
+            reject(err);
+        }).always((xhr, status, err) => {
+            console.log(status);
+            console.log(err);
+        });
+    });
+}
+
+function downloadEbook(id) {
+    return new Promise((resolve) => {
+        chrome.downloads.download(
+            { url: `http://localhost:3000/api/books/download?id=${id}` },
+            () => resolve()
+        );
+    });
+}
+
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    console.log(request);
+    if (request.action === 'download') {
+        chrome.storage.local.set({ downloadState: true });
+        requestEbook(request.urls).then((id) => {
+            downloadEbook(id);
+        }).then(() => {
+            chrome.storage.local.set({ downloadState: false });
+            sendResponse({ action: 'download', status: 'success' });
+        }).catch((e) => {
+            sendResponse({ action: 'download', status: 'failed', error: e });
+        });
+    }
+    return true;
+});

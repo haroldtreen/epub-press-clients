@@ -10,21 +10,28 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
 </head>
 <body>
-    <h1>Epub Press</h1>
-    <h4>Select the articles to add to your book.</h4>
-    <div id='tab-list' class="checkbox">
+    <div id="downloadForm">
+        <h1>Epub Press</h1>
+        <h4>Select the articles to add to your book.</h4>
+        <div id='tab-list' class="checkbox">
+        </div>
+
+        <div class="btn-group btn-group-justified" role="group" aria-label="...">
+            <div class="btn-group" role="group">
+                <button type="button" id="select-all" class="btn btn-default">Select All</button>
+            </div>
+            <div class="btn-group" role="group">
+                <button type="button" id="select-none" class="btn btn-default">Select None</button>
+            </div>
+        </div>
+
+        <button type="button" id="download" class="btn btn-success btn-block">Download</button>
     </div>
 
-    <div class="btn-group btn-group-justified" role="group" aria-label="...">
-        <div class="btn-group" role="group">
-            <button type="button" id="select-all" class="btn btn-default">Select All</button>
-        </div>
-        <div class="btn-group" role="group">
-            <button type="button" id="select-none" class="btn btn-default">Select None</button>
-        </div>
+    <div id="downloadSpinner">
+        <div class="loader"></div>
+        <h2 class='text-center'>Pressing Your EPUB...<h2>
     </div>
-
-    <button type="button" id="download" class="btn btn-success btn-block">Download</button>
 
     <script src="scripts/jquery.min.js"></script>
     <script src="scripts/popup.js"></script>

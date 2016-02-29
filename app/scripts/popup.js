@@ -36,34 +36,9 @@ $('#select-none').click(() => {
     });
 });
 
-function requestEbook(urls) {
-    return new Promise((resolve, reject) => {
-        $.ajax({
-            url: 'http://localhost:3000/api/books',
-            method: 'POST',
-            data: JSON.stringify({ urls }),
-            contentType: 'application/json'
-        }).done((response) => {
-            console.log(response);
-            resolve(response.id);
-        }).fail((err) => {
-            console.log(err);
-            reject(err);
-        }).always((xhr, status, err) => {
-            console.log(status);
-            console.log(err);
-        });
-    });
-}
+$('#download').click(() => {
 
-function downloadEbook(id) {
-    return new Promise((resolve) => {
-        chrome.downloads.download(
-            { url: `http://localhost:3000/api/books/download?id=${id}` },
-            () => resolve()
-        );
-    });
-}
+});
 
 $('#download').click(() => {
     const selectedUrls = [];
@@ -76,29 +51,37 @@ $('#download').click(() => {
     if (selectedUrls.length <= 0) {
         alert('No articles selected!');
     } else {
-        requestEbook(selectedUrls).then((ebookId) =>
-            downloadEbook(ebookId)
-        ).then(() => {
+        $('#downloadForm').hide();
+        $('#downloadSpinner').show();
+        chrome.runtime.sendMessage(null, { action: 'download', urls: selectedUrls }, {}, (res) => {
+            console.log(res);
             $('body').replaceWith('<h1 style="margin: 20px;">SUCCESS!</h1>');
         });
     }
 });
 
-window.onload = () => {
-    getCurrentWindowTabs().then((tabs) => {
-        tabs.filter((tab) => {
-            return tab.url.indexOf('http') > -1;
-        }).forEach((tab) => {
-            $('#tab-list').append(getCheckbox(tab.title, tab.url));
-        });
+chrome.runtime.onMessage.addListener((request, sender) => {
+    console.log(request);
+    console.log(sender);
+});
 
-        // $.post('http://localhost:3000/api/books/publish', { 'urls': urlss }, (response) => {
-        //     console.log(response.bookId);
-        //     $('#c-tabs-list').append('<h1>Response: ' + JSON.stringify(response) + '</h1>');
-        //
-        //     chrome.downloads.download({ url: 'http://localhost:3000/api/books/download?bookId=' + response.bookId }, () => {
-        //         $('#c-tabs-list').append('<h1>SUCCESS</h1>');
-        //     });
-        // });
+window.onload = () => {
+    chrome.storage.local.get('downloadState', (state) => {
+        console.log();
+        if (state.downloadState) {
+            $('#downloadForm').hide();
+            $('#downloadSpinner').show();
+        } else {
+            $('#downloadForm').show();
+            $('#downloadSpinner').hide();
+
+            getCurrentWindowTabs().then((tabs) => {
+                tabs.filter((tab) => {
+                    return tab.url.indexOf('http') > -1;
+                }).forEach((tab) => {
+                    $('#tab-list').append(getCheckbox(tab.title, tab.url));
+                });
+            });
+        }
     });
 };
