@@ -25,7 +25,6 @@ const getCheckbox = (title, url) => {
 };
 
 $('#select-all').click(() => {
-    console.log('all');
     $('input.article-checkbox').each((index, checkbox) => {
         $(checkbox).prop('checked', true);
     });
@@ -37,8 +36,55 @@ $('#select-none').click(() => {
     });
 });
 
+function requestEbook(urls) {
+    return new Promise((resolve, reject) => {
+        $.ajax({
+            url: 'http://localhost:3000/api/books',
+            method: 'POST',
+            data: JSON.stringify({ urls }),
+            contentType: 'application/json'
+        }).done((response) => {
+            console.log(response);
+            resolve(response.id);
+        }).fail((err) => {
+            console.log(err);
+            reject(err);
+        }).always((xhr, status, err) => {
+            console.log(status);
+            console.log(err);
+        });
+    });
+}
+
+function downloadEbook(id) {
+    return new Promise((resolve) => {
+        chrome.downloads.download(
+            { url: `http://localhost:3000/api/books/download?id=${id}` },
+            () => resolve()
+        );
+    });
+}
+
+$('#download').click(() => {
+    const selectedUrls = [];
+    $('input.article-checkbox').each((index, checkbox) => {
+        if ($(checkbox).prop('checked')) {
+            selectedUrls.push($(checkbox).prop('value'));
+        }
+    });
+
+    if (selectedUrls.length <= 0) {
+        alert('No articles selected!');
+    } else {
+        requestEbook(selectedUrls).then((ebookId) =>
+            downloadEbook(ebookId)
+        ).then(() => {
+            $('body').replaceWith('<h1 style="margin: 20px;">SUCCESS!</h1>');
+        });
+    }
+});
+
 window.onload = () => {
-    console.log('opened');
     getCurrentWindowTabs().then((tabs) => {
         tabs.filter((tab) => {
             return tab.url.indexOf('http') > -1;
@@ -54,8 +100,5 @@ window.onload = () => {
         //         $('#c-tabs-list').append('<h1>SUCCESS</h1>');
         //     });
         // });
-    }).catch((error) => {
-        console.log(error);
-        console.log(':\'(');
     });
 };
