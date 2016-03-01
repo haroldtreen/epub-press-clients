@@ -12,6 +12,21 @@ body {
     color: rgba(50, 50, 50, 0.3);
 }
 
+#downloadSuccess {
+    color: green;
+    margin: 20px auto;
+}
+
+#downloadFailed {
+    color: red;
+    margin: 20px auto;
+}
+
+.glyphicon {
+    width: 100%;
+    font-size: 80px;
+}
+
 .loader {
   margin: 60px auto;
   font-size: 10px;

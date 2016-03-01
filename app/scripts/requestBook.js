@@ -1,5 +1,3 @@
-console.log('Backaground!');
-
 function requestEbook(urls) {
     return new Promise((resolve, reject) => {
         $.ajax({
@@ -22,25 +20,30 @@ function requestEbook(urls) {
 
 function downloadEbook(id) {
     return new Promise((resolve) => {
-        chrome.downloads.download(
-            { url: `http://localhost:3000/api/books/download?id=${id}` },
-            () => resolve()
-        );
+        if (id) {
+            chrome.downloads.download(
+                { url: `http://localhost:3000/api/books/download?id=${id}` },
+                () => resolve()
+            );
+        }
     });
 }
 
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-    console.log(request);
-    if (request.action === 'download') {
+function isPopupMsg(sender) {
+    return sender.url.indexOf('popup') > -1;
+}
+
+chrome.runtime.onMessage.addListener((request, sender) => {
+    if (request.action === 'download' && isPopupMsg(sender)) {
         chrome.storage.local.set({ downloadState: true });
         requestEbook(request.urls).then((id) => {
             downloadEbook(id);
         }).then(() => {
             chrome.storage.local.set({ downloadState: false });
-            sendResponse({ action: 'download', status: 'success' });
+            chrome.runtime.sendMessage(null, { action: 'download', status: 'complete' });
         }).catch((e) => {
-            sendResponse({ action: 'download', status: 'failed', error: e });
+            chrome.storage.local.set({ downloadState: false });
+            chrome.runtime.sendMessage(null, { action: 'download', status: 'failed', error: e });
         });
     }
-    return true;
 });

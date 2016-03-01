@@ -15,7 +15,24 @@ const getCurrentWindowTabs = () => {
     });
 };
 
-const getCheckbox = (title, url) => {
+const SECTIONS_SELECTORS = [
+    '#downloadForm',
+    '#downloadSpinner',
+    '#downloadSuccess',
+    '#downloadFailed',
+];
+
+function showSection(section) {
+    SECTIONS_SELECTORS.forEach((selector) => {
+        if (selector === section) {
+            $(selector).show();
+        } else {
+            $(selector).hide();
+        }
+    });
+}
+
+function getCheckbox(title, url) {
     const html = `<div class="checkbox">
                   <label>
                   <input class='article-checkbox' type="checkbox" value="${url}">${title}
@@ -23,6 +40,10 @@ const getCheckbox = (title, url) => {
                   </div>`;
     return html;
 };
+
+function isBackgroundMsg(sender) {
+    return sender.url.indexOf('background_page') > -1;
+}
 
 $('#select-all').click(() => {
     $('input.article-checkbox').each((index, checkbox) => {
@@ -37,10 +58,6 @@ $('#select-none').click(() => {
 });
 
 $('#download').click(() => {
-
-});
-
-$('#download').click(() => {
     const selectedUrls = [];
     $('input.article-checkbox').each((index, checkbox) => {
         if ($(checkbox).prop('checked')) {
@@ -51,29 +68,28 @@ $('#download').click(() => {
     if (selectedUrls.length <= 0) {
         alert('No articles selected!');
     } else {
-        $('#downloadForm').hide();
-        $('#downloadSpinner').show();
-        chrome.runtime.sendMessage(null, { action: 'download', urls: selectedUrls }, {}, (res) => {
-            console.log(res);
-            $('body').replaceWith('<h1 style="margin: 20px;">SUCCESS!</h1>');
-        });
+        showSection('#downloadSpinner');
+        chrome.runtime.sendMessage(null, { action: 'download', urls: selectedUrls });
     }
 });
 
 chrome.runtime.onMessage.addListener((request, sender) => {
-    console.log(request);
     console.log(sender);
+    if (request.action === 'download' && isBackgroundMsg(sender)) {
+        if (request.status === 'complete') {
+            showSection('#downloadSuccess');
+        } else {
+            showSection('#downloadFailed');
+        }
+    }
 });
 
 window.onload = () => {
     chrome.storage.local.get('downloadState', (state) => {
-        console.log();
         if (state.downloadState) {
-            $('#downloadForm').hide();
-            $('#downloadSpinner').show();
+            showSection('#downloadSpinner');
         } else {
-            $('#downloadForm').show();
-            $('#downloadSpinner').hide();
+            showSection('#downloadForm');
 
             getCurrentWindowTabs().then((tabs) => {
                 tabs.filter((tab) => {
