@@ -1,7 +1,7 @@
 function requestEbook(urls) {
     return new Promise((resolve, reject) => {
         $.ajax({
-            url: 'http://localhost:3000/api/books',
+            url: 'http://www.epub.press/api/books',
             method: 'POST',
             data: JSON.stringify({ urls }),
             contentType: 'application/json',
@@ -22,7 +22,7 @@ function downloadEbook(id) {
     return new Promise((resolve) => {
         if (id) {
             chrome.downloads.download(
-                { url: `http://localhost:3000/api/books/download?id=${id}` },
+                { url: `http://www.epub.press/api/books/download?id=${id}` },
                 () => resolve()
             );
         }
