@@ -6,34 +6,43 @@ Epub Press is a service for stitching your backlog of unread articles/blogs/webp
 
 It takes an experience that usually sucks (staring at a bright screen and clicking through web articles) and turns it into an experience that rocks (reading on your ereader!).
 
-## Usage
-1. [Install the extension](#install)
-2. Open all the articles you want in your ebook as seperate tabs.
-3. Click on the extension.
-4. Select the articles you want in your ebook.
-5. Click `Download`
+## Install:
 
-The extension will make a request to the Epub Press webservice with your desired articles. The service will then take all the content, stitch it into a book and download it to your computer. From there you can read it using your favorite Ereader!
+1. Download the `epub-press-<version>.crx` file from the [releases section](https://github.com/haroldtreen/epub-press-chrome/releases)
+1. Open Chrome
+1. Navigate to `chrome://extensions/`
+1. Drag and drop the `epub-press-<version>.crx` file onto the chrome window
+1. Click **Add Extension**  
+  ![image](https://cloud.githubusercontent.com/assets/1745854/13517595/c04b634e-e192-11e5-90e3-ce4899617d10.png)
+1. The icon should now be in your menu bar  
+  ![image](https://cloud.githubusercontent.com/assets/1745854/13517609/e05ec9f0-e192-11e5-8ab3-16f757318fbc.png)
 
-## Install
+## Usage:
+1. Click on the extensions icon  
+  ![image](https://cloud.githubusercontent.com/assets/1745854/13517662/9a554690-e193-11e5-856f-c9ae86800735.png)
+1. Select the articles you want in your book.
+  ![image](https://cloud.githubusercontent.com/assets/1745854/13517673/c29eb03c-e193-11e5-9f82-aa5e6d200d5c.png)
+1. Click `Download`
+1. A spinner will show as the book is created
+1. A `.epub` file will download that you can load onto your e-reader
 
-Currently, this extension is unreleased and still under development. To load it and get a sneak peak, you will need to do the following.
+## Bug Reporting:
+**This extension is still under development and could stop working at any time.**
 
-1. Enable 'Developer Mode' in Chrome.
-    - Go to `chrome://extensions/`.
-    - Check the `Developer Mode` checkbox.
-1. Navigate to the `epub-press-chrome` repository: https://github.com/haroldtreen/epub-press-chrome
-1. Download the repo as a zip file (or clone it)
-1. Unzip the file
-1. Go to `chrome://extensions/` and click `Load Unpacked Extension...`
-1. Navigate to folder for this repo, and select the `app` folder to load.
- 
-This should load the extension and you should be good to go :).
+Support requests can be sent to support@epub.press.
+
+Please include:
+- Version of Chrome
+- Operating system
+- Description of how to reproduce the problem
+- Screenshots
 
 ## Future Additions
 - Install through the Chrome Extension Store.
-- Support for formats other then `epub`.
+- Support for formats other then `epub` (in the meantime - check out [Calibre](https://calibre-ebook.com/)).
 - Ability to send the file directly to your reader.
 - Ability to share your generated creations with others.
+- Integration with [OneTab](https://chrome.google.com/webstore/detail/onetab/chphlpgkkbolifaimnlloiipkdnihall?hl=en)
 
-
+Have any awesome ideas? Suggestions? Feature requests? Would love to hear them!  
+feedback@epub.press
