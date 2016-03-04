@@ -10,9 +10,10 @@
   "default_locale": "en",
   "background": {
     "scripts": [
-      "scripts/chromereload.js",
-      "scripts/requestBook.js",
-      "scripts/jquery.min.js"
+      "vendor/chromereload.js",
+      "vendor/jquery.min.js",
+      "vendor/bluebird.min.js",
+      "build/requestBook.js"
     ]
   },
   "permissions": [
