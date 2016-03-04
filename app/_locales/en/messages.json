@@ -1,10 +1,10 @@
 {
   "appName": {
     "message": "Epub Press",
-    "description": "The name of the application"
+    "description": "Publish custom eBooks with your favorite web content!"
   },
   "appDescription": {
-    "message": "My Chrome Extension",
-    "description": "The description of the application"
+    "message": "Epub Press (ALPHA)",
+    "description": "Publish custom eBooks with your favorite web content!"
   }
 }
