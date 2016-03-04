@@ -1,7 +1,10 @@
+const BASE_URL = 'http://epub.press';
+// const BASE_URL = 'http://localhost:3000';
+
 function requestEbook(urls) {
     return new Promise((resolve, reject) => {
         $.ajax({
-            url: 'http://epub.press/api/books',
+            url: `${BASE_URL}/api/books`,
             method: 'POST',
             data: JSON.stringify({ urls }),
             contentType: 'application/json',
@@ -22,7 +25,7 @@ function downloadEbook(id) {
     return new Promise((resolve) => {
         if (id) {
             chrome.downloads.download(
-                { url: `http://epub.press/api/books/download?id=${id}` },
+                { url: `${BASE_URL}/api/books/download?id=${id}` },
                 () => resolve()
             );
         }

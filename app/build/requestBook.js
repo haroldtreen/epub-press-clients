@@ -1,9 +1,12 @@
 'use strict';
 
+var BASE_URL = 'http://epub.press';
+// const BASE_URL = 'http://localhost:3000';
+
 function requestEbook(urls) {
     return new Promise(function (resolve, reject) {
         $.ajax({
-            url: 'http://epub.press/api/books',
+            url: BASE_URL + '/api/books',
             method: 'POST',
             data: JSON.stringify({ urls: urls }),
             contentType: 'application/json'
@@ -23,7 +26,7 @@ function requestEbook(urls) {
 function downloadEbook(id) {
     return new Promise(function (resolve) {
         if (id) {
-            chrome.downloads.download({ url: 'http://epub.press/api/books/download?id=' + id }, function () {
+            chrome.downloads.download({ url: BASE_URL + '/api/books/download?id=' + id }, function () {
                 return resolve();
             });
         }
