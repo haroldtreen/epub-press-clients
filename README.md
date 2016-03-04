@@ -20,7 +20,7 @@ It takes an experience that usually sucks (staring at a bright screen and clicki
 ## Usage:
 1. Click on the extensions icon  
   ![image](https://cloud.githubusercontent.com/assets/1745854/13517662/9a554690-e193-11e5-856f-c9ae86800735.png)
-1. Select the articles you want in your book.
+1. Select the articles you want in your book.  
   ![image](https://cloud.githubusercontent.com/assets/1745854/13517673/c29eb03c-e193-11e5-9f82-aa5e6d200d5c.png)
 1. Click `Download`
 1. A spinner will show as the book is created
