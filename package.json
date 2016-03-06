@@ -24,6 +24,7 @@
     "gulp-sourcemaps": "^1.5.0",
     "gulp-uglify": "^1.1.0",
     "gulp-useref": "^1.1.1",
+    "gulp-watch": "^4.3.5",
     "gulp-zip": "^3.0.2",
     "main-bower-files": "^2.5.0",
     "mobify-code-style": "^2.3.3",
