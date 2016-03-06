@@ -15,7 +15,7 @@ var getCurrentWindowTabs = function getCurrentWindowTabs() {
     });
 };
 
-var SECTIONS_SELECTORS = ['#downloadForm', '#downloadSpinner', '#downloadSuccess', '#downloadFailed'];
+var SECTIONS_SELECTORS = ['#downloadForm', '#settingsForm', '#downloadSpinner', '#downloadSuccess', '#downloadFailed'];
 
 function showSection(section) {
     SECTIONS_SELECTORS.forEach(function (selector) {
@@ -62,6 +62,32 @@ $('#download').click(function () {
         showSection('#downloadSpinner');
         chrome.runtime.sendMessage(null, { action: 'download', urls: selectedUrls });
     }
+});
+
+function setExistingSettings(cb) {
+    chrome.storage.local.get(['email', 'filetype'], function (state) {
+        $('#settings-email-text').val(state.email);
+        $('#settings-filetype-select').val(state.filetype);
+        cb();
+    });
+}
+
+$('#settings-btn').click(function () {
+    setExistingSettings(function () {
+        showSection('#settingsForm');
+    });
+});
+
+$('#settings-save-btn').click(function () {
+    chrome.storage.local.set({
+        email: $('#settings-email-text').val(),
+        filetype: $('#settings-filetype-select').val()
+    });
+    showSection('#downloadForm');
+});
+
+$('#settings-cancel-btn').click(function () {
+    showSection('#downloadForm');
 });
 
 chrome.runtime.onMessage.addListener(function (request, sender) {

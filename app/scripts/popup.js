@@ -17,6 +17,7 @@ const getCurrentWindowTabs = () => {
 
 const SECTIONS_SELECTORS = [
     '#downloadForm',
+    '#settingsForm',
     '#downloadSpinner',
     '#downloadSuccess',
     '#downloadFailed',
@@ -71,6 +72,32 @@ $('#download').click(() => {
         showSection('#downloadSpinner');
         chrome.runtime.sendMessage(null, { action: 'download', urls: selectedUrls });
     }
+});
+
+function setExistingSettings(cb) {
+    chrome.storage.local.get(['email', 'filetype'], (state) => {
+        $('#settings-email-text').val(state.email);
+        $('#settings-filetype-select').val(state.filetype);
+        cb();
+    });
+}
+
+$('#settings-btn').click(() => {
+    setExistingSettings(() => {
+        showSection('#settingsForm');
+    });
+});
+
+$('#settings-save-btn').click(() => {
+    chrome.storage.local.set({
+        email: $('#settings-email-text').val(),
+        filetype: $('#settings-filetype-select').val(),
+    });
+    showSection('#downloadForm');
+});
+
+$('#settings-cancel-btn').click(() => {
+    showSection('#downloadForm');
 });
 
 chrome.runtime.onMessage.addListener((request, sender) => {

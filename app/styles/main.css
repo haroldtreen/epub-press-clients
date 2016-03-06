@@ -22,7 +22,26 @@ body {
     margin: 20px auto;
 }
 
-.glyphicon {
+#settingsForm {
+    margin-bottom: 10px;
+}
+
+#settingsForm > button {
+    margin-top: 10px;
+}
+
+div#settings-btn {
+    font-size: 20px;
+    float: right;
+    text-align: center;
+    style: bold;
+}
+
+div#settings-btn > p {
+    font-size: 12px;
+}
+
+span.glyphicon {
     width: 100%;
     font-size: 80px;
 }

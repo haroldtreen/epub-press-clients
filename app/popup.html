@@ -11,6 +11,10 @@
 </head>
 <body>
     <div id="downloadForm">
+        <div id="settings-btn">
+            <div class="glyphicon glyphicon-cog text-center" aria-hidden="true"></div>
+            <p>Settings</p>
+        </div>
         <h1>Epub Press</h1>
         <h4>Select the articles to add to your book.</h4>
         <div id='tab-list' class="checkbox">
@@ -28,24 +32,39 @@
         <button type="button" id="download" class="btn btn-success btn-block">Download</button>
     </div>
 
+    <div id="settingsForm">
+        <h1>Settings</h1>
+
+        <h4>Filetype:</h4>
+        <select id="settings-filetype-select" class="form-control">
+            <option value='epub'>.epub</option>
+            <option value='mobi'>.mobi (Kindle)</option>
+        </select>
+
+        <h4>Delivery Email:</h4>
+        <input id="settings-email-text" type="text" class="form-control" placeholder="Email">
+
+        <button type="button" id="settings-save-btn" class="btn btn-success btn-block">Save</button>
+        <button type="button" id="settings-cancel-btn" class="btn btn-default btn-block">Cancel</button>
+    </div>
+
     <div id="downloadSpinner">
         <div class="loader"></div>
         <h2 class='text-center'>Pressing Your EPUB...<h2>
-    </div>
+        </div>
 
-    <div id='downloadSuccess'>
-        <span class="glyphicon glyphicon-ok text-center" aria-hidden="true"></span>
-        <h2 class='text-center'>Success<h2>
-    </div>
+        <div id='downloadSuccess'>
+            <span class="glyphicon glyphicon-ok text-center" aria-hidden="true"></span>
+            <h2 class='text-center'>Success<h2>
+            </div>
 
-    <div id='downloadFailed'>
-        <span class="glyphicon glyphicon-remove text-center" aria-hidden="true"></span>
-        <h2 class='text-center'>Failed<h2>
-    </div>
+            <div id='downloadFailed'>
+                <span class="glyphicon glyphicon-remove text-center" aria-hidden="true"></span>
+                <h2 class='text-center'>Failed<h2>
+                </div>
 
-
-    <script src="vendor/jquery.min.js"></script>
-    <script src="vendor/bluebird.min.js"></script>
-    <script src="build/popup.js"></script>
-</body>
-</html>
+                <script src="vendor/jquery.min.js"></script>
+                <script src="vendor/bluebird.js"></script>
+                <script src="build/popup.js"></script>
+            </body>
+            </html>
