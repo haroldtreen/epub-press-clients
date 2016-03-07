@@ -1,12 +1,12 @@
-// const BASE_URL = 'http://epub.press';
-const BASE_URL = 'http://localhost:3000';
+const BASE_URL = 'http://epub.press';
+// const BASE_URL = 'http://localhost:3000';
 
-function requestEbook(params) {
+function requestEbook(urls) {
     return new Promise((resolve, reject) => {
         $.ajax({
             url: `${BASE_URL}/api/books`,
             method: 'POST',
-            data: JSON.stringify(params),
+            data: JSON.stringify({ urls }),
             contentType: 'application/json',
         }).done((response) => {
             console.log(response);
@@ -21,14 +21,20 @@ function requestEbook(params) {
     });
 }
 
-function downloadEbook(id, filetype) {
+function downloadEbook(params) {
     return new Promise((resolve) => {
-        if (id) {
-            const queryString = $.param({ id, filetype });
-            chrome.downloads.download(
-                { url: `${BASE_URL}/api/books/download?${queryString}` },
-                () => resolve()
-            );
+        if (params.id) {
+            const queryString = $.param(params);
+            const url = `${BASE_URL}/api/books/download?${queryString}`;
+
+            if (params.email.length > 0) {
+                $.ajax({ url }).done((response) => {
+                    console.log(response);
+                    resolve();
+                });
+            } else {
+                chrome.downloads.download({ url }, () => resolve());
+            }
         }
     });
 }
@@ -41,12 +47,8 @@ chrome.runtime.onMessage.addListener((request, sender) => {
     if (request.action === 'download' && isPopupMsg(sender)) {
         chrome.storage.local.set({ downloadState: true });
         chrome.storage.local.get(['email', 'filetype'], (state) => {
-            requestEbook({
-                urls: request.urls,
-                filetype: state.filetype,
-                email: state.email,
-            }).then((id) => {
-                downloadEbook(id, state.filetype);
+            requestEbook(request.urls).then((id) => {
+                return downloadEbook({ id, filetype: state.filetype, email: state.email });
             }).then(() => {
                 chrome.storage.local.set({ downloadState: false });
                 chrome.runtime.sendMessage(null, { action: 'download', status: 'complete' });
