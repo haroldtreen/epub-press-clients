@@ -7,7 +7,6 @@ Epub Press is a service for stitching your backlog of unread articles/blogs/webp
 It takes an experience that usually sucks (staring at a bright screen and clicking through web articles) and turns it into an experience that rocks (reading on your ereader!).
 
 ## Install:
-
 1. Download the `epub-press-<version>.crx` file from the [releases section](https://github.com/haroldtreen/epub-press-chrome/releases)
 1. Open Chrome
 1. Navigate to `chrome://extensions/`
