@@ -21,6 +21,7 @@ Reading on an eReader is a much nicer experience then reading in a web browser.
 1. Open Chrome.
 1. Navigate to `chrome://extensions/`.
 1. Drag and drop the `epub-press-<version>.crx` file onto the chrome window.
+  ![drag-to-chrome](https://cloud.githubusercontent.com/assets/1745854/14151355/1a5a4c48-f673-11e5-875c-1fce3a3bcec9.png)
 1. Click **Add Extension**.  
   ![image](https://cloud.githubusercontent.com/assets/1745854/13517595/c04b634e-e192-11e5-90e3-ce4899617d10.png)
 1. The icon should now be in your menu bar.  
