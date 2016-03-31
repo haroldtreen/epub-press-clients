@@ -1,3 +1,6 @@
+<p align="center"><img src="https://cloud.githubusercontent.com/assets/1745854/14191006/397082b2-f75b-11e5-9f5b-6016d069556b.png"/>
+</p>
+
 # epub-press-chrome
 Chrome extension for pushing articles to [Epub Press](http://epub.press).
 
