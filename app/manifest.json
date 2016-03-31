@@ -1,6 +1,6 @@
 {
   "name": "__MSG_appName__",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "manifest_version": 2,
   "description": "__MSG_appDescription__",
   "icons": {
@@ -26,8 +26,8 @@
   ],
   "browser_action": {
     "default_icon": {
-      "19": "images/download-icon-19.png",
-      "38": "images/download-icon-38.png"
+      "20": "images/download-icon-20.png",
+      "32": "images/download-icon-32.png"
     },
     "default_title": "Epub Press",
     "default_popup": "popup.html"
