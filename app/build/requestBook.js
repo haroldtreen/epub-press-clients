@@ -29,7 +29,7 @@ function downloadEbook(params) {
             var queryString = $.param(params);
             var url = BASE_URL + '/api/books/download?' + queryString;
 
-            if (params.email.length > 0) {
+            if (params.email && params.email.length > 0) {
                 $.ajax({ url: url }).done(function (response) {
                     console.log(response);
                     resolve();
@@ -57,6 +57,7 @@ chrome.runtime.onMessage.addListener(function (request, sender) {
                 chrome.storage.local.set({ downloadState: false });
                 chrome.runtime.sendMessage(null, { action: 'download', status: 'complete' });
             }).catch(function (e) {
+                console.log('Error: ' + e);
                 chrome.storage.local.set({ downloadState: false });
                 chrome.runtime.sendMessage(null, { action: 'download', status: 'failed', error: e });
             });

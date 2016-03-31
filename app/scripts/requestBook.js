@@ -27,7 +27,7 @@ function downloadEbook(params) {
             const queryString = $.param(params);
             const url = `${BASE_URL}/api/books/download?${queryString}`;
 
-            if (params.email.length > 0) {
+            if (params.email && params.email.length > 0) {
                 $.ajax({ url }).done((response) => {
                     console.log(response);
                     resolve();
@@ -47,12 +47,13 @@ chrome.runtime.onMessage.addListener((request, sender) => {
     if (request.action === 'download' && isPopupMsg(sender)) {
         chrome.storage.local.set({ downloadState: true });
         chrome.storage.local.get(['email', 'filetype'], (state) => {
-            requestEbook(request.urls).then((id) => {
-                return downloadEbook({ id, filetype: state.filetype, email: state.email });
-            }).then(() => {
+            requestEbook(request.urls).then((id) =>
+                downloadEbook({ id, filetype: state.filetype, email: state.email })
+            ).then(() => {
                 chrome.storage.local.set({ downloadState: false });
                 chrome.runtime.sendMessage(null, { action: 'download', status: 'complete' });
             }).catch((e) => {
+                console.log(`Error: ${e}`);
                 chrome.storage.local.set({ downloadState: false });
                 chrome.runtime.sendMessage(null, { action: 'download', status: 'failed', error: e });
             });
