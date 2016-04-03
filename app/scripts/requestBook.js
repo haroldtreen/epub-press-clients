@@ -1,5 +1,4 @@
-const BASE_URL = 'http://epub.press';
-// const BASE_URL = 'http://localhost:3000';
+const BASE_URL = chrome.runtime.getManifest().homepage_url;
 
 function requestEbook(urls) {
     return new Promise((resolve, reject) => {
@@ -11,7 +10,7 @@ function requestEbook(urls) {
         }).done((response) => {
             console.log(response);
             resolve(response.id);
-        }).fail((err) => {
+        }).fail((xhr, err) => {
             console.log(err);
             reject(err);
         }).always((xhr, status, err) => {

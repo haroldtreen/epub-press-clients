@@ -121,6 +121,7 @@ input.article-checkbox {
     Status Messages
 */
 
+
 .status-msg {
     display: flex;
     flex-direction: column;
@@ -133,6 +134,12 @@ input.article-checkbox {
 
 .status-icon {
     font-size: 90px;
+}
+
+#status-server {
+    color: red;
+    font-size: 16px;
+    font-weight: bold;
 }
 
 #downloadSuccess {
@@ -148,10 +155,6 @@ input.article-checkbox {
 /*
     Settings
 */
-
-#settingsForm {
-    /*margin-bottom: 10px;*/
-}
 
 #settingsForm > button {
     margin-top: 10px;
