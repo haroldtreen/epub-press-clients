@@ -4,63 +4,60 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="styles/main.css" rel="stylesheet">
-    <!-- Latest compiled and minified CSS -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
-    <!-- Optional theme -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
 </head>
 <body>
     <div id="downloadForm">
         <div id="settings-btn">
-            <div class="glyphicon glyphicon-cog text-center" aria-hidden="true"></div>
+            <img src="images/gear.svg" />
             <p>Settings</p>
         </div>
-        <h1>Epub Press</h1>
-        <h4>Select the articles to add to your book.</h4>
-        <div id='tab-list' class="checkbox">
+        <h1>EpubPress</h1>
+        <h4>Select pages to add to your book.</h4>
+        <div id="tab-list">
         </div>
 
-        <div class="btn-group btn-group-justified" role="group" aria-label="...">
-            <div class="btn-group" role="group">
-                <button type="button" id="select-all" class="btn btn-default">Select All</button>
-            </div>
-            <div class="btn-group" role="group">
-                <button type="button" id="select-none" class="btn btn-default">Select None</button>
-            </div>
+        <div class="btn-box">
+            <button id="select-all" class="btn-left">Select All</button>
+            <button id="select-none" class="btn-right">Select None</button>
         </div>
 
-        <button type="button" id="download" class="btn btn-success btn-block">Download</button>
+        <div class="btn-box">
+            <button id="download">Download</button>
+        </div>
     </div>
 
     <div id="settingsForm">
         <h1>Settings</h1>
 
-        <h4>Filetype:</h4>
+        <h3>Filetype:</h3>
         <select id="settings-filetype-select" class="form-control">
             <option value='epub'>.epub</option>
             <option value='mobi'>.mobi (Kindle)</option>
         </select>
 
-        <h4>Delivery Email:</h4>
+        <h3>Delivery Email:</h3>
         <input id="settings-email-text" type="text" class="form-control" placeholder="Email">
 
-        <button type="button" id="settings-save-btn" class="btn btn-success btn-block">Save</button>
-        <button type="button" id="settings-cancel-btn" class="btn btn-default btn-block">Cancel</button>
+
+        <div class="btn-box">
+            <button id="settings-save-btn" class="btn-left">Save</button>
+            <button id="settings-cancel-btn" class="btn-right">Cancel</button>
+        </div>
     </div>
 
-    <div id="downloadSpinner">
+    <div id="downloadSpinner" class="status-msg">
         <div class="loader"></div>
-        <h2 class='text-center'>Pressing Your EPUB...</h2>
+        <h2>Pressing Your EPUB...</h2>
     </div>
 
-    <div id='downloadSuccess'>
-        <span class="glyphicon glyphicon-ok text-center" aria-hidden="true"></span>
-        <h2 class='text-center'>Success</h2>
+    <div id="downloadSuccess" class="status-msg">
+        <h2 class="status-icon">&#10004;</h2>
+        <h2>Success</h2>
     </div>
 
-    <div id='downloadFailed'>
-        <span class="glyphicon glyphicon-remove text-center" aria-hidden="true"></span>
-        <h2 class='text-center'>Failed</h2>
+    <div id="downloadFailed" class="status-msg">
+        <h2 class="status-icon">&#10008;</h2>
+        <h2>Failed</h2>
     </div>
 
     <script src="vendor/jquery.min.js"></script>

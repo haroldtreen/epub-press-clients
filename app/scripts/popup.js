@@ -35,9 +35,7 @@ function showSection(section) {
 
 function getCheckbox(title, url) {
     const html = `<div class="checkbox">
-                  <label>
-                  <input class='article-checkbox' type="checkbox" value="${url}">${title}
-                  </label>
+                  <label><input class='article-checkbox' type="checkbox" value="${url}"><span>${title}</span></label>
                   </div>`;
     return html;
 };

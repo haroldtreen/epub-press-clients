@@ -28,7 +28,7 @@ function showSection(section) {
 }
 
 function getCheckbox(title, url) {
-    var html = '<div class="checkbox">\n                  <label>\n                  <input class=\'article-checkbox\' type="checkbox" value="' + url + '">' + title + '\n                  </label>\n                  </div>';
+    var html = '<div class="checkbox">\n                  <label><input class=\'article-checkbox\' type="checkbox" value="' + url + '"><span>' + title + '</span></label>\n                  </div>';
     return html;
 };
 
