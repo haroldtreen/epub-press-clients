@@ -24,7 +24,9 @@
     "topSites",
     "webRequest",
     "downloads",
-    "storage"
+    "storage",
+    "http://*/",
+    "https://*/"
   ],
   "browser_action": {
     "default_icon": {

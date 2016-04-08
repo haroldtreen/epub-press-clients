@@ -1,11 +1,11 @@
 const BASE_URL = chrome.runtime.getManifest().homepage_url;
 
-function requestEbook(urls) {
+function requestEbook(sections) {
     return new Promise((resolve, reject) => {
         $.ajax({
             url: `${BASE_URL}/api/books`,
             method: 'POST',
-            data: JSON.stringify({ urls }),
+            data: JSON.stringify({ sections }),
             contentType: 'application/json',
         }).done((response) => {
             console.log(response);
@@ -46,7 +46,7 @@ chrome.runtime.onMessage.addListener((request, sender) => {
     if (request.action === 'download' && isPopupMsg(sender)) {
         chrome.storage.local.set({ downloadState: true });
         chrome.storage.local.get(['email', 'filetype'], (state) => {
-            requestEbook(request.urls).then((id) =>
+            requestEbook(request.sections).then((id) =>
                 downloadEbook({ id, filetype: state.filetype, email: state.email })
             ).then(() => {
                 chrome.storage.local.set({ downloadState: false });

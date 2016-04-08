@@ -29,14 +29,33 @@ function showSection(section) {
     Download Form
 */
 
-function getCheckbox(title, url) {
+function getCheckbox(props) {
     const html = `<div class="checkbox">
                     <label>
-                        <input class='article-checkbox' type="checkbox" value="${url}">
-                        <span>${title}</span>
+                        <input class='article-checkbox' type="checkbox" value="${props.url}" name="${props.id}">
+                        <span>${props.title}</span>
                     </label>
                   </div>`;
     return html;
+}
+
+function getTabsHtml(tabs) {
+    const code = 'document.documentElement.outerHTML';
+    const htmlPromises = tabs.map((tab) =>
+        new Promise((resolve) => {
+            chrome.tabs.executeScript(tab.id, { code }, (html) => {
+                const updatedTab = tab;
+                if (html[0] && html[0].match(/html/i)) {
+                    updatedTab.html = html[0];
+                } else {
+                    updatedTab.html = null;
+                }
+                resolve(updatedTab);
+            });
+        })
+    );
+
+    return Promise.all(htmlPromises);
 }
 
 $('#select-all').click(() => {
@@ -52,18 +71,24 @@ $('#select-none').click(() => {
 });
 
 $('#download').click(() => {
-    const selectedUrls = [];
+    const selectedItems = [];
     $('input.article-checkbox').each((index, checkbox) => {
         if ($(checkbox).prop('checked')) {
-            selectedUrls.push($(checkbox).prop('value'));
+            selectedItems.push({
+                url: $(checkbox).prop('value'),
+                id: Number($(checkbox).prop('name'))
+            });
         }
     });
 
-    if (selectedUrls.length <= 0) {
+
+    if (selectedItems.length <= 0) {
         alert('No articles selected!');
     } else {
-        showSection('#downloadSpinner');
-        chrome.runtime.sendMessage(null, { action: 'download', urls: selectedUrls });
+        getTabsHtml(selectedItems).then((sections) => {
+            showSection('#downloadSpinner');
+            chrome.runtime.sendMessage(null, { action: 'download', sections });
+        })
     }
 });
 
@@ -147,14 +172,13 @@ function checkForUpdates() {
 
 function getCurrentWindowTabs() {
     return new Promise((resolve, reject) => {
-        chrome.windows.getCurrent((currentWindow) => {
-            chrome.tabs.getAllInWindow(currentWindow.id, (tabs) => {
-                if (tabs) {
-                    resolve(tabs);
-                } else {
-                    reject('No tabs!');
-                }
-            });
+        chrome.windows.getCurrent({ populate: true }, (currentWindow) => {
+            if (currentWindow.tabs) {
+                const websiteTabs = currentWindow.tabs.filter((tab) => tab.url.indexOf('http') > -1);
+                resolve(websiteTabs);
+            } else {
+                reject('No tabs!');
+            }
         });
     });
 }
@@ -167,10 +191,12 @@ window.onload = () => {
             checkForUpdates();
             showSection('#downloadForm');
             getCurrentWindowTabs().then((tabs) => {
-                tabs.filter((tab) => {
-                    return tab.url.indexOf('http') > -1;
-                }).forEach((tab) => {
-                    $('#tab-list').append(getCheckbox(tab.title, tab.url));
+                tabs.forEach((tab) => {
+                    $('#tab-list').append(getCheckbox({
+                        title: tab.title,
+                        url: tab.url,
+                        id: tab.id,
+                    }));
                 });
             });
         }
