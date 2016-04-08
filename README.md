@@ -4,6 +4,8 @@
 # epub-press-chrome
 Chrome extension for pushing articles to [Epub Press](http://epub.press).
 
+Follow us on [Twitter](https://twitter.com/Epub_Press).
+
 ## Overview
 Epub Press is a service for stitching articles/blogs/webpages into a customized ebook.
 
