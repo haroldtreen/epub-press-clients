@@ -2,6 +2,7 @@
 
 const MANIFEST = chrome.runtime.getManifest();
 const BASE_URL = MANIFEST.homepage_url;
+const EpubPress = window.EpubPress;
 
 /*
     State Management
@@ -174,7 +175,9 @@ function getCurrentWindowTabs() {
     return new Promise((resolve, reject) => {
         chrome.windows.getCurrent({ populate: true }, (currentWindow) => {
             if (currentWindow.tabs) {
-                const websiteTabs = currentWindow.tabs.filter((tab) => tab.url.indexOf('http') > -1);
+                const websiteTabs = currentWindow.tabs.filter(
+                    (tab) => EpubPress.isValidUrl(tab.url)
+                );
                 resolve(websiteTabs);
             } else {
                 reject('No tabs!');

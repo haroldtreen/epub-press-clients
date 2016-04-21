@@ -2,6 +2,7 @@
 
 var MANIFEST = chrome.runtime.getManifest();
 var BASE_URL = MANIFEST.homepage_url;
+var EpubPress = window.EpubPress;
 
 /*
     State Management
@@ -162,7 +163,7 @@ function getCurrentWindowTabs() {
         chrome.windows.getCurrent({ populate: true }, function (currentWindow) {
             if (currentWindow.tabs) {
                 var websiteTabs = currentWindow.tabs.filter(function (tab) {
-                    return tab.url.indexOf('http') > -1;
+                    return EpubPress.isValidUrl(tab.url);
                 });
                 resolve(websiteTabs);
             } else {
