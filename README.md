@@ -4,12 +4,11 @@
 # epub-press-chrome
 Chrome extension for pushing articles to [Epub Press](http://epub.press).
 
+Download it from the [Chrome Store](https://chrome.google.com/webstore/detail/epubpress/pnhdnpnnffpijjbnhnipkehhibchdeok)
 Follow us on [Twitter](https://twitter.com/Epub_Press).
 
 ## Overview
 Epub Press is a service for stitching articles/blogs/webpages into a customized ebook.
-
-More information available @ http://epub.press
 
 #### **Why would I use this?**
 
@@ -24,7 +23,7 @@ Reading on an eReader is a much nicer experience then reading in a web browser.
 - eBooks are easier to share with friends than lists of URLs.
 
 ## Bug Reporting:
-**This extension is still under development and could stop working at any time.**
+**This extension is still under active development.**
 
 Support requests can be sent to support@epub.press.
 
@@ -40,7 +39,7 @@ Support requests can be sent to support@epub.press.
 - ~~Ability to send the file directly to your reader.~~
 - Custom book titles/descriptions.
 - Ability to share your generated creations with others.
-- Integration with [OneTab](https://chrome.google.com/webstore/detail/onetab/chphlpgkkbolifaimnlloiipkdnihall?hl=en)
+- Detection for pages with a list of links (eg. OneTab, Feedly, RSS Feeds) and show those links.
 
 Have any awesome ideas? Suggestions? Feature requests? Would love to hear them!  
 feedback@epub.press
