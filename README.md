@@ -4,7 +4,7 @@
 # epub-press-chrome
 Chrome extension for pushing articles to [Epub Press](http://epub.press).
 
-Download it from the [Chrome Store](https://chrome.google.com/webstore/detail/epubpress/pnhdnpnnffpijjbnhnipkehhibchdeok)
+Download it from the [Chrome Store](https://chrome.google.com/webstore/detail/epubpress/pnhdnpnnffpijjbnhnipkehhibchdeok)  
 Follow us on [Twitter](https://twitter.com/Epub_Press).
 
 ## Overview
