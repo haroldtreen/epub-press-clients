@@ -23,7 +23,7 @@ function requestEbook(sections) {
 }
 
 function downloadEbook(params) {
-    return new Promise(function (resolve) {
+    return new Promise(function (resolve, reject) {
         if (params.id) {
             var queryString = $.param(params);
             var url = BASE_URL + '/api/books/download?' + queryString;
@@ -32,6 +32,8 @@ function downloadEbook(params) {
                 $.ajax({ url: url }).done(function (response) {
                     console.log(response);
                     resolve();
+                }).fail(function (xhr, err) {
+                    reject(err);
                 });
             } else {
                 chrome.downloads.download({ url: url }, function () {
