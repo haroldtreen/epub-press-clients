@@ -1,58 +1,86 @@
 /*
-    General
+General
 */
 
 body {
-  padding: 0px 15px 5px 15px;
-  width: 500px;
+    font-family: 'Lato', sans-serif;
+    font-weight: 400;
+    padding: 0px;
+    margin: 0px;
+    width: 500px;
+}
+
+h1, h2, h3, h4 {
+    font-family: 'Quicksand', sans-serif;
+    margin-bottom: 10px;
 }
 
 h1 {
-    margin-bottom: 10px;
+    margin-top: 10px;
 }
 
 h2 {
     font-size: 30px;
-    margin-bottom: 10px;
 }
 
 h3 {
+    font-family: 'Quicksand', sans-serif;
     font-size: 18px;
-    margin-bottom: 10px;
+    margin: 10px 0px;
 }
 
 h4 {
     font-size: 16px;
     margin-top: 0px;
-    margin-bottom: 10px;
+}
+
+.container {
+    margin: 10px;
+}
+
+#title-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'Quicksand', sans-serif;
+    font-weight: bolder;
+    color: white;
+    background-color: black;
+    padding: 10px 10px;
+}
+
+#title-bar--title > h1 {
+    margin: 0px 0px 0px 5px;
+    font-size: 25px;
+}
+
+#title-bar > #title-bar--title {
+    align-items: center;
+    display: flex;
 }
 
 /*
-    Inputs
+Inputs
 */
 
 select, input[type="text"] {
-    width: 488px;
-    padding: 5px;
-    font-size: 14px;
+    height: 30px;
+    width: 100%;
+    background-color: white;
     border-radius: 5px;
     border: 1px solid #ccc;
+    box-sizing: border-box;
+    font-size: 14px;
     margin-bottom: 10px;
-}
-
-select {
-    width: 500px;
-    height: 30px;
-    background-color: white;
+    padding: 5px;
 }
 
 /*
-    Buttons
+Buttons
 */
 
 .btn-box {
     height: 30px;
-    width: 490px;
     border: 5px solid black;
     border-radius: 5px;
     display: flex;
@@ -62,6 +90,7 @@ select {
 }
 
 .btn-box > button {
+    font-family: 'Quicksand', sans-serif;
     width: 100%;
     height: 100%;
     border: 0px;
@@ -69,7 +98,7 @@ select {
     background-color: black;
     color: white;
     font-weight: bold;
-    font-size: 12px;
+    font-size: 14px;
     flex-grow: 1;
 }
 
@@ -91,7 +120,7 @@ button.btn-right {
 }
 
 /*
-    Lists
+Lists
 */
 
 #tab-list {
@@ -110,7 +139,7 @@ input.article-checkbox {
 }
 
 /*
-    Spinner
+Spinner
 */
 
 #downloadSpinner > h2 {
@@ -118,7 +147,7 @@ input.article-checkbox {
 }
 
 /*
-    Status Messages
+Status Messages
 */
 
 
@@ -153,7 +182,7 @@ input.article-checkbox {
 }
 
 /*
-    Settings
+Settings
 */
 
 #settingsForm > button {
@@ -161,69 +190,63 @@ input.article-checkbox {
 }
 
 div#settings-btn {
-    font-size: 20px;
-    float: right;
+    font-size: 15px;
     text-align: center;
     style: bold;
 }
 
-div#settings-btn > p {
-    font-size: 12px;
-    margin: 0px;
-}
-
 div#settings-btn > img {
-    width: 40px;
-    height: 40px;
+    width: 100%;
+    height: 100%;
 }
 
-span.glyphicon {
-    width: 100%;
-    font-size: 80px;
+div#settings-btn {
+    height: 30px;
+    width: 30px;
 }
 
 /*
-    Loader styles
+Loader styles
 */
 
 .loader {
-  margin: 20px auto;
-  font-size: 10px;
-  position: relative;
-  text-indent: -9999em;
-  border-top: 1.1em solid rgba(100, 100, 100, 0.2);
-  border-right: 1.1em solid rgba(100, 100, 100, 0.2);
-  border-bottom: 1.1em solid rgba(100, 100, 100, 0.2);
-  border-left: 1.1em solid #ffffff;
-  -webkit-transform: translateZ(0);
-  -ms-transform: translateZ(0);
-  transform: translateZ(0);
-  -webkit-animation: load8 1.1s infinite linear;
-  animation: load8 1.1s infinite linear;
+    margin: 20px auto;
+    font-size: 10px;
+    position: relative;
+    text-indent: -9999em;
+    border-top: 1.1em solid rgba(100, 100, 100, 0.2);
+    border-right: 1.1em solid rgba(100, 100, 100, 0.2);
+    border-bottom: 1.1em solid rgba(100, 100, 100, 0.2);
+    border-left: 1.1em solid #ffffff;
+    -webkit-transform: translateZ(0);
+    -ms-transform: translateZ(0);
+    transform: translateZ(0);
+    -webkit-animation: load8 1.1s infinite linear;
+    animation: load8 1.1s infinite linear;
 }
 .loader,
 .loader:after {
-  border-radius: 50%;
-  width: 10em;
-  height: 10em;
+    border-radius: 50%;
+    width: 10em;
+    height: 10em;
 }
 @-webkit-keyframes load8 {
-  0% {
-    -webkit-transform: rotate(0deg);
-    transform: rotate(0deg);
-  }
-  100% {
-    -webkit-transform: rotate(360deg);
-    transform: rotate(360deg);
-  }
+    0% {
+        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+    100% {
+        -webkit-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
 }
 @keyframes load8 {
-  0% {
-    -webkit-transform: rotate(0deg);
-    transform: rotate(0deg);
-  }
-  100% {
-    -webkit-transform: rotate(360deg);
-    transform: rotate(360deg);
-  }
+    0% {
+        -webkit-transform: rotate(0deg);
+        transform: rotate(0deg);
+    }
+    100% {
+        -webkit-transform: rotate(360deg);
+        transform: rotate(360deg);
+    }
 }

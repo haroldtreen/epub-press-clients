@@ -4,59 +4,73 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link href="styles/main.css" rel="stylesheet">
+    <link href="styles/fonts.css" rel='stylesheet' type='text/css'>
 </head>
 <body>
     <div id="downloadForm">
-        <div id="settings-btn">
-            <img src="images/gear.svg" />
-            <p>Settings</p>
+        <div id="title-bar">
+            <div id="title-bar--title">
+                <img src="images/download-icon-white.svg">
+                <h1>EpubPress</h1>
+            </div>
+            <div id="settings-btn">
+                <img src="images/gear.svg" />
+            </div>
         </div>
-        <h1>EpubPress</h1>
-        <h4>Select pages to add to your book.</h4>
-        <div id="tab-list">
-        </div>
+        <div class="container">
+            <h4>Select pages to add to your book:</h4>
+            <div id="tab-list">
+            </div>
 
-        <div class="btn-box">
-            <button id="select-all" class="btn-left">Select All</button>
-            <button id="select-none" class="btn-right">Select None</button>
-        </div>
+            <div class="btn-box">
+                <button id="select-all" class="btn-left">Select All</button>
+                <button id="select-none" class="btn-right">Select None</button>
+            </div>
 
-        <div class="btn-box">
-            <button id="download">Download</button>
+            <div class="btn-box">
+                <button id="download">Download</button>
+            </div>
+            <div id="status-server" align="center"></div>
         </div>
-        <div id="status-server" align="center"></div>
     </div>
 
     <div id="settingsForm">
-        <h1>Settings</h1>
+        <div id="title-bar">
+            <div id="title-bar--title">
+                <img src="images/download-icon-white.svg">
+                <h1>EpubPress</h1>
+            </div>
+        </div>
+        <div class="container">
+            <h1>Settings:</h1>
 
-        <h3>Filetype:</h3>
-        <select id="settings-filetype-select" class="form-control">
-            <option value='epub'>.epub</option>
-            <option value='mobi'>.mobi (Kindle)</option>
-        </select>
+            <h3>Filetype</h3>
+            <select id="settings-filetype-select">
+                <option value='epub'>.epub</option>
+                <option value='mobi'>.mobi (Kindle)</option>
+            </select>
 
-        <h3>Delivery Email:</h3>
-        <input id="settings-email-text" type="text" class="form-control" placeholder="Email">
+            <h3>Delivery Email</h3>
+            <input id="settings-email-text" type="text" placeholder="Email">
 
-
-        <div class="btn-box">
-            <button id="settings-save-btn" class="btn-left">Save</button>
-            <button id="settings-cancel-btn" class="btn-right">Cancel</button>
+            <div class="btn-box">
+                <button id="settings-save-btn" class="btn-left">Save</button>
+                <button id="settings-cancel-btn" class="btn-right">Cancel</button>
+            </div>
         </div>
     </div>
 
-    <div id="downloadSpinner" class="status-msg">
+    <div id="downloadSpinner" class="status-msg container">
         <div class="loader"></div>
         <h2>Pressing Your EPUB...</h2>
     </div>
 
-    <div id="downloadSuccess" class="status-msg">
+    <div id="downloadSuccess" class="status-msg container">
         <h2 class="status-icon">&#10004;</h2>
         <h2>Success</h2>
     </div>
 
-    <div id="downloadFailed" class="status-msg">
+    <div id="downloadFailed" class="status-msg container">
         <h2 class="status-icon">&#10008;</h2>
         <h2>Failed</h2>
     </div>
