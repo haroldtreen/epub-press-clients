@@ -1,0 +1,40 @@
+/* lato-regular - latin */
+@font-face {
+  font-family: 'Lato';
+  font-style: normal;
+  font-weight: 400;
+  src: url('../vendor/fonts/lato-v11-latin-regular.eot'); /* IE9 Compat Modes */
+  src: local('Lato Regular'), local('Lato-Regular'),
+       url('../vendor/fonts/lato-v11-latin-regular.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('../vendor/fonts/lato-v11-latin-regular.woff2') format('woff2'), /* Super Modern Browsers */
+       url('../vendor/fonts/lato-v11-latin-regular.woff') format('woff'), /* Modern Browsers */
+       url('../vendor/fonts/lato-v11-latin-regular.ttf') format('truetype'), /* Safari, Android, iOS */
+       url('../vendor/fonts/lato-v11-latin-regular.svg#Lato') format('svg'); /* Legacy iOS */
+}
+
+/* quicksand-regular - latin */
+@font-face {
+  font-family: 'Quicksand';
+  font-style: normal;
+  font-weight: 400;
+  src: url('../vendor/fonts/quicksand-v5-latin-regular.eot'); /* IE9 Compat Modes */
+  src: local('Quicksand Regular'), local('Quicksand-Regular'),
+       url('../vendor/fonts/quicksand-v5-latin-regular.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('../vendor/fonts/quicksand-v5-latin-regular.woff2') format('woff2'), /* Super Modern Browsers */
+       url('../vendor/fonts/quicksand-v5-latin-regular.woff') format('woff'), /* Modern Browsers */
+       url('../vendor/fonts/quicksand-v5-latin-regular.ttf') format('truetype'), /* Safari, Android, iOS */
+       url('../vendor/fonts/quicksand-v5-latin-regular.svg#Quicksand') format('svg'); /* Legacy iOS */
+}
+/* quicksand-700 - latin */
+@font-face {
+  font-family: 'Quicksand';
+  font-style: normal;
+  font-weight: 700;
+  src: url('../vendor/fonts/quicksand-v5-latin-700.eot'); /* IE9 Compat Modes */
+  src: local('Quicksand Bold'), local('Quicksand-Bold'),
+       url('../vendor/fonts/quicksand-v5-latin-700.eot?#iefix') format('embedded-opentype'), /* IE6-IE8 */
+       url('../vendor/fonts/quicksand-v5-latin-700.woff2') format('woff2'), /* Super Modern Browsers */
+       url('../vendor/fonts/quicksand-v5-latin-700.woff') format('woff'), /* Modern Browsers */
+       url('../vendor/fonts/quicksand-v5-latin-700.ttf') format('truetype'), /* Safari, Android, iOS */
+       url('../vendor/fonts/quicksand-v5-latin-700.svg#Quicksand') format('svg'); /* Legacy iOS */
+}
