@@ -164,7 +164,7 @@ var Browser = function () {
     }, {
         key: 'getManifest',
         value: function getManifest() {
-            chrome.runtime.getManifest();
+            return chrome.runtime.getManifest();
         }
     }]);
 

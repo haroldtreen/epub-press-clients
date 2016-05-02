@@ -146,5 +146,6 @@ window.onload = () => {
                 });
             });
         }
+        return null;
     });
 };

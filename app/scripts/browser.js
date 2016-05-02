@@ -133,7 +133,7 @@ class Browser {
     }
 
     static getManifest() {
-        chrome.runtime.getManifest();
+        return chrome.runtime.getManifest();
     }
 }
 
