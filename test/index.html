@@ -1,30 +1,32 @@
 <!doctype html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <title>Mocha Spec Runner</title>
-  <link rel="stylesheet" href="../node_modules/mocha/mocha.css">
+    <meta charset="utf-8">
+    <title>Mocha Spec Runner</title>
+    <link rel="stylesheet" href="../node_modules/mocha/mocha.css">
 </head>
 <body>
-  <div id="mocha"></div>
-  <script src="../node_modules/mocha/mocha.js"></script>
-  <script>mocha.setup('bdd');</script>
-  <script src="../node_modules/chai/chai.js"></script>
-  <script>
+    <div id="mocha"></div>
+    <script src="../node_modules/mocha/mocha.js"></script>
+    <script>mocha.setup('bdd');</script>
+    <script src="../node_modules/chai/chai.js"></script>
+    <script>
     var assert = chai.assert;
     var expect = chai.expect;
     var should = chai.should();
-  </script>
-  <!-- bower:js -->
-  <!-- endbower -->
-  <!-- include source files here... -->
-  <script src="../app/build/epub-press.js"></script>
-  <!-- include spec files here... -->
-  <script src="epub-press-test.js"></script>
-  <script>
+    </script>
+    <!-- bower:js -->
+    <!-- endbower -->
+    <!-- include source files here... -->
+    <script src="../app/build/epub-press.js"></script>
+    <script src="../app/build/ui.js"></script>
+    <script src="../app/build/browser.js"></script>
+    <!-- include spec files here... -->
+    <script src="epub-press-test.js"></script>
+    <script>
     if (navigator.userAgent.indexOf('PhantomJS') === -1) {
-      mocha.run();
+        mocha.run();
     }
-  </script>
+    </script>
 </body>
 </html>
