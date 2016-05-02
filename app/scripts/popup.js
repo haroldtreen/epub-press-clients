@@ -1,7 +1,4 @@
-'use strict';
-
-const MANIFEST = chrome.runtime.getManifest();
-const BASE_URL = MANIFEST.homepage_url;
+const Browser = window.Browser;
 const EpubPress = window.EpubPress;
 
 /*
@@ -40,25 +37,6 @@ function getCheckbox(props) {
     return html;
 }
 
-function getTabsHtml(tabs) {
-    const code = 'document.documentElement.outerHTML';
-    const htmlPromises = tabs.map((tab) =>
-        new Promise((resolve) => {
-            chrome.tabs.executeScript(tab.id, { code }, (html) => {
-                const updatedTab = tab;
-                if (html[0] && html[0].match(/html/i)) {
-                    updatedTab.html = html[0];
-                } else {
-                    updatedTab.html = null;
-                }
-                resolve(updatedTab);
-            });
-        })
-    );
-
-    return Promise.all(htmlPromises);
-}
-
 $('#select-all').click(() => {
     $('input.article-checkbox').each((index, checkbox) => {
         $(checkbox).prop('checked', true);
@@ -77,7 +55,7 @@ $('#download').click(() => {
         if ($(checkbox).prop('checked')) {
             selectedItems.push({
                 url: $(checkbox).prop('value'),
-                id: Number($(checkbox).prop('name'))
+                id: Number($(checkbox).prop('name')),
             });
         }
     });
@@ -86,10 +64,10 @@ $('#download').click(() => {
     if (selectedItems.length <= 0) {
         alert('No articles selected!');
     } else {
-        getTabsHtml(selectedItems).then((sections) => {
+        Browser.getTabsHtml(selectedItems).then((sections) => {
             showSection('#downloadSpinner');
-            chrome.runtime.sendMessage(null, { action: 'download', sections });
-        })
+            Browser.sendMessage(null, { action: 'download', sections });
+        });
     }
 });
 
@@ -99,7 +77,7 @@ $('#download').click(() => {
 */
 
 function setExistingSettings(cb) {
-    chrome.storage.local.get(['email', 'filetype'], (state) => {
+    Browser.getLocalStorage(['email', 'filetype']).then((state) => {
         $('#settings-email-text').val(state.email);
         $('#settings-filetype-select').val(state.filetype);
         cb();
@@ -113,7 +91,7 @@ $('#settings-btn').click(() => {
 });
 
 $('#settings-save-btn').click(() => {
-    chrome.storage.local.set({
+    Browser.setLocalStorage({
         email: $('#settings-email-text').val(),
         filetype: $('#settings-filetype-select').val(),
     });
@@ -128,13 +106,8 @@ $('#settings-cancel-btn').click(() => {
     Messaging
 */
 
-function isBackgroundMsg(sender) {
-    return sender.url.indexOf('background_page') > -1;
-}
-
-chrome.runtime.onMessage.addListener((request, sender) => {
-    console.log(sender);
-    if (request.action === 'download' && isBackgroundMsg(sender)) {
+Browser.onBackgroundMessage((request) => {
+    if (request.action === 'download') {
         if (request.status === 'complete') {
             showSection('#downloadSuccess');
         } else {
@@ -147,53 +120,14 @@ chrome.runtime.onMessage.addListener((request, sender) => {
     Startup
 */
 
-function compareVersion(versionData) {
-    const apiSupported = Number(versionData.minCompatible.replace('.', ''));
-    const currentVersion = Number(MANIFEST.version.replace('.', ''));
-
-    if (apiSupported > currentVersion) {
-        if (versionData.message) {
-            $('#status-server').text(versionData.message);
-        }
-    }
-}
-
-function checkForUpdates() {
-    $.ajax({
-        url: `${BASE_URL}/api/version`,
-        contentType: 'application/json',
-    }).done((versionData) => {
-        console.log(versionData);
-        compareVersion(versionData);
-    }).fail((xhr, err) => {
-        console.error('Version Check Failed:');
-        console.error(err);
-    });
-}
-
-function getCurrentWindowTabs() {
-    return new Promise((resolve, reject) => {
-        chrome.windows.getCurrent({ populate: true }, (currentWindow) => {
-            if (currentWindow.tabs) {
-                const websiteTabs = currentWindow.tabs.filter(
-                    (tab) => EpubPress.isValidUrl(tab.url)
-                );
-                resolve(websiteTabs);
-            } else {
-                reject('No tabs!');
-            }
-        });
-    });
-}
-
 window.onload = () => {
-    chrome.storage.local.get('downloadState', (state) => {
+    Browser.getLocalStorage('downloadState').then((state) => {
         if (state.downloadState) {
             showSection('#downloadSpinner');
         } else {
-            checkForUpdates();
+            EpubPress.checkForUpdates();
             showSection('#downloadForm');
-            getCurrentWindowTabs().then((tabs) => {
+            Browser.getCurrentWindowTabs().then((tabs) => {
                 tabs.forEach((tab) => {
                     $('#tab-list').append(getCheckbox({
                         title: tab.title,
