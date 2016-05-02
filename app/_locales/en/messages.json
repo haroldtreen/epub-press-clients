@@ -1,10 +1,14 @@
 {
-  "appName": {
-    "message": "EpubPress",
-    "description": "Publish custom eBooks with your favorite web content!"
-  },
-  "appDescription": {
-    "message": "Create custom ebooks from your favorite blogs and websites.",
-    "description": "Publish custom eBooks with your favorite web content!"
-  }
+    "appName": {
+        "message": "EpubPress - Create ebooks from your tabs",
+        "description": "Publish custom eBooks with your favorite web content!"
+    },
+    "appShortName": {
+        "message": "EpubPress",
+        "description": "Name of app."
+    },
+    "appDescription": {
+        "message": "Create custom ebooks from your favorite blogs and websites.",
+        "description": "Publish custom eBooks with your favorite web content!"
+    }
 }
