@@ -136,8 +136,22 @@ var Browser = function () {
         value: function download(params) {
             var promise = undefined;
             if (chrome) {
-                promise = new Promise(function (resolve) {
-                    chrome.downloads.download(params, resolve);
+                promise = new Promise(function (resolve, reject) {
+                    chrome.downloads.download(params, function (downloadId) {
+                        var downloadListener = chrome.downloads.onChanged.addListener(function (downloadInfo) {
+                            if (downloadInfo.id === downloadId) {
+                                if (downloadInfo.error) {
+                                    console.log(downloadInfo.error);
+                                    chrome.downloads.onChanged.removeListener(downloadListener);
+                                    reject(downloadInfo.error);
+                                } else if (downloadInfo.endTime) {
+                                    console.log('end time: ', downloadInfo.endTime);
+                                    chrome.downloads.onChanged.removeListener(downloadListener);
+                                    resolve(downloadInfo.endTime);
+                                }
+                            }
+                        });
+                    });
                 });
             }
             return promise;

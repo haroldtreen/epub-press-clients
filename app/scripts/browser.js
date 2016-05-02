@@ -107,8 +107,22 @@ class Browser {
     static download(params) {
         let promise;
         if (chrome) {
-            promise = new Promise((resolve) => {
-                chrome.downloads.download(params, resolve);
+            promise = new Promise((resolve, reject) => {
+                chrome.downloads.download(params, (downloadId) => {
+                    let downloadListener = chrome.downloads.onChanged.addListener((downloadInfo) => {
+                        if (downloadInfo.id === downloadId) {
+                            if (downloadInfo.error) {
+                                console.log(downloadInfo.error);
+                                chrome.downloads.onChanged.removeListener(downloadListener);
+                                reject(downloadInfo.error);
+                            } else if (downloadInfo.endTime) {
+                                console.log('end time: ', downloadInfo.endTime);
+                                chrome.downloads.onChanged.removeListener(downloadListener);
+                                resolve(downloadInfo.endTime);
+                            }
+                        }
+                    });
+                });
             });
         }
         return promise;
