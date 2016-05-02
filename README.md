@@ -37,7 +37,7 @@ Support requests can be sent to support@epub.press.
 - ~~Install through the Chrome Extension Store.~~ [VOILA](https://chrome.google.com/webstore/detail/epubpress/pnhdnpnnffpijjbnhnipkehhibchdeok)
 - ~~Support for formats other then `epub` (in the meantime - check out [Calibre](https://calibre-ebook.com/)).~~
 - ~~Ability to send the file directly to your reader.~~
-- Custom book titles/descriptions.
+- ~~Custom book titles/descriptions~~.
 - Ability to share your generated creations with others.
 - Detection for pages with a list of links (eg. OneTab, Feedly, RSS Feeds) and show those links.
 
