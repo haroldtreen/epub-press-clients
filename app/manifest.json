@@ -12,7 +12,6 @@
   "default_locale": "en",
   "background": {
     "scripts": [
-      "vendor/chromereload.js",
       "vendor/jquery.min.js",
       "vendor/bluebird.min.js",
       "build/browser.js",
