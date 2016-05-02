@@ -15,7 +15,9 @@
       "vendor/chromereload.js",
       "vendor/jquery.min.js",
       "vendor/bluebird.min.js",
-      "build/requestBook.js"
+      "build/browser.js",
+      "build/epub-press.js",
+      "build/background.js"
     ]
   },
   "permissions": [
