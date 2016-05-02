@@ -27,12 +27,12 @@ class EpubPress {
         });
     }
 
-    static requestEbook(sections) {
+    static requestEbook(book) {
         return new Promise((resolve, reject) => {
             $.ajax({
                 url: `${BASE_URL}/api/books`,
                 method: 'POST',
-                data: JSON.stringify({ sections }),
+                data: JSON.stringify(book),
                 contentType: 'application/json',
             }).done((response) => {
                 console.log(response);
@@ -61,7 +61,7 @@ class EpubPress {
                         reject(err);
                     });
                 } else {
-                    Browser.download({ url }, resolve);
+                    Browser.download({ url }).then(resolve).catch(reject);
                 }
             }
         });

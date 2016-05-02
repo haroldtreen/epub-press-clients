@@ -41,12 +41,12 @@ var EpubPress = function () {
         }
     }, {
         key: 'requestEbook',
-        value: function requestEbook(sections) {
+        value: function requestEbook(book) {
             return new Promise(function (resolve, reject) {
                 $.ajax({
                     url: BASE_URL + '/api/books',
                     method: 'POST',
-                    data: JSON.stringify({ sections: sections }),
+                    data: JSON.stringify(book),
                     contentType: 'application/json'
                 }).done(function (response) {
                     console.log(response);
@@ -76,7 +76,7 @@ var EpubPress = function () {
                             reject(err);
                         });
                     } else {
-                        Browser.download({ url: url }, resolve);
+                        Browser.download({ url: url }).then(resolve).catch(reject);
                     }
                 }
             });

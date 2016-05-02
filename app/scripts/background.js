@@ -5,7 +5,7 @@ Browser.onForegroundMessage((request) => {
     if (request.action === 'download') {
         Browser.setLocalStorage({ downloadState: true });
         Browser.getLocalStorage(['email', 'filetype']).then((state) => {
-            EpubPress.requestEbook(request.sections).then((id) =>
+            EpubPress.requestEbook(request.book).then((id) =>
                 EpubPress.downloadEbook({ id, filetype: state.filetype, email: state.email })
             ).then(() => {
                 Browser.setLocalStorage({ downloadState: false });

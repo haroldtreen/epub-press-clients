@@ -56,7 +56,14 @@ $('#download').click(function () {
     } else {
         Browser.getTabsHtml(selectedItems).then(function (sections) {
             showSection('#downloadSpinner');
-            Browser.sendMessage(null, { action: 'download', sections: sections });
+            Browser.sendMessage(null, {
+                action: 'download',
+                book: {
+                    title: $('#book-title').val() || undefined,
+                    description: $('#book-description').val() || undefined,
+                    sections: sections
+                }
+            });
         });
     }
 });
