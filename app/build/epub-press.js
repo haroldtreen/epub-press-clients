@@ -14,29 +14,6 @@ var EpubPress = function () {
     }
 
     _createClass(EpubPress, null, [{
-        key: 'isValidUrl',
-        value: function isValidUrl(url) {
-            var matchesValid = true;
-            var matchesInvalid = false;
-
-            var invalidRegex = [/\.pdf$/i, /\.jpg$/i, /\.png$/, /\.gif$/];
-            var validRegex = [/^http/];
-
-            invalidRegex.forEach(function (regex) {
-                matchesInvalid = matchesInvalid || regex.test(url);
-            });
-            validRegex.forEach(function (regex) {
-                matchesValid = matchesValid && regex.test(url);
-            });
-
-            return matchesValid && !matchesInvalid;
-        }
-    }, {
-        key: 'filterUrls',
-        value: function filterUrls(urls) {
-            return (urls || []).filter(EpubPress.isValidUrl);
-        }
-    }, {
         key: 'compareVersion',
         value: function compareVersion(versionData) {
             var apiSupported = Number(versionData.minCompatible.replace('.', ''));

@@ -28,6 +28,11 @@ var Browser = function () {
             return matchesValid && !matchesInvalid;
         }
     }, {
+        key: 'filterUrls',
+        value: function filterUrls(urls) {
+            return (urls || []).filter(Browser.isValidUrl);
+        }
+    }, {
         key: 'isBackgroundMsg',
         value: function isBackgroundMsg(sender) {
             return sender.url.indexOf('background_page') > -1;

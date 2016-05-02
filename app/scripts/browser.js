@@ -16,6 +16,10 @@ class Browser {
         return matchesValid && !matchesInvalid;
     }
 
+    static filterUrls(urls) {
+        return (urls || []).filter(Browser.isValidUrl);
+    }
+
     static isBackgroundMsg(sender) {
         return sender.url.indexOf('background_page') > -1;
     }
