@@ -56,6 +56,8 @@
                         },
                     }
                 );
+            }).catch((error) => {
+                UI.setErrorMessage(`Could not find tab content: ${error}`);
             });
         }
     });
@@ -70,6 +72,8 @@
             $('#settings-email-text').val(state.email);
             $('#settings-filetype-select').val(state.filetype);
             cb();
+        }).catch((error) => {
+            UI.setErrorMessage(`Could not load settings: ${error}`);
         });
     }
 
@@ -127,6 +131,8 @@
                             id: tab.id,
                         }));
                     });
+                }).catch((error) => {
+                    UI.setErrorMessage(`Searching tabs failed: ${error}`);
                 });
             }
             return null;

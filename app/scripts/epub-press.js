@@ -10,7 +10,7 @@
 
             if (apiSupported > currentVersion) {
                 if (versionData.message) {
-                    $('#status-server').text(versionData.message);
+                    $('#alert-message').text(versionData.message);
                 }
             }
         }
@@ -22,9 +22,9 @@
             }).done((versionData) => {
                 console.log(versionData);
                 EpubPress.compareVersion(versionData);
-            }).fail((xhr, err) => {
+            }).fail((xhr) => {
                 console.error('Version Check Failed:');
-                console.error(err);
+                console.error(xhr);
             });
         }
 
@@ -36,14 +36,13 @@
                     data: JSON.stringify(book),
                     contentType: 'application/json',
                 }).done((response) => {
-                    console.log(response);
                     resolve(response.id);
-                }).fail((xhr, err) => {
-                    console.log(err);
-                    reject(err);
-                }).always((xhr, status, err) => {
-                    console.log(status);
-                    console.log(err);
+                }).fail((xhr) => {
+                    const msg = Browser.getErrorMsg('Book create', xhr);
+                    console.log(msg);
+                    reject(msg);
+                }).always((xhr) => {
+                    console.log(xhr);
                 });
             });
         }
@@ -55,14 +54,17 @@
                     const url = `${BASE_URL}/api/books/download?${queryString}`;
 
                     if (params.email && params.email.length > 0) {
-                        $.ajax({ url }).done((response) => {
-                            console.log(response);
+                        $.ajax({ url }).done(() => {
                             resolve();
-                        }).fail((xhr, err) => {
-                            reject(err);
+                        }).fail((xhr) => {
+                            const msg = Browser.getErrorMsg('Book download', xhr);
+                            reject(msg);
                         });
                     } else {
-                        Browser.download({ url }).then(resolve).catch(reject);
+                        Browser.download({ url }).then(resolve).catch((error) => {
+                            const msg = Browser.getErrorMsg('Book download', error);
+                            reject(msg);
+                        });
                     }
                 }
             });

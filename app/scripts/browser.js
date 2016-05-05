@@ -136,7 +136,33 @@
         static getManifest() {
             return chrome.runtime.getManifest();
         }
+
+        static getErrorMsg(location, xhr) {
+            let msg = location ? `${location}:  ` : '';
+
+            msg += xhr.responseText ||
+                    Browser.ERROR_CODES[xhr.statusText] ||
+                    Browser.ERROR_CODES[xhr.status] ||
+                    Browser.ERROR_CODES[xhr.current] ||
+                    'Unknown';
+
+            return msg;
+        }
     }
+
+    Browser.ERROR_CODES = {
+        // Book Create Errors
+        0: 'Server is down. Please try again later.',
+        400: 'There was a problem with the request. Is EpubPress up to date?',
+        404: 'Resource not found.',
+        500: 'Unexpected server error.',
+        503: 'Server took too long to respond.',
+        timeout: 'Request took too long to complete.',
+        error: undefined,
+        // Download Errors
+        SERVER_FAILED: 'Server error while downloading.',
+        SERVER_BAD_CONTENT: 'Book could not be found',
+    };
 
     global.Browser = Browser; // eslint-disable-line
 }(window));
