@@ -56,7 +56,7 @@
                 return new Promise((resolve) => {
                     chrome.tabs.executeScript(tab.id, { code }, (html) => {
                         const updatedTab = tab;
-                        if (html[0] && html[0].match(/html/i)) {
+                        if (html && html[0] && html[0].match(/html/i)) {
                             updatedTab.html = html[0];
                         } else {
                             updatedTab.html = null;
