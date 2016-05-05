@@ -1,28 +1,7 @@
 (function (global) {
     const Browser = global.Browser;
     const EpubPress = global.EpubPress;
-
-    /*
-    State Management
-    */
-
-    const SECTIONS_SELECTORS = [
-        '#downloadForm',
-        '#settingsForm',
-        '#downloadSpinner',
-        '#downloadSuccess',
-        '#downloadFailed',
-    ];
-
-    function showSection(section) {
-        SECTIONS_SELECTORS.forEach((selector) => {
-            if (selector === section) {
-                $(selector).show();
-            } else {
-                $(selector).hide();
-            }
-        });
-    }
+    const UI = global.UI;
 
     /*
     Download Form
@@ -96,7 +75,7 @@
 
     $('#settings-btn').click(() => {
         setExistingSettings(() => {
-            showSection('#settingsForm');
+            UI.showSection('#settingsForm');
         });
     });
 
@@ -105,11 +84,11 @@
             email: $('#settings-email-text').val(),
             filetype: $('#settings-filetype-select').val(),
         });
-        showSection('#downloadForm');
+        UI.showSection('#downloadForm');
     });
 
     $('#settings-cancel-btn').click(() => {
-        showSection('#downloadForm');
+        UI.showSection('#downloadForm');
     });
 
     /*
@@ -119,9 +98,12 @@
     Browser.onBackgroundMessage((request) => {
         if (request.action === 'download') {
             if (request.status === 'complete') {
-                showSection('#downloadSuccess');
+                UI.showSection('#downloadSuccess');
             } else {
-                showSection('#downloadFailed');
+                UI.showSection('#downloadFailed');
+                if (request.error) {
+                    UI.setErrorMessage(request.error);
+                }
             }
         }
     });
@@ -133,10 +115,10 @@
     global.onload = () => { // eslint-disable-line
         Browser.getLocalStorage('downloadState').then((state) => {
             if (state.downloadState) {
-                showSection('#downloadSpinner');
+                UI.showSection('#downloadSpinner');
             } else {
                 EpubPress.checkForUpdates();
-                showSection('#downloadForm');
+                UI.showSection('#downloadForm');
                 Browser.getCurrentWindowTabs().then((tabs) => {
                     tabs.forEach((tab) => {
                         $('#tab-list').append(getCheckbox({

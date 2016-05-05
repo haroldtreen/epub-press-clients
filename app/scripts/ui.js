@@ -11,7 +11,25 @@
         static setErrorMessage(msg) {
             $('#failure-message').text(msg);
         }
+
+        static showSection(section) {
+            UI.SECTIONS_SELECTORS.forEach((selector) => {
+                if (selector === section) {
+                    $(selector).show();
+                } else {
+                    $(selector).hide();
+                }
+            });
+        }
     }
+
+    UI.SECTIONS_SELECTORS = [
+        '#downloadForm',
+        '#settingsForm',
+        '#downloadSpinner',
+        '#downloadSuccess',
+        '#downloadFailed',
+    ];
 
     global.UI = UI; // eslint-disable-line
 }(window));
