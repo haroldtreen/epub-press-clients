@@ -63,10 +63,10 @@
 
 
         if (selectedItems.length <= 0) {
-            alert('No articles selected!');
+            $('#alert-message').text('No articles selected!');
         } else {
             Browser.getTabsHtml(selectedItems).then((sections) => {
-                showSection('#downloadSpinner');
+                UI.showSection('#downloadSpinner');
                 Browser.sendMessage(null,
                     {
                         action: 'download',
