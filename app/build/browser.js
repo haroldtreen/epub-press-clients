@@ -76,7 +76,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                     return new Promise(function (resolve) {
                         chrome.tabs.executeScript(tab.id, { code: code }, function (html) {
                             var updatedTab = tab;
-                            if (html[0] && html[0].match(/html/i)) {
+                            if (html && html[0] && html[0].match(/html/i)) {
                                 updatedTab.html = html[0];
                             } else {
                                 updatedTab.html = null;
@@ -169,10 +169,33 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             value: function getManifest() {
                 return chrome.runtime.getManifest();
             }
+        }, {
+            key: 'getErrorMsg',
+            value: function getErrorMsg(location, xhr) {
+                var msg = location ? location + ':  ' : '';
+
+                msg += xhr.responseText || Browser.ERROR_CODES[xhr.statusText] || Browser.ERROR_CODES[xhr.status] || Browser.ERROR_CODES[xhr.current] || 'Unknown';
+
+                return msg;
+            }
         }]);
 
         return Browser;
     }();
+
+    Browser.ERROR_CODES = {
+        // Book Create Errors
+        0: 'Server is down. Please try again later.',
+        400: 'There was a problem with the request. Is EpubPress up to date?',
+        404: 'Resource not found.',
+        500: 'Unexpected server error.',
+        503: 'Server took too long to respond.',
+        timeout: 'Request took too long to complete.',
+        error: undefined,
+        // Download Errors
+        SERVER_FAILED: 'Server error while downloading.',
+        SERVER_BAD_CONTENT: 'Book could not be found'
+    };
 
     global.Browser = Browser; // eslint-disable-line
 })(window);

@@ -3,22 +3,7 @@
 (function (global) {
     var Browser = global.Browser;
     var EpubPress = global.EpubPress;
-
-    /*
-    State Management
-    */
-
-    var SECTIONS_SELECTORS = ['#downloadForm', '#settingsForm', '#downloadSpinner', '#downloadSuccess', '#downloadFailed'];
-
-    function showSection(section) {
-        SECTIONS_SELECTORS.forEach(function (selector) {
-            if (selector === section) {
-                $(selector).show();
-            } else {
-                $(selector).hide();
-            }
-        });
-    }
+    var UI = global.UI;
 
     /*
     Download Form
@@ -53,10 +38,10 @@
         });
 
         if (selectedItems.length <= 0) {
-            alert('No articles selected!');
+            $('#alert-message').text('No articles selected!');
         } else {
             Browser.getTabsHtml(selectedItems).then(function (sections) {
-                showSection('#downloadSpinner');
+                UI.showSection('#downloadSpinner');
                 Browser.sendMessage(null, {
                     action: 'download',
                     book: {
@@ -65,6 +50,8 @@
                         sections: sections
                     }
                 });
+            }).catch(function (error) {
+                UI.setErrorMessage('Could not find tab content: ' + error);
             });
         }
     });
@@ -78,12 +65,14 @@
             $('#settings-email-text').val(state.email);
             $('#settings-filetype-select').val(state.filetype);
             cb();
+        }).catch(function (error) {
+            UI.setErrorMessage('Could not load settings: ' + error);
         });
     }
 
     $('#settings-btn').click(function () {
         setExistingSettings(function () {
-            showSection('#settingsForm');
+            UI.showSection('#settingsForm');
         });
     });
 
@@ -92,11 +81,11 @@
             email: $('#settings-email-text').val(),
             filetype: $('#settings-filetype-select').val()
         });
-        showSection('#downloadForm');
+        UI.showSection('#downloadForm');
     });
 
     $('#settings-cancel-btn').click(function () {
-        showSection('#downloadForm');
+        UI.showSection('#downloadForm');
     });
 
     /*
@@ -106,9 +95,12 @@
     Browser.onBackgroundMessage(function (request) {
         if (request.action === 'download') {
             if (request.status === 'complete') {
-                showSection('#downloadSuccess');
+                UI.showSection('#downloadSuccess');
             } else {
-                showSection('#downloadFailed');
+                UI.showSection('#downloadFailed');
+                if (request.error) {
+                    UI.setErrorMessage(request.error);
+                }
             }
         }
     });
@@ -121,10 +113,10 @@
         // eslint-disable-line
         Browser.getLocalStorage('downloadState').then(function (state) {
             if (state.downloadState) {
-                showSection('#downloadSpinner');
+                UI.showSection('#downloadSpinner');
             } else {
                 EpubPress.checkForUpdates();
-                showSection('#downloadForm');
+                UI.showSection('#downloadForm');
                 Browser.getCurrentWindowTabs().then(function (tabs) {
                     tabs.forEach(function (tab) {
                         $('#tab-list').append(getCheckbox({
@@ -133,6 +125,8 @@
                             id: tab.id
                         }));
                     });
+                }).catch(function (error) {
+                    UI.setErrorMessage('Searching tabs failed: ' + error);
                 });
             }
             return null;

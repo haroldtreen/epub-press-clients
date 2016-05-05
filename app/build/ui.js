@@ -23,10 +23,23 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
             value: function setErrorMessage(msg) {
                 $('#failure-message').text(msg);
             }
+        }, {
+            key: 'showSection',
+            value: function showSection(section) {
+                UI.SECTIONS_SELECTORS.forEach(function (selector) {
+                    if (selector === section) {
+                        $(selector).show();
+                    } else {
+                        $(selector).hide();
+                    }
+                });
+            }
         }]);
 
         return UI;
     }();
+
+    UI.SECTIONS_SELECTORS = ['#downloadForm', '#settingsForm', '#downloadSpinner', '#downloadSuccess', '#downloadFailed'];
 
     global.UI = UI; // eslint-disable-line
 })(window);

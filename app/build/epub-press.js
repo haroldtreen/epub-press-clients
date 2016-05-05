@@ -22,7 +22,7 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
 
                 if (apiSupported > currentVersion) {
                     if (versionData.message) {
-                        $('#status-server').text(versionData.message);
+                        $('#alert-message').text(versionData.message);
                     }
                 }
             }
@@ -35,9 +35,9 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                 }).done(function (versionData) {
                     console.log(versionData);
                     EpubPress.compareVersion(versionData);
-                }).fail(function (xhr, err) {
+                }).fail(function (xhr) {
                     console.error('Version Check Failed:');
-                    console.error(err);
+                    console.error(xhr);
                 });
             }
         }, {
@@ -50,14 +50,13 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                         data: JSON.stringify(book),
                         contentType: 'application/json'
                     }).done(function (response) {
-                        console.log(response);
                         resolve(response.id);
-                    }).fail(function (xhr, err) {
-                        console.log(err);
-                        reject(err);
-                    }).always(function (xhr, status, err) {
-                        console.log(status);
-                        console.log(err);
+                    }).fail(function (xhr) {
+                        var msg = Browser.getErrorMsg('Book create', xhr);
+                        console.log(msg);
+                        reject(msg);
+                    }).always(function (xhr) {
+                        console.log(xhr);
                     });
                 });
             }
@@ -70,14 +69,17 @@ function _classCallCheck(instance, Constructor) { if (!(instance instanceof Cons
                         var url = BASE_URL + '/api/books/download?' + queryString;
 
                         if (params.email && params.email.length > 0) {
-                            $.ajax({ url: url }).done(function (response) {
-                                console.log(response);
+                            $.ajax({ url: url }).done(function () {
                                 resolve();
-                            }).fail(function (xhr, err) {
-                                reject(err);
+                            }).fail(function (xhr) {
+                                var msg = Browser.getErrorMsg('Book download', xhr);
+                                reject(msg);
                             });
                         } else {
-                            Browser.download({ url: url }).then(resolve).catch(reject);
+                            Browser.download({ url: url }).then(resolve).catch(function (error) {
+                                var msg = Browser.getErrorMsg('Book download', error);
+                                reject(msg);
+                            });
                         }
                     }
                 });
