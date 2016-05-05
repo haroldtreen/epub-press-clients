@@ -1,138 +1,141 @@
 'use strict';
 
-var Browser = window.Browser;
-var EpubPress = window.EpubPress;
+(function (global) {
+    var Browser = global.Browser;
+    var EpubPress = global.EpubPress;
 
-/*
+    /*
     State Management
-*/
+    */
 
-var SECTIONS_SELECTORS = ['#downloadForm', '#settingsForm', '#downloadSpinner', '#downloadSuccess', '#downloadFailed'];
+    var SECTIONS_SELECTORS = ['#downloadForm', '#settingsForm', '#downloadSpinner', '#downloadSuccess', '#downloadFailed'];
 
-function showSection(section) {
-    SECTIONS_SELECTORS.forEach(function (selector) {
-        if (selector === section) {
-            $(selector).show();
-        } else {
-            $(selector).hide();
-        }
-    });
-}
-
-/*
-    Download Form
-*/
-
-function getCheckbox(props) {
-    var html = '<div class="checkbox">\n                    <label>\n                        <input class=\'article-checkbox\' type="checkbox" value="' + props.url + '" name="' + props.id + '">\n                        <span>' + props.title + '</span>\n                    </label>\n                  </div>';
-    return html;
-}
-
-$('#select-all').click(function () {
-    $('input.article-checkbox').each(function (index, checkbox) {
-        $(checkbox).prop('checked', true);
-    });
-});
-
-$('#select-none').click(function () {
-    $('input.article-checkbox').each(function (index, checkbox) {
-        $(checkbox).prop('checked', false);
-    });
-});
-
-$('#download').click(function () {
-    var selectedItems = [];
-    $('input.article-checkbox').each(function (index, checkbox) {
-        if ($(checkbox).prop('checked')) {
-            selectedItems.push({
-                url: $(checkbox).prop('value'),
-                id: Number($(checkbox).prop('name'))
-            });
-        }
-    });
-
-    if (selectedItems.length <= 0) {
-        alert('No articles selected!');
-    } else {
-        Browser.getTabsHtml(selectedItems).then(function (sections) {
-            showSection('#downloadSpinner');
-            Browser.sendMessage(null, {
-                action: 'download',
-                book: {
-                    title: $('#book-title').val() || undefined,
-                    description: $('#book-description').val() || undefined,
-                    sections: sections
-                }
-            });
+    function showSection(section) {
+        SECTIONS_SELECTORS.forEach(function (selector) {
+            if (selector === section) {
+                $(selector).show();
+            } else {
+                $(selector).hide();
+            }
         });
     }
-});
 
-/*
-    Settings Management
-*/
+    /*
+    Download Form
+    */
 
-function setExistingSettings(cb) {
-    Browser.getLocalStorage(['email', 'filetype']).then(function (state) {
-        $('#settings-email-text').val(state.email);
-        $('#settings-filetype-select').val(state.filetype);
-        cb();
-    });
-}
-
-$('#settings-btn').click(function () {
-    setExistingSettings(function () {
-        showSection('#settingsForm');
-    });
-});
-
-$('#settings-save-btn').click(function () {
-    Browser.setLocalStorage({
-        email: $('#settings-email-text').val(),
-        filetype: $('#settings-filetype-select').val()
-    });
-    showSection('#downloadForm');
-});
-
-$('#settings-cancel-btn').click(function () {
-    showSection('#downloadForm');
-});
-
-/*
-    Messaging
-*/
-
-Browser.onBackgroundMessage(function (request) {
-    if (request.action === 'download') {
-        if (request.status === 'complete') {
-            showSection('#downloadSuccess');
-        } else {
-            showSection('#downloadFailed');
-        }
+    function getCheckbox(props) {
+        var html = '<div class="checkbox">\n        <label>\n        <input class=\'article-checkbox\' type="checkbox" value="' + props.url + '" name="' + props.id + '">\n        <span>' + props.title + '</span>\n        </label>\n        </div>';
+        return html;
     }
-});
 
-/*
-    Startup
-*/
+    $('#select-all').click(function () {
+        $('input.article-checkbox').each(function (index, checkbox) {
+            $(checkbox).prop('checked', true);
+        });
+    });
 
-window.onload = function () {
-    Browser.getLocalStorage('downloadState').then(function (state) {
-        if (state.downloadState) {
-            showSection('#downloadSpinner');
+    $('#select-none').click(function () {
+        $('input.article-checkbox').each(function (index, checkbox) {
+            $(checkbox).prop('checked', false);
+        });
+    });
+
+    $('#download').click(function () {
+        var selectedItems = [];
+        $('input.article-checkbox').each(function (index, checkbox) {
+            if ($(checkbox).prop('checked')) {
+                selectedItems.push({
+                    url: $(checkbox).prop('value'),
+                    id: Number($(checkbox).prop('name'))
+                });
+            }
+        });
+
+        if (selectedItems.length <= 0) {
+            alert('No articles selected!');
         } else {
-            EpubPress.checkForUpdates();
-            showSection('#downloadForm');
-            Browser.getCurrentWindowTabs().then(function (tabs) {
-                tabs.forEach(function (tab) {
-                    $('#tab-list').append(getCheckbox({
-                        title: tab.title,
-                        url: tab.url,
-                        id: tab.id
-                    }));
+            Browser.getTabsHtml(selectedItems).then(function (sections) {
+                showSection('#downloadSpinner');
+                Browser.sendMessage(null, {
+                    action: 'download',
+                    book: {
+                        title: $('#book-title').val() || undefined,
+                        description: $('#book-description').val() || undefined,
+                        sections: sections
+                    }
                 });
             });
         }
-        return null;
     });
-};
+
+    /*
+    Settings Management
+    */
+
+    function setExistingSettings(cb) {
+        Browser.getLocalStorage(['email', 'filetype']).then(function (state) {
+            $('#settings-email-text').val(state.email);
+            $('#settings-filetype-select').val(state.filetype);
+            cb();
+        });
+    }
+
+    $('#settings-btn').click(function () {
+        setExistingSettings(function () {
+            showSection('#settingsForm');
+        });
+    });
+
+    $('#settings-save-btn').click(function () {
+        Browser.setLocalStorage({
+            email: $('#settings-email-text').val(),
+            filetype: $('#settings-filetype-select').val()
+        });
+        showSection('#downloadForm');
+    });
+
+    $('#settings-cancel-btn').click(function () {
+        showSection('#downloadForm');
+    });
+
+    /*
+    Messaging
+    */
+
+    Browser.onBackgroundMessage(function (request) {
+        if (request.action === 'download') {
+            if (request.status === 'complete') {
+                showSection('#downloadSuccess');
+            } else {
+                showSection('#downloadFailed');
+            }
+        }
+    });
+
+    /*
+    Startup
+    */
+
+    global.onload = function () {
+        // eslint-disable-line
+        Browser.getLocalStorage('downloadState').then(function (state) {
+            if (state.downloadState) {
+                showSection('#downloadSpinner');
+            } else {
+                EpubPress.checkForUpdates();
+                showSection('#downloadForm');
+                Browser.getCurrentWindowTabs().then(function (tabs) {
+                    tabs.forEach(function (tab) {
+                        $('#tab-list').append(getCheckbox({
+                            title: tab.title,
+                            url: tab.url,
+                            id: tab.id
+                        }));
+                    });
+                });
+            }
+            return null;
+        });
+    };
+})(window);
