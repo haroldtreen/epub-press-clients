@@ -35,13 +35,16 @@
                     method: 'POST',
                     data: JSON.stringify(book),
                     contentType: 'application/json',
-                }).done((response) => {
+                })
+                .done((response) => {
                     resolve(response.id);
-                }).fail((xhr) => {
+                })
+                .fail((xhr) => {
                     const msg = Browser.getErrorMsg('Book create', xhr);
                     console.log(msg);
                     reject(msg);
-                }).always((xhr) => {
+                })
+                .always((xhr) => {
                     console.log(xhr);
                 });
             });

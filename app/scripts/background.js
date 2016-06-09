@@ -6,20 +6,25 @@
         if (request.action === 'download') {
             Browser.setLocalStorage({ downloadState: true });
             Browser.getLocalStorage(['email', 'filetype']).then((state) => {
-                EpubPress.requestEbook(request.book).then((id) => { // eslint-disable-line
-                    return EpubPress.downloadEbook({
-                        id,
-                        filetype: state.filetype,
-                        email: state.email,
+                EpubPress
+                    .requestEbook(request.book)
+                    .then((id) => { // eslint-disable-line
+                        return EpubPress.downloadEbook({
+                            id,
+                            filetype: state.filetype,
+                            email: state.email,
+                        });
+                    })
+                    .then(() => {
+                        Browser.setLocalStorage({ downloadState: false });
+                        Browser.sendMessage(null, { action: 'download', status: 'complete' });
+                    })
+                    .catch((e) => {
+                        console.log(`Error: ${e}`);
+                        Browser.setLocalStorage({ downloadState: false });
+                        Browser.sendMessage(null,
+                            { action: 'download', status: 'failed', error: e });
                     });
-                }).then(() => {
-                    Browser.setLocalStorage({ downloadState: false });
-                    Browser.sendMessage(null, { action: 'download', status: 'complete' });
-                }).catch((e) => {
-                    console.log(`Error: ${e}`);
-                    Browser.setLocalStorage({ downloadState: false });
-                    Browser.sendMessage(null, { action: 'download', status: 'failed', error: e });
-                });
             });
         }
     });
