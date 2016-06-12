@@ -1,0 +1,32 @@
+{
+  "name": "epub-press-js",
+  "version": "0.0.1",
+  "description": "Javascript client for building books with EpubPress",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/haroldtreen/epub-press-clients.git"
+  },
+  "keywords": [
+    "epub",
+    "publishing",
+    "productivity",
+    "client",
+    "epubpress",
+    "ebooks",
+    "content",
+    "extraction"
+  ],
+  "author": "EpubPress",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/haroldtreen/epub-press-clients/issues"
+  },
+  "homepage": "https://github.com/haroldtreen/epub-press-clients#readme"
+}
