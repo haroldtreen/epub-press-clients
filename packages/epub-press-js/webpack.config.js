@@ -18,7 +18,7 @@ let WebpackConfig;
 if (!process.env.TEST) {
     WebpackConfig = {
         devtool: 'inline-source-map',
-        entry: ['whatwg-fetch', './index.js']
+        entry: ['whatwg-fetch', './epub-press.js'],
         output: {
             filename: 'build.js',
             path: path.join(__dirname, 'build'),
