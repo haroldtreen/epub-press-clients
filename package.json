@@ -35,6 +35,7 @@
     "mobify-code-style": "^2.3.3",
     "mocha": "^2.3.4",
     "run-sequence": "^1.1.4",
+    "webpack-dev-server": "^1.14.1",
     "wiredep": "^2.2.2"
   },
   "dependencies": {
