@@ -54,3 +54,7 @@ ebook.publish().then(() =>
     console.log(`Error: ${error}`);
 });
 ```
+
+### Todo
+- [ ] Email Support
+- [ ] Mobi Support
