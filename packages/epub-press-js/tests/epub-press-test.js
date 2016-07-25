@@ -163,6 +163,21 @@ describe('EpubPressJS', () => {
                 })
                 .catch(done);
             });
+
+            it('only attempts publish once', (done) => {
+                const props = getMockBook();
+                const book = new EpubPress(props);
+
+                fetchMock.post(PUBLISH_URL, MOCK_RESPONSE);
+
+                book.publish().then(() => {
+                    console.log(fetchMock.calls(PUBLISH_URL));
+                    assert.lengthOf(fetchMock.calls(PUBLISH_URL), 1);
+                    done();
+                }).catch(done);
+                book.publish();
+                book.publish();
+            });
         });
     });
 });

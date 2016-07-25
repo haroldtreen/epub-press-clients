@@ -21,7 +21,7 @@ if (process.env.ENV !== 'test') {
         devtool: 'inline-source-map',
         entry: ['whatwg-fetch', './epub-press.js'],
         output: {
-            filename: 'build.js',
+            filename: 'index.js',
             path: path.join(__dirname, 'build'),
         },
         module: {

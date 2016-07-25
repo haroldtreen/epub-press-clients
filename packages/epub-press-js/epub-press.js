@@ -13,7 +13,7 @@ const getPublishParams = (bookData) => {
     if (bookData.sections) {
         body.sections = bookData.sections;
     } else {
-        body.urls = bookData.getUrls();
+        body.urls = bookData.urls.slice();
     }
 
     return {
@@ -79,15 +79,23 @@ class EpubPress {
 
     publish() {
         const self = this;
+        if (self._isPublishing) {
+            return Promise.reject(new Error('Publishing in progress'));
+        } else if (self.getId()) {
+            return Promise.resolve(self.getId());
+        }
+        self._isPublishing = true;
         return new Promise((resolve, reject) => {
             fetch(self.getPublishUrl(), getPublishParams(self.bookData))
             .then(checkStatus)
             .then((response) => response.json())
             .then((body) => {
+                self._isPublishing = false;
                 self.bookData.id = body.id;
                 resolve(body.id);
             })
             .catch((err) => {
+                self._isPublishing = false;
                 console.log('EbupPress: Publish failed', err);
                 reject(err);
             });
@@ -138,4 +146,5 @@ EpubPress.ERROR_CODES = {
     SERVER_BAD_CONTENT: 'Book could not be found',
 };
 
+if (window) window.EpubPress = EpubPress;
 export default EpubPress;
