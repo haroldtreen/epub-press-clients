@@ -28,17 +28,19 @@ Source code for the EpubPress chrome extension. The extension allows you to buil
 
 It is available on the [Chrome Store](https://chrome.google.com/webstore/detail/epubpress/pnhdnpnnffpijjbnhnipkehhibchdeok)  
 
+See the Readme [here](./packages/epub-press-chrome/README.md)
+
 ### epub-press-js
 
 A javascript library for creating books with EpubPress.
 
-See the Readme [here](./blob/master/packages/epub-press-js/README.md)
+See the Readme [here](./packages/epub-press-js/README.md)
 
 ### epub-press-widgets
 
 A set of ready to use widgets for integration by publishers. Give your users the ability to download your content in an ebook!
 
-See the Readme [here](./blob/master/packages/epub-press-widgets/README.md)
+See the Readme [here](./packages/epub-press-widgets/README.md)
 
 ## Bug Reporting:
 Support requests can be sent to support@epub.press.
