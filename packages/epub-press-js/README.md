@@ -8,6 +8,18 @@ A javascript library for building books with [EpubPress](https://epub.press)
 npm install --save epub-press-js
 ```
 
+### Test
+
+```
+npm test
+```
+
+### Build
+
+```
+npm run-script build
+```
+
 ### Usage
 
 ```js
@@ -34,7 +46,11 @@ const ebook = new EpubPress({
     ]
 });
 
-ebook.publish(() => {
-    ebook.download();
+ebook.publish().then(() =>
+    ebook.download()
+).then(() => {
+    console.log('Success!');
+}).catch((error) => {
+    console.log(`Error: ${error}`);
 });
 ```

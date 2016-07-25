@@ -1,5 +1,6 @@
 import Promise from 'bluebird';
 import 'whatwg-fetch';
+import { saveAs } from 'file-saver';
 
 import packageInfo from './package.json';
 
@@ -27,7 +28,7 @@ const checkStatus = (response) => {
         return response;
     }
 
-    const error = new Error(response.statusText);
+    const error = new Error(EpubPress.ERROR_CODES[response.status]);
     error.response = response;
     throw error;
 };
@@ -96,12 +97,24 @@ class EpubPress {
     download() {
         const self = this;
         return new Promise((resolve, reject) => {
-            if (!self.bookData.id) { reject('No ID provided'); }
+            if (!self.bookData.id) {
+                return reject(new Error('No ID provided'));
+            }
 
             fetch(self.getDownloadUrl())
             .then(checkStatus)
             .then((response) => {
-                resolve(response);
+                return response.blob();
+            }).then((bookData) => {
+                const file = new File([bookData], self.getTitle() + '.epub');
+                if (process.env.ENV !== 'test') {
+                    saveAs(file);
+                }
+                resolve();
+            })
+            .catch((err) => {
+                console.log('EpubPress: Download failed', err);
+                reject(err);
             });
         });
     }
@@ -110,5 +123,19 @@ class EpubPress {
 EpubPress.BASE_URL = packageInfo.baseUrl;
 EpubPress.PUBLISH_URL = `${EpubPress.BASE_URL}/api/books`;
 EpubPress.DOWNLOAD_URL = `${EpubPress.BASE_URL}/api/books/download`;
+
+EpubPress.ERROR_CODES = {
+    // Book Create Errors
+    0: 'Server is down. Please try again later.',
+    400: 'There was a problem with the request. Is EpubPress up to date?',
+    404: 'Resource not found.',
+    500: 'Unexpected server error.',
+    503: 'Server took too long to respond.',
+    timeout: 'Request took too long to complete.',
+    error: undefined,
+    // Download Errors
+    SERVER_FAILED: 'Server error while downloading.',
+    SERVER_BAD_CONTENT: 'Book could not be found',
+};
 
 export default EpubPress;
