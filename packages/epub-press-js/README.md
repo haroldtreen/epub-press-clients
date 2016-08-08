@@ -1,6 +1,6 @@
 # epub-press-js
 
-A javascript library for building books with [EpubPress](https://epub.press)
+A javascript library for building books with [EpubPress](https://epub.press) - https://epub.press
 
 ### Install
 

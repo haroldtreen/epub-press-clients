@@ -1,10 +1,10 @@
 {
   "name": "epub-press-js",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "description": "Javascript client for building books with EpubPress.",
   "homepage": "https://github.com/haroldtreen/epub-press-clients#readme",
   "baseUrl": "https://epub.press",
-  "main": "index.js",
+  "main": "build/index.js",
   "directories": {
     "test": "test"
   },
