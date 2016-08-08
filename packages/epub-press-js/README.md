@@ -55,6 +55,25 @@ ebook.publish().then(() =>
 });
 ```
 
+##### Email + Custom Filetypes
+
+```js
+const ebook = new EpubPress({
+    email: 'epubpress@kindle.com',
+    filetype: 'mobi', // or 'epub'
+    /* Book sections */
+    /* ... */
+});
+```
+
+### Issues
+
+Feel free to report any issues:
+
+- In the Github repo: https://github.com/haroldtreen/epub-press-clients
+- By email: support@epub.press
+
+
 ### Todo
-- [ ] Email Support
-- [ ] Mobi Support
+- [x] Email Support
+- [x] Mobi Support

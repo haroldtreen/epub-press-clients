@@ -63,7 +63,16 @@ describe('EpubPressJS', () => {
             book.bookData.id = 1;
 
             const downloadUrl = book.getDownloadUrl();
-            assert.equal(downloadUrl, `${EpubPress.BASE_URL}/api/books/download?id=1`);
+            assert.include(downloadUrl, `${EpubPress.BASE_URL}/api/books/download?id=1`);
+        });
+
+        it('accepts an email and filetype', () => {
+            const settings = { email: 'epubpress@gmail.com', filetype: 'mobi' };
+            const book = new EpubPress(getMockBook(settings));
+
+            const downloadUrl = book.getDownloadUrl();
+            assert.include(downloadUrl, encodeURIComponent(settings.email));
+            assert.include(downloadUrl, encodeURIComponent(settings.filetype));
         });
     });
 

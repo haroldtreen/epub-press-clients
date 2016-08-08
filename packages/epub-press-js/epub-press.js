@@ -70,7 +70,11 @@ class EpubPress {
     }
 
     getDownloadUrl() {
-        return `${EpubPress.DOWNLOAD_URL}?id=${this.getId()}`;
+        const urlParams = ['id', 'email', 'filetype'].map((param) => {
+            const value = this.bookData[param] || '';
+            return `${param}=${window.encodeURIComponent(value)}`;
+        }).join('&');
+        return `${EpubPress.DOWNLOAD_URL}?${urlParams}`;
     }
 
     getPublishUrl() {
