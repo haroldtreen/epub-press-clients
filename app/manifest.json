@@ -3,7 +3,7 @@
   "short_name": "__MSG_appShortName__",
   "version": "0.8.0",
   "author": "Harold Treen",
-  "homepage_url": "https://epub.press",
+  "homepage_url": "http://localhost:3000",
   "manifest_version": 2,
   "description": "__MSG_appDescription__",
   "icons": {
