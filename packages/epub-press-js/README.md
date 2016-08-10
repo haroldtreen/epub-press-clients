@@ -1,6 +1,6 @@
 # epub-press-js
 
-A javascript client for building books with [EpubPress](https://epub.press) - https://epub.press
+A javascript client for building books with [EpubPress](https://epub.press).
 
 ### Install
 
@@ -24,7 +24,6 @@ npm run-script build
 
 ```html
 <script src="node_modules/epub-press-js/build/index.js"></script>
-
 ```
 
 ```js
@@ -78,6 +77,10 @@ Feel free to report any issues:
 - In the Github repo: https://github.com/haroldtreen/epub-press-clients
 - By email: support@epub.press
 
+### Related
+
+ - Website: https://epub.press
+ - Chrome Extension: https://chrome.google.com/webstore/detail/epubpress-create-ebooks-f/pnhdnpnnffpijjbnhnipkehhibchdeok
 
 ### Todo
-- [x] NodeJS Support
+- [ ] NodeJS Support (https://github.com/haroldtreen/epub-press-clients/issues/4)
