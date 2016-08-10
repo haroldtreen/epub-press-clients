@@ -1,6 +1,6 @@
 # epub-press-js
 
-A javascript library for building books with [EpubPress](https://epub.press) - https://epub.press
+A javascript client for building books with [EpubPress](https://epub.press) - https://epub.press
 
 ### Install
 
@@ -22,8 +22,13 @@ npm run-script build
 
 ### Usage
 
+```html
+<script src="node_modules/epub-press-js/build/index.js"></script>
+
+```
+
 ```js
-import EpubPress from 'epub-press-js';
+const EpubPress = window.EpubPress;
 
 const ebook = new EpubPress({
     title: 'Best of HackerNews'
@@ -75,5 +80,4 @@ Feel free to report any issues:
 
 
 ### Todo
-- [x] Email Support
-- [x] Mobi Support
+- [x] NodeJS Support
