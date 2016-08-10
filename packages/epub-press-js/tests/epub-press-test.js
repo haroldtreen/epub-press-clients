@@ -1,6 +1,7 @@
 import { assert } from 'chai';
 import fetchMock from 'fetch-mock';
-import EpubPress from '../epub-press.js';
+
+const EpubPress = window.EpubPress;
 
 const MOCK_SECTIONS = [{
     url: 'https://epub.press',
@@ -180,7 +181,6 @@ describe('EpubPressJS', () => {
                 fetchMock.post(PUBLISH_URL, MOCK_RESPONSE);
 
                 book.publish().then(() => {
-                    console.log(fetchMock.calls(PUBLISH_URL));
                     assert.lengthOf(fetchMock.calls(PUBLISH_URL), 1);
                     done();
                 }).catch(done);
