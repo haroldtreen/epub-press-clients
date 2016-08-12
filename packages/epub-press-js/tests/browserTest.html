@@ -1,0 +1,18 @@
+<script src="../build/index.js"></script>
+<script>
+const EpubPress = window.EpubPress;
+
+const book = new EpubPress({
+    title: 'A book',
+    description: 'A book',
+    urls: [
+        'http://www.cbc.ca/news/canada/toronto/penny-oleksiak-coach-1.3712572',
+    ],
+});
+
+book.publish().then(() => {
+    return book.download();
+}).then(() => {
+    console.log('done');
+}).catch(console.log);
+</script>
