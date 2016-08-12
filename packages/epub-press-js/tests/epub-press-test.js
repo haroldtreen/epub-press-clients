@@ -1,7 +1,6 @@
 import { assert } from 'chai';
 import fetchMock from 'fetch-mock';
-
-const EpubPress = window.EpubPress;
+import EpubPress from '../epub-press';
 
 const MOCK_SECTIONS = [{
     url: 'https://epub.press',
@@ -75,6 +74,16 @@ describe('EpubPressJS', () => {
             assert.include(downloadUrl, encodeURIComponent(settings.email));
             assert.include(downloadUrl, encodeURIComponent(settings.filetype));
         });
+
+        it('returns the filedtype', () => {
+            const mobiBook = new EpubPress(getMockBook({ filetype: 'mobi' }));
+            const epubBook = new EpubPress(getMockBook({ filetype: 'epub' }));
+            const noneBook = new EpubPress(getMockBook({ filetype: '.mobi' }));
+
+            assert.equal(mobiBook.getFiletype(), 'mobi');
+            assert.equal(epubBook.getFiletype(), 'epub');
+            assert.equal(noneBook.getFiletype(), 'epub');
+        });
     });
 
     describe('api', () => {
@@ -88,6 +97,38 @@ describe('EpubPressJS', () => {
         };
         const PUBLISH_URL = EpubPress.PUBLISH_URL;
 
+        describe('versions', (done) => {
+
+            const VERSION_RESPONSE = {
+                version: '0.3.0',
+                minCompatible:'0.8.0',
+                message: 'An update for EpubPress is available.'
+            };
+
+            it('can detect when an update is needed', (done) => {
+                fetchMock.get(EpubPress.VERSION_URL, VERSION_RESPONSE);
+
+                EpubPress.VERSION = '0.7.0';
+
+                EpubPress.checkForUpdate().then((result) => {
+                    assert.isTrue(fetchMock.called(EpubPress.VERSION_URL));
+                    assert.equal(result, VERSION_RESPONSE.message);
+                    done();
+                }).catch(done);
+            });
+
+            it('can detect when an update is not needed', (done) => {
+                fetchMock.get(EpubPress.VERSION_URL, VERSION_RESPONSE);
+
+                EpubPress.VERSION = '0.8.1';
+
+                EpubPress.checkForUpdate().then((result) => {
+                    assert.isTrue(fetchMock.called(EpubPress.VERSION_URL));
+                    assert.isUndefined(result);
+                    done();
+                }).catch(done);
+            });
+        });
 
         describe('success', () => {
             it('posts section data to EpubPress', (done) => {
