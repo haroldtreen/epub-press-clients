@@ -11,7 +11,9 @@
   "scripts": {
     "test": "export NODE_ENV=test && open http://localhost:5001/tests && webpack-dev-server",
     "start": "export NODE_ENV=development && webpack --watch --progress --color",
-    "build": "export NODE_ENV=development && webpack"
+    "build": "export NODE_ENV=development && webpack",
+    "build-prod": "export NODE_ENV=production && webpack",
+    "preversion": "npm run-script build-prod"
   },
   "repository": {
     "type": "git",
