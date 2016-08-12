@@ -10,18 +10,34 @@ npm install --save epub-press-js
 
 ### Test
 
+**Unit Tests**
 ```
 npm test
+```
+
+**Browser Test**
+```
+serve && open tests/browserTest.html
+```
+
+**NodeJS Test**
+```
+node tests/nodeTest.js
 ```
 
 ### Build
 
 ```
+// Single build
 npm run-script build
+
+// Build + watch
+npm start
 ```
 
 ### Usage
 
+#### Browser
 ```html
 <script src="node_modules/epub-press-js/build/index.js"></script>
 ```
@@ -59,6 +75,13 @@ ebook.publish().then(() =>
 });
 ```
 
+##### NodeJS
+```js
+const EpubPress = require('epub-press-js');
+
+// Same as above
+```
+
 ##### Email + Custom Filetypes
 
 ```js
@@ -69,6 +92,16 @@ const ebook = new EpubPress({
     /* ... */
 });
 ```
+
+##### Check for updates
+
+```js
+EpubPress.checkForUpdate().then((message) => {
+    console.log(message); // Undefined if no update required
+});
+```
+
+
 
 ### Issues
 
@@ -83,4 +116,4 @@ Feel free to report any issues:
  - Chrome Extension: https://chrome.google.com/webstore/detail/epubpress-create-ebooks-f/pnhdnpnnffpijjbnhnipkehhibchdeok
 
 ### Todo
-- [ ] NodeJS Support (https://github.com/haroldtreen/epub-press-clients/issues/4)
+- [x] NodeJS Support (https://github.com/haroldtreen/epub-press-clients/issues/4)
