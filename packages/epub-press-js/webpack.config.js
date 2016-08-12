@@ -19,10 +19,12 @@ let WebpackConfig;
 if (process.env.ENV !== 'test') {
     WebpackConfig = {
         devtool: 'inline-source-map',
-        entry: ['whatwg-fetch', './epub-press.js'],
+        entry: ['isomorphic-fetch', './epub-press.js'],
         output: {
             filename: 'index.js',
             path: path.join(__dirname, 'build'),
+            library: 'EpubPress',
+            libraryTarget: 'umd',
         },
         module: {
             loaders: MODULE_LOADERS,
@@ -35,6 +37,11 @@ if (process.env.ENV !== 'test') {
         resolve: {
             extensions: ['', '.js'],
         },
+        externals: [{
+            fs: true,
+            'isomorphic-fetch': true,
+            process: true,
+        }],
         devServer: {
             hostname: 'localhost',
             port: '5000',
@@ -53,7 +60,7 @@ if (process.env.ENV !== 'test') {
         },
         plugins: [
             new webpack.DefinePlugin({
-                'process.env.ENV': JSON.stringify(process.env.NODE_ENV || 'test')
+                'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'test')
             }),
         ],
         resolve: {
