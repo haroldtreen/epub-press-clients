@@ -1,10 +1,26 @@
 import Promise from 'bluebird';
-import 'whatwg-fetch';
 import { saveAs } from 'file-saver';
 
 import packageInfo from './package.json';
 
-const getPublishParams = (bookData) => {
+function isBrowser() {
+    return typeof window !== 'undefined';
+}
+
+function saveFile(filename, data) {
+    if (isBrowser()) {
+        const file = new File(
+            [data],
+            filename
+        );
+        saveAs(file);
+    } else {
+        const fs = require('fs');
+        fs.writeFileSync(filename, data);
+    }
+}
+
+function getPublishParams(bookData) {
     const body = {
         title: bookData.title,
         description: bookData.description,
@@ -23,7 +39,7 @@ const getPublishParams = (bookData) => {
     };
 };
 
-const checkStatus = (response) => {
+function checkStatus(response) {
     if (response.status >= 200 && response.status < 300) {
         return response;
     }
@@ -33,13 +49,47 @@ const checkStatus = (response) => {
     throw error;
 };
 
+function compareVersion(versionData) {
+    const apiSupported = Number(versionData.minCompatible.replace('.', ''));
+    const currentVersion = Number(EpubPress.getVersion().replace('.', ''));
+
+    if (apiSupported > currentVersion) {
+        return versionData.message;
+    }
+}
+
 class EpubPress {
+    static checkForUpdate() {
+        return new Promise((resolve, reject) => {
+            fetch(EpubPress.getVersionUrl())
+            .then(checkStatus)
+            .then((response) => response.json())
+            .then((versionData) => {
+                console.log(versionData);
+                resolve(compareVersion(versionData));
+            })
+            .catch((e) => {
+                console.log('Version check failed', e);
+                reject(e);
+            });
+        });
+    }
+
+    static getVersionUrl() {
+        return EpubPress.VERSION_URL;
+    }
+
+    static getVersion() {
+        return EpubPress.VERSION;
+    }
+
     constructor(bookData) {
         const defaults = {
             title: undefined,
             description: undefined,
             sections: undefined,
             urls: undefined,
+            filetype: 'epub',
         };
 
         this.bookData = Object.assign({}, defaults, bookData);
@@ -57,6 +107,15 @@ class EpubPress {
         return bookUrls;
     }
 
+    getFiletype(providedFiletype) {
+        const filetype = providedFiletype || this.bookData.filetype;
+        if (!filetype) {
+            return 'epub';
+        }
+
+        return ['mobi', 'epub'].find((type) => filetype.toLowerCase() === type) || 'epub';
+    }
+
     getTitle() {
         return this.bookData.title;
     }
@@ -72,7 +131,7 @@ class EpubPress {
     getDownloadUrl() {
         const urlParams = ['id', 'email', 'filetype'].map((param) => {
             const value = this.bookData[param] || '';
-            return `${param}=${window.encodeURIComponent(value)}`;
+            return `${param}=${encodeURIComponent(value)}`;
         }).join('&');
         return `${EpubPress.DOWNLOAD_URL}?${urlParams}`;
     }
@@ -116,11 +175,10 @@ class EpubPress {
             fetch(self.getDownloadUrl())
             .then(checkStatus)
             .then((response) => {
-                return response.blob();
+                return response.blob ? response.blob() : response.buffer();
             }).then((bookData) => {
-                const file = new File([bookData], self.getTitle() + '.epub');
-                if (process.env.ENV !== 'test') {
-                    saveAs(file);
+                if (process.env.NODE_ENV !== 'test') {
+                    saveFile(`${self.getTitle()}.${self.getFiletype()}`, bookData);
                 }
                 resolve();
             })
@@ -135,6 +193,9 @@ class EpubPress {
 EpubPress.BASE_URL = packageInfo.baseUrl;
 EpubPress.PUBLISH_URL = `${EpubPress.BASE_URL}/api/books`;
 EpubPress.DOWNLOAD_URL = `${EpubPress.BASE_URL}/api/books/download`;
+EpubPress.VERSION_URL = `${EpubPress.BASE_URL}/api/version`;
+
+EpubPress.VERSION = packageInfo.version;
 
 EpubPress.ERROR_CODES = {
     // Book Create Errors
@@ -150,5 +211,4 @@ EpubPress.ERROR_CODES = {
     SERVER_BAD_CONTENT: 'Book could not be found',
 };
 
-if (window) window.EpubPress = EpubPress;
-export default EpubPress;
+module.exports = EpubPress;
