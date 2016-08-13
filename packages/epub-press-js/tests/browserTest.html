@@ -1,3 +1,4 @@
+<script src="../node_modules/whatwg-fetch/fetch.js"></script>
 <script src="../build/index.js"></script>
 <script>
 const EpubPress = window.EpubPress;
@@ -10,9 +11,12 @@ const book = new EpubPress({
     ],
 });
 
-book.publish().then(() => {
+book.publish().then(function() {
     return book.download();
-}).then(() => {
+}).then(function() {
     console.log('done');
-}).catch(console.log);
+}).catch(function() {
+
+    console.log('failed', arguments);
+});
 </script>

@@ -7,13 +7,18 @@ function isBrowser() {
     return typeof window !== 'undefined';
 }
 
-function saveFile(filename, data) {
+
+
+function saveFile(book, data) {
+    const filename = `${book.getTitle()}.${book.getFiletype()}`
     if (isBrowser()) {
-        const file = new File(
-            [data],
-            filename
-        );
-        saveAs(file);
+        let file;
+        if (typeof File === 'function') {
+            file = new File([data], filename);
+        } else {
+            file = new Blob([data], { type: `application/octet-stream` });
+        }
+        saveAs(file, filename);
     } else {
         const fs = require('fs');
         fs.writeFileSync(filename, data);
@@ -178,7 +183,7 @@ class EpubPress {
                 return response.blob ? response.blob() : response.buffer();
             }).then((bookData) => {
                 if (process.env.NODE_ENV !== 'test') {
-                    saveFile(`${self.getTitle()}.${self.getFiletype()}`, bookData);
+                    saveFile(self, bookData);
                 }
                 resolve();
             })
