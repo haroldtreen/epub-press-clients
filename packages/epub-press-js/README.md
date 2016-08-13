@@ -105,7 +105,9 @@ EpubPress.checkForUpdate().then((message) => {
 
 ### Issues
 
-Feel free to report any issues:
+- Safari downloads the file as `Unknown`. You then must manually add the file extension (eg. `.epub` or `.mobi`)
+
+Feel free to report any other issues:
 
 - In the Github repo: https://github.com/haroldtreen/epub-press-clients
 - By email: support@epub.press
