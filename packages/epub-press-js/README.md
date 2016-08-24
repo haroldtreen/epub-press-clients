@@ -101,7 +101,15 @@ EpubPress.checkForUpdate().then((message) => {
 });
 ```
 
+### API
 
+**`new EpubPress({ title, description, email, filetype, sections|urls }) => book`**
+
+**`book.publish() => Promise`**
+
+**`book.download() => Promise`**
+
+**`EpubPress.checkForUpdate() => Promise => Update Message | undefined`**
 
 ### Issues
 
