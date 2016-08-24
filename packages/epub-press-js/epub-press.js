@@ -7,8 +7,6 @@ function isBrowser() {
     return typeof window !== 'undefined';
 }
 
-
-
 function saveFile(book, data) {
     const filename = `${book.getTitle()}.${book.getFiletype()}`
     if (isBrowser()) {
@@ -89,8 +87,9 @@ class EpubPress {
     }
 
     constructor(bookData) {
+        const date = Date().slice(0, Date().match(/\d{4}/).index + 4);
         const defaults = {
-            title: undefined,
+            title: `EpubPress - ${date}`,
             description: undefined,
             sections: undefined,
             urls: undefined,
@@ -165,7 +164,8 @@ class EpubPress {
             .catch((err) => {
                 self._isPublishing = false;
                 console.log('EbupPress: Publish failed', err);
-                reject(err);
+                const customError = new Error(EpubPress.ERROR_CODES[err.message]);
+                reject(customError);
             });
         });
     }
@@ -205,6 +205,7 @@ EpubPress.VERSION = packageInfo.version;
 EpubPress.ERROR_CODES = {
     // Book Create Errors
     0: 'Server is down. Please try again later.',
+    'Failed to fetch': 'Server is down. Please try again later.',
     400: 'There was a problem with the request. Is EpubPress up to date?',
     404: 'Resource not found.',
     500: 'Unexpected server error.',
