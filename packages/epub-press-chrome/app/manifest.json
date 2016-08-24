@@ -1,7 +1,7 @@
 {
   "name": "__MSG_appName__",
   "short_name": "__MSG_appShortName__",
-  "version": "0.8.0",
+  "version": "0.8.1",
   "author": "Harold Treen",
   "homepage_url": "http://localhost:3000",
   "manifest_version": 2,
@@ -13,10 +13,6 @@
   "default_locale": "en",
   "background": {
     "scripts": [
-      "vendor/jquery.min.js",
-      "vendor/bluebird.min.js",
-      "build/browser.js",
-      "build/epub-press.js",
       "build/background.js"
     ]
   },
