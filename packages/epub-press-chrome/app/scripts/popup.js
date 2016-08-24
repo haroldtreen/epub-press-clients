@@ -1,141 +1,126 @@
-(function (global) {
-    const Browser = global.Browser;
-    const EpubPress = global.EpubPress;
-    const UI = global.UI;
+import Browser from './browser';
+import EpubPress from 'epub-press-js';
+import UI from './ui';
+import $ from 'jquery';
 
-    /*
-    Download Form
-    */
+const defaultBase = EpubPress.BASE_URL;
 
-    function getCheckbox(props) {
-        const html = `<div class="checkbox">
-        <label>
-        <input class='article-checkbox' type="checkbox" value="${props.url}" name="${props.id}">
-        <span>${props.title}</span>
-        </label>
-        </div>`;
-        return html;
-    }
+// ['BASE_URL', 'PUBLISH_URL', 'DOWNLOAD_URL', 'VERSION_URL'].forEach((url) => {
+//     EpubPress[url] = EpubPress[url] && EpubPress[url].replace(defaultBase, 'http://localhost:3000');
+// });
 
-    $('#select-all').click(() => {
-        $('input.article-checkbox').each((index, checkbox) => {
-            $(checkbox).prop('checked', true);
-        });
+/*
+Download Form
+*/
+
+$('#select-all').click(() => {
+    $('input.article-checkbox').each((index, checkbox) => {
+        $(checkbox).prop('checked', true);
     });
+});
 
-    $('#select-none').click(() => {
-        $('input.article-checkbox').each((index, checkbox) => {
-            $(checkbox).prop('checked', false);
-        });
+$('#select-none').click(() => {
+    $('input.article-checkbox').each((index, checkbox) => {
+        $(checkbox).prop('checked', false);
     });
+});
 
-    $('#download').click(() => {
-        const selectedItems = [];
-        $('input.article-checkbox').each((index, checkbox) => {
-            if ($(checkbox).prop('checked')) {
-                selectedItems.push({
-                    url: $(checkbox).prop('value'),
-                    id: Number($(checkbox).prop('name')),
-                });
-            }
-        });
-
-
-        if (selectedItems.length <= 0) {
-            $('#alert-message').text('No articles selected!');
-        } else {
-            Browser.getTabsHtml(selectedItems).then((sections) => {
-                UI.showSection('#downloadSpinner');
-                Browser.sendMessage(null,
-                    {
-                        action: 'download',
-                        book: {
-                            title: $('#book-title').val() || undefined,
-                            description: $('#book-description').val() || undefined,
-                            sections,
-                        },
-                    }
-                );
-            }).catch((error) => {
-                UI.setErrorMessage(`Could not find tab content: ${error}`);
+$('#download').click(() => {
+    const selectedItems = [];
+    $('input.article-checkbox').each((index, checkbox) => {
+        if ($(checkbox).prop('checked')) {
+            selectedItems.push({
+                url: $(checkbox).prop('value'),
+                id: Number($(checkbox).prop('name')),
             });
         }
     });
 
 
-    /*
-    Settings Management
-    */
-
-    function setExistingSettings(cb) {
-        Browser.getLocalStorage(['email', 'filetype']).then((state) => {
-            $('#settings-email-text').val(state.email);
-            $('#settings-filetype-select').val(state.filetype);
-            cb();
+    if (selectedItems.length <= 0) {
+        $('#alert-message').text('No articles selected!');
+    } else {
+        Browser.getTabsHtml(selectedItems).then((sections) => {
+            UI.showSection('#downloadSpinner');
+            Browser.sendMessage(null,
+                {
+                    action: 'download',
+                    book: {
+                        title: $('#book-title').val() || undefined,
+                        description: $('#book-description').val() || undefined,
+                        sections,
+                    },
+                }
+            );
         }).catch((error) => {
-            UI.setErrorMessage(`Could not load settings: ${error}`);
+            UI.setErrorMessage(`Could not find tab content: ${error}`);
         });
     }
+});
 
-    $('#settings-btn').click(() => {
-        setExistingSettings(() => {
-            UI.showSection('#settingsForm');
-        });
+
+/*
+Settings Management
+*/
+
+function setExistingSettings(cb) {
+    Browser.getLocalStorage(['email', 'filetype']).then((state) => {
+        $('#settings-email-text').val(state.email);
+        $('#settings-filetype-select').val(state.filetype);
+        cb();
+    }).catch((error) => {
+        UI.setErrorMessage(`Could not load settings: ${error}`);
     });
+}
 
-    $('#settings-save-btn').click(() => {
-        Browser.setLocalStorage({
-            email: $('#settings-email-text').val(),
-            filetype: $('#settings-filetype-select').val(),
-        });
-        UI.showSection('#downloadForm');
+$('#settings-btn').click(() => {
+    setExistingSettings(() => {
+        UI.showSection('#settingsForm');
     });
+});
 
-    $('#settings-cancel-btn').click(() => {
-        UI.showSection('#downloadForm');
+$('#settings-save-btn').click(() => {
+    Browser.setLocalStorage({
+        email: $('#settings-email-text').val(),
+        filetype: $('#settings-filetype-select').val(),
     });
+    UI.showSection('#downloadForm');
+});
 
-    /*
-    Messaging
-    */
+$('#settings-cancel-btn').click(() => {
+    UI.showSection('#downloadForm');
+});
 
-    Browser.onBackgroundMessage((request) => {
-        if (request.action === 'download') {
-            if (request.status === 'complete') {
-                UI.showSection('#downloadSuccess');
-            } else {
-                UI.showSection('#downloadFailed');
-                if (request.error) {
-                    UI.setErrorMessage(request.error);
-                }
+/*
+Messaging
+*/
+
+Browser.onBackgroundMessage((request) => {
+    if (request.action === 'download') {
+        if (request.status === 'complete') {
+            UI.showSection('#downloadSuccess');
+        } else {
+            UI.showSection('#downloadFailed');
+            if (request.error) {
+                UI.setErrorMessage(request.error);
             }
         }
+    }
+});
+
+/*
+Startup
+*/
+
+window.onload = () => {
+    UI.initializeUi();
+    Browser.getLocalStorage('downloadState').then((state) => {
+        if (state.downloadState) {
+            UI.showSection('#downloadSpinner');
+        } else {
+            UI.showSection('#downloadForm');
+            UI.initializeTabList();
+        }
+        return null;
     });
-
-    /*
-    Startup
-    */
-
-    global.onload = () => { // eslint-disable-line
-        Browser.getLocalStorage('downloadState').then((state) => {
-            if (state.downloadState) {
-                UI.showSection('#downloadSpinner');
-            } else {
-                EpubPress.checkForUpdates();
-                UI.showSection('#downloadForm');
-                Browser.getCurrentWindowTabs().then((tabs) => {
-                    tabs.forEach((tab) => {
-                        $('#tab-list').append(getCheckbox({
-                            title: tab.title,
-                            url: tab.url,
-                            id: tab.id,
-                        }));
-                    });
-                }).catch((error) => {
-                    UI.setErrorMessage(`Searching tabs failed: ${error}`);
-                });
-            }
-            return null;
-        });
-    };
-}(window));
+};
