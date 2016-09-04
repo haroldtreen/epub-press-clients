@@ -67,7 +67,8 @@ const ebook = new EpubPress({
 });
 
 ebook.publish().then(() =>
-    ebook.download()
+    ebook.download() // Default epub + download
+    // or ebook.emailDelivery('epubpress@gmail.com')
 ).then(() => {
     console.log('Success!');
 }).catch((error) => {
@@ -82,34 +83,34 @@ const EpubPress = require('epub-press-js');
 // Same as above
 ```
 
-##### Email + Custom Filetypes
-
-```js
-const ebook = new EpubPress({
-    email: 'epubpress@kindle.com',
-    filetype: 'mobi', // or 'epub'
-    /* Book sections */
-    /* ... */
-});
-```
-
 ##### Check for updates
 
 ```js
-EpubPress.checkForUpdate().then((message) => {
+EpubPress.checkForUpdates().then((message) => {
     console.log(message); // Undefined if no update required
 });
 ```
 
 ### API
 
-**`new EpubPress({ title, description, email, filetype, sections|urls }) => book`**
+##### **`new EpubPress(metadata) => book`**
 
-**`book.publish() => Promise`**
+Valid properties for `metadata`:
+- `sections`: Object with the url and html for a chapter.
+- `urls`: Array of urls.
+- `title`: Title for the book.
+- `description`: Description for the book.
 
-**`book.download() => Promise`**
+##### **`book.publish() => Promise`**
 
-**`EpubPress.checkForUpdate() => Promise => Update Message | undefined`**
+##### **`book.download(filetype) => Promise`**
+- `filetype`: `'mobi'` or `'epub'` (Default `'epub'`)
+
+##### **`book.emailDelivery(email, filetype) => Promise`**
+- `filetype`: `'mobi'` or `'epub'` (Default `'epub'`)
+- `email`: Email address to deliver ebook to.
+
+##### **`EpubPress.checkForUpdates() => Promise => Update Message | undefined`**
 
 ### Issues
 
@@ -124,6 +125,3 @@ Feel free to report any other issues:
 
  - Website: https://epub.press
  - Chrome Extension: https://chrome.google.com/webstore/detail/epubpress-create-ebooks-f/pnhdnpnnffpijjbnhnipkehhibchdeok
-
-### Todo
-- [x] NodeJS Support (https://github.com/haroldtreen/epub-press-clients/issues/4)

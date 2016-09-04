@@ -16,23 +16,29 @@ const MOCK_BOOK_DATA = {
     sections: MOCK_SECTIONS,
 };
 
+const EMAIL = 'epubpress@gmail.com';
+const FILETYPE = 'mobi';
+
+const DOWNLOAD_REGEX = /epub\.press\/api\/books/;
+
 const getMockBook = (props) => {
     const defaults = MOCK_BOOK_DATA;
     return Object.assign({}, defaults, props);
 };
 
 describe('EpubPressJS', () => {
-    describe('data', () => {
-        it('can be created with sections', () => {
+    describe('constructor', () => {
+        it('accepts sections', () => {
             const props = getMockBook();
             const book = new EpubPress(props);
             const urls = book.getUrls();
 
-            assert.include(urls, 'https://epub.press');
-            assert.include(urls, 'https://google.com');
+            MOCK_SECTIONS.forEach((section) => {
+                assert.include(urls, section.url);
+            });
         });
 
-        it('can be created with urls', () => {
+        it('accepts urls', () => {
             const props = getMockBook({
                 sections: undefined,
                 urls: MOCK_SECTIONS.map(s => s.url),
@@ -40,30 +46,23 @@ describe('EpubPressJS', () => {
             const book = new EpubPress(props);
             const urls = book.getUrls();
 
-            assert.include(urls, 'https://epub.press');
-            assert.include(urls, 'https://google.com');
+            MOCK_SECTIONS.forEach((section) => {
+                assert.include(urls, section.url);
+            });
         });
 
-        it('can return the title', () => {
+        it('accepts a title', () => {
             const props = getMockBook({ title: 'A title' });
             const book = new EpubPress(props);
 
             assert.equal(book.getTitle(), props.title);
         });
 
-        it('can return a description', () => {
+        it('accepts a description', () => {
             const props = getMockBook({ description: 'Hello world' });
             const book = new EpubPress(props);
 
             assert.equal(book.getDescription(), props.description);
-        });
-
-        it('has a download url', () => {
-            const book = new EpubPress(getMockBook());
-            book.bookData.id = 1;
-
-            const downloadUrl = book.getDownloadUrl();
-            assert.include(downloadUrl, `${EpubPress.BASE_URL}/api/books/download?id=1`);
         });
 
         it('accepts an email and filetype', () => {
@@ -75,7 +74,7 @@ describe('EpubPressJS', () => {
             assert.include(downloadUrl, encodeURIComponent(settings.filetype));
         });
 
-        it('returns the filedtype', () => {
+        it('accepts a filetype', () => {
             const mobiBook = new EpubPress(getMockBook({ filetype: 'mobi' }));
             const epubBook = new EpubPress(getMockBook({ filetype: 'epub' }));
             const noneBook = new EpubPress(getMockBook({ filetype: '.mobi' }));
@@ -86,7 +85,32 @@ describe('EpubPressJS', () => {
         });
     });
 
-    describe('api', () => {
+    describe('#getDownloadUrl', () => {
+        let book;
+
+        before(() => {
+            book = new EpubPress(getMockBook());
+        });
+
+        it('returns a download url', () => {
+            book.bookData.id = 1;
+
+            const downloadUrl = book.getDownloadUrl();
+            assert.include(downloadUrl, `${EpubPress.BASE_URL}/api/books/download?id=1`);
+        });
+
+        it('accepts an email', () => {
+            const downloadUrl = book.getDownloadUrl({ email: EMAIL });
+            assert.include(downloadUrl, EMAIL.split('@')[1]);
+        });
+
+        it('accepts a filetype', () => {
+            const downloadUrl = book.getDownloadUrl({ filetype: FILETYPE });
+            assert.include(downloadUrl, FILETYPE);
+        });
+    });
+
+    describe('Server APIs', () => {
         const MOCK_RESPONSE = {
             headers: {
                 'Access-Control-Allow-Origin': '*',
@@ -97,136 +121,221 @@ describe('EpubPressJS', () => {
         };
         const PUBLISH_URL = EpubPress.PUBLISH_URL;
 
-        describe('versions', (done) => {
-
+        describe('versions', () => {
             const VERSION_RESPONSE = {
                 version: '0.3.0',
-                minCompatible:'0.8.0',
-                message: 'An update for EpubPress is available.'
+                minCompatible: '0.8.0',
+                message: 'An update for EpubPress is available.',
             };
 
-            it('can detect when an update is needed', (done) => {
-                fetchMock.get(EpubPress.VERSION_URL, VERSION_RESPONSE);
+            describe('#checkForUpdate', () => {
+                it('can detect when an update is needed', (done) => {
+                    fetchMock.get(EpubPress.VERSION_URL, VERSION_RESPONSE);
 
-                EpubPress.VERSION = '0.7.0';
+                    EpubPress.VERSION = '0.7.0';
 
-                EpubPress.checkForUpdate().then((result) => {
-                    assert.isTrue(fetchMock.called(EpubPress.VERSION_URL));
-                    assert.equal(result, VERSION_RESPONSE.message);
-                    done();
-                }).catch(done);
-            });
+                    EpubPress.checkForUpdate().then((result) => {
+                        assert.isTrue(fetchMock.called(EpubPress.VERSION_URL));
+                        assert.equal(result, VERSION_RESPONSE.message);
+                        done();
+                    }).catch(done);
+                });
 
-            it('can detect when an update is not needed', (done) => {
-                fetchMock.get(EpubPress.VERSION_URL, VERSION_RESPONSE);
+                it('can detect when an update is not needed', (done) => {
+                    fetchMock.get(EpubPress.VERSION_URL, VERSION_RESPONSE);
 
-                EpubPress.VERSION = '0.8.1';
+                    EpubPress.VERSION = '0.8.1';
 
-                EpubPress.checkForUpdate().then((result) => {
-                    assert.isTrue(fetchMock.called(EpubPress.VERSION_URL));
-                    assert.isUndefined(result);
-                    done();
-                }).catch(done);
-            });
-        });
-
-        describe('success', () => {
-            it('posts section data to EpubPress', (done) => {
-                const props = getMockBook();
-                const book = new EpubPress(props);
-
-                fetchMock.post(PUBLISH_URL, MOCK_RESPONSE);
-
-                book.publish().then(() => {
-                    assert.isTrue(fetchMock.called(PUBLISH_URL));
-                    assert.equal(fetchMock.lastUrl(PUBLISH_URL), PUBLISH_URL);
-                    assert.deepEqual(JSON.parse(fetchMock.lastOptions(PUBLISH_URL).body), props);
-                    assert.equal(book.getId(), 1);
-                    done();
-                }).catch(done);
-            });
-
-            it('downloads books from EpubPress', (done) => {
-                const props = getMockBook({ id: 1 });
-                const book = new EpubPress(props);
-                const DOWNLOAD_URL = book.getDownloadUrl();
-
-                fetchMock.get(DOWNLOAD_URL, 200);
-
-                book.download().then(() => {
-                    assert.isTrue(fetchMock.called(DOWNLOAD_URL));
-                    assert.equal(fetchMock.lastUrl(DOWNLOAD_URL), DOWNLOAD_URL);
-                    done();
-                }).catch(done);
+                    EpubPress.checkForUpdate().then((result) => {
+                        assert.isTrue(fetchMock.called(EpubPress.VERSION_URL));
+                        assert.isFalse(!!result);
+                        done();
+                    }).catch(done);
+                });
             });
         });
 
-        describe('failure', () => {
+        describe('books', () => {
             beforeEach(() => {
                 fetchMock.restore();
             });
 
-            it('handles publish errors', (done) => {
-                const props = getMockBook();
-                const book = new EpubPress(props);
+            describe('#publish', () => {
+                it('posts section data to EpubPress', (done) => {
+                    const props = getMockBook();
+                    const book = new EpubPress(props);
 
-                fetchMock.post(PUBLISH_URL, 500);
-                book.publish().then(() => {
-                    done(new Error('Reject should have been called.'));
-                }).catch((error) => {
-                    assert.isTrue(fetchMock.called(PUBLISH_URL));
-                    assert.include(error.message, 'Unexpected server');
-                    done();
-                })
-                .catch(done);
+                    fetchMock.post(PUBLISH_URL, MOCK_RESPONSE);
+
+                    book.publish().then(() => {
+                        assert.isTrue(fetchMock.called(PUBLISH_URL));
+                        assert.equal(fetchMock.lastUrl(PUBLISH_URL), PUBLISH_URL);
+
+                        const requestBody = JSON.parse(fetchMock.lastOptions(PUBLISH_URL).body);
+                        assert.deepEqual(requestBody, props);
+                        assert.equal(book.getId(), 1);
+                        done();
+                    }).catch(done);
+                });
+
+                it('handles publish errors', (done) => {
+                    const props = getMockBook();
+                    const book = new EpubPress(props);
+
+                    fetchMock.post(PUBLISH_URL, 500);
+                    book.publish().then(() => {
+                        done(new Error('Reject should have been called.'));
+                    }).catch((error) => {
+                        assert.isTrue(fetchMock.called(PUBLISH_URL));
+                        assert.include(error.message, 'Unexpected server');
+                        done();
+                    })
+                    .catch(done);
+                });
+
+                it('only attempts publish once', (done) => {
+                    const props = getMockBook();
+                    const book = new EpubPress(props);
+
+                    fetchMock.post(PUBLISH_URL, MOCK_RESPONSE);
+
+                    book.publish().then(() => {
+                        assert.lengthOf(fetchMock.calls(PUBLISH_URL), 1);
+                        done();
+                    }).catch(done);
+                    book.publish().catch(() => {});
+                    book.publish().catch(() => {});
+                });
             });
 
-            it('handles download errors', (done) => {
-                const props = getMockBook({ id: 123 });
-                const book = new EpubPress(props);
-                const DOWNLOAD_URL = book.getDownloadUrl();
+            describe('#download', () => {
+                let DOWNLOAD_URL;
+                let book;
+                let props;
 
-                fetchMock.get(DOWNLOAD_URL, 404);
-                book.download().then(() => {
-                    done(new Error('Reject should have been called.'));
-                }).catch((error) => {
-                    assert.isTrue(fetchMock.called(DOWNLOAD_URL));
-                    assert.include(error.message, 'not found');
-                    done();
-                })
-                .catch(done);
+                beforeEach(() => {
+                    props = getMockBook({ id: 1 });
+                    book = new EpubPress(props);
+                    DOWNLOAD_URL = book.getDownloadUrl();
+                });
+
+                it('downloads books from EpubPress', (done) => {
+                    fetchMock.get(DOWNLOAD_URL, 200);
+
+                    book.download().then(() => {
+                        assert.isTrue(fetchMock.called(DOWNLOAD_URL));
+                        assert.equal(fetchMock.lastUrl(DOWNLOAD_URL), DOWNLOAD_URL);
+                        done();
+                    }).catch(done);
+                });
+
+                it('requests with the provided filetype', (done) => {
+                    fetchMock.get(DOWNLOAD_REGEX, 200);
+
+                    book.download(FILETYPE).then(() => {
+                        assert.include(fetchMock.lastUrl(DOWNLOAD_REGEX), FILETYPE);
+                        done();
+                    }).catch(done);
+                });
+
+                it('handles download errors', (done) => {
+                    fetchMock.get(DOWNLOAD_URL, 404);
+                    book.download().then(() => {
+                        done(new Error('Reject should have been called.'));
+                    }).catch((error) => {
+                        assert.isTrue(fetchMock.called(DOWNLOAD_URL));
+                        assert.include(error.message, 'not found');
+                        done();
+                    })
+                    .catch(done);
+                });
+
+                it('ignores download when no id is saved', (done) => {
+                    props = getMockBook({ id: undefined });
+                    book = new EpubPress(props);
+                    DOWNLOAD_URL = book.getDownloadUrl();
+
+                    fetchMock.get(DOWNLOAD_URL, 200);
+
+                    book.download().then(() => {
+                        done(new Error('Download should only be called for books with ids'));
+                    }).catch((error) => {
+                        assert.isFalse(fetchMock.called(DOWNLOAD_URL));
+                        assert.include(error.message.toLowerCase(), 'no id');
+
+                        done();
+                    })
+                    .catch(done);
+                });
             });
 
-            it('ignores download when no id is saved', (done) => {
-                const props = getMockBook({ id: undefined });
-                const book = new EpubPress(props);
-                const DOWNLOAD_URL = book.getDownloadUrl();
+            describe('#emailDelivery', () => {
+                let book;
+                let props;
+                beforeEach(() => {
+                    props = getMockBook({ id: 1 });
+                    book = new EpubPress(props);
+                });
 
-                fetchMock.get(DOWNLOAD_URL, 200);
+                it('requests with the provided email & filetype', (done) => {
+                    props = getMockBook({ id: 1 });
+                    book = new EpubPress(props);
 
-                book.download().then(() => {
-                    done(new Error('Download should only be called for books with ids'));
-                }).catch((error) => {
-                    assert.isFalse(fetchMock.called(DOWNLOAD_URL));
-                    assert.include(error.message, 'No ID');
+                    fetchMock.get(DOWNLOAD_REGEX, 200);
 
-                    done();
-                })
-                .catch(done);
-            });
+                    book.emailDelivery(EMAIL, FILETYPE).then(() => {
+                        assert.isTrue(fetchMock.called(DOWNLOAD_REGEX));
+                        assert.include(fetchMock.lastUrl(DOWNLOAD_REGEX), EMAIL.split('@')[1]);
+                        assert.include(fetchMock.lastUrl(DOWNLOAD_REGEX), FILETYPE);
+                        done();
+                    }).catch(done);
+                });
 
-            it('only attempts publish once', (done) => {
-                const props = getMockBook();
-                const book = new EpubPress(props);
+                it('rejects when the book has no id', (done) => {
+                    props = getMockBook({ id: undefined });
+                    book = new EpubPress(props);
 
-                fetchMock.post(PUBLISH_URL, MOCK_RESPONSE);
+                    book.emailDelivery(EMAIL, FILETYPE).then(() => {
+                        done(new Error('Success sending book with no id.'));
+                    }).catch((err) => {
+                        assert.include(err.message.toLowerCase(), 'no id');
+                        done();
+                    });
+                });
 
-                book.publish().then(() => {
-                    assert.lengthOf(fetchMock.calls(PUBLISH_URL), 1);
-                    done();
-                }).catch(done);
-                book.publish();
-                book.publish();
+                it('rejects when no email is provided', (done) => {
+                    fetchMock.get(DOWNLOAD_REGEX, 200);
+
+                    book.emailDelivery().then(() => {
+                        done(new Error('Success despite no email provided.'));
+                    }).catch((err) => {
+                        assert.isFalse(fetchMock.called(DOWNLOAD_REGEX));
+                        assert.include(err.message.toLowerCase(), 'no email');
+                        done();
+                    });
+                });
+
+                it('rejects when the server responds with an error', (done) => {
+                    fetchMock.get(DOWNLOAD_REGEX, 500);
+
+                    book.emailDelivery(EMAIL, FILETYPE).then(() => {
+                        done(new Error('Success received when response was 500.'));
+                    }).catch((err) => {
+                        assert.include(err.message, 'Unexpected');
+                        done();
+                    });
+                });
+
+                it('rejects when the book is not found', (done) => {
+                    fetchMock.get(DOWNLOAD_REGEX, 404);
+
+                    book.emailDelivery(EMAIL, FILETYPE).then(() => {
+                        done(new Error('Success received when response was 404.'));
+                    }).catch((err) => {
+                        assert.include(err.message.toLowerCase(), 'not found');
+                        done();
+                    });
+                });
             });
         });
     });

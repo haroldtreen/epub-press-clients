@@ -7,14 +7,20 @@ function isBrowser() {
     return typeof window !== 'undefined';
 }
 
+function isDownloadable(book) {
+    if (!book.getId()) {
+        throw new Error('Book has no id. Have you published?');
+    }
+}
+
 function saveFile(book, data) {
-    const filename = `${book.getTitle()}.${book.getFiletype()}`
+    const filename = `${book.getTitle()}.${book.getFiletype()}`;
     if (isBrowser()) {
         let file;
         if (typeof File === 'function') {
             file = new File([data], filename);
         } else {
-            file = new Blob([data], { type: `application/octet-stream` });
+            file = new Blob([data], { type: 'application/octet-stream' });
         }
         saveAs(file, filename);
     } else {
@@ -40,7 +46,7 @@ function getPublishParams(bookData) {
         headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
         body: JSON.stringify(body),
     };
-};
+}
 
 function checkStatus(response) {
     if (response.status >= 200 && response.status < 300) {
@@ -50,7 +56,7 @@ function checkStatus(response) {
     const error = new Error(EpubPress.ERROR_CODES[response.status]);
     error.response = response;
     throw error;
-};
+}
 
 function compareVersion(versionData) {
     const apiSupported = Number(versionData.minCompatible.replace('.', ''));
@@ -59,6 +65,7 @@ function compareVersion(versionData) {
     if (apiSupported > currentVersion) {
         return versionData.message;
     }
+    return null;
 }
 
 class EpubPress {
@@ -132,9 +139,9 @@ class EpubPress {
         return this.bookData.id;
     }
 
-    getDownloadUrl() {
+    getDownloadUrl(options = {}) {
         const urlParams = ['id', 'email', 'filetype'].map((param) => {
-            const value = this.bookData[param] || '';
+            const value = options[param] || this.bookData[param] || '';
             return `${param}=${encodeURIComponent(value)}`;
         }).join('&');
         return `${EpubPress.DOWNLOAD_URL}?${urlParams}`;
@@ -145,43 +152,39 @@ class EpubPress {
     }
 
     publish() {
-        const self = this;
-        if (self._isPublishing) {
+        if (this.isPublishing) {
             return Promise.reject(new Error('Publishing in progress'));
-        } else if (self.getId()) {
-            return Promise.resolve(self.getId());
+        } else if (this.getId()) {
+            return Promise.resolve(this.getId());
         }
-        self._isPublishing = true;
+        this.isPublishing = true;
         return new Promise((resolve, reject) => {
-            fetch(self.getPublishUrl(), getPublishParams(self.bookData))
+            fetch(this.getPublishUrl(), getPublishParams(this.bookData))
             .then(checkStatus)
             .then((response) => response.json())
             .then((body) => {
-                self._isPublishing = false;
-                self.bookData.id = body.id;
+                this.isPublishing = false;
+                this.bookData.id = body.id;
                 resolve(body.id);
             })
             .catch((err) => {
-                self._isPublishing = false;
+                this.isPublishing = false;
                 console.log('EbupPress: Publish failed', err);
-                const customError = new Error(EpubPress.ERROR_CODES[err.message]);
-                reject(customError);
+                reject(err);
             });
         });
     }
 
-    download() {
-        const self = this;
+    download(filetype) {
         return new Promise((resolve, reject) => {
-            if (!self.bookData.id) {
-                return reject(new Error('No ID provided'));
-            }
+            isDownloadable(this);
 
-            fetch(self.getDownloadUrl())
+            fetch(this.getDownloadUrl({ filetype }))
             .then(checkStatus)
             .then((response) => {
                 return response.blob ? response.blob() : response.buffer();
-            }).then((bookData) => {
+            })
+            .then((bookData) => {
                 if (process.env.NODE_ENV !== 'test') {
                     saveFile(self, bookData);
                 }
@@ -189,6 +192,27 @@ class EpubPress {
             })
             .catch((err) => {
                 console.log('EpubPress: Download failed', err);
+                reject(err);
+            });
+        });
+    }
+
+    emailDelivery(email, filetype) {
+        return new Promise((resolve, reject) => {
+            if (!email) {
+                return reject(new Error('EpubPress: No email provided.'));
+            }
+
+            isDownloadable(this);
+
+            return fetch(this.getDownloadUrl({ email, filetype }))
+            .then(checkStatus)
+            .then(() => {
+                console.log('EpubPress: Book delivered.');
+                resolve();
+            })
+            .catch((err) => {
+                console.log('EpubPress: Email delivery failed.');
                 reject(err);
             });
         });

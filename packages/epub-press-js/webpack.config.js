@@ -31,7 +31,7 @@ if (process.env.NODE_ENV !== 'test') {
         },
         plugins: [
             new webpack.DefinePlugin({
-                'process.env.ENV': JSON.stringify(process.env.NODE_ENV || 'development')
+                'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development')
             }),
         ],
         resolve: {
@@ -39,8 +39,6 @@ if (process.env.NODE_ENV !== 'test') {
         },
         externals: [{
             fs: true,
-            'isomorphic-fetch': true,
-            process: true,
         }],
         devServer: {
             hostname: 'localhost',
@@ -66,6 +64,9 @@ if (process.env.NODE_ENV !== 'test') {
         resolve: {
             extensions: ['', '.js'],
         },
+        externals: [{
+            fs: true,
+        }],
         devServer: {
             hostname: 'localhost',
             port: '5001',
