@@ -11,14 +11,13 @@ Browser.onForegroundMessage((request) => {
     if (request.action === 'download') {
         Browser.setLocalStorage({ downloadState: true });
         Browser.getLocalStorage(['email', 'filetype']).then((state) => {
-            const book = new EpubPress(Object.assign({}, request.book, {
-                email: state.email,
-                filetype: state.filetype,
-            }));
+            const book = new EpubPress(Object.assign({}, request.book));
             book
             .publish()
             .then(() => { // eslint-disable-line
-                return book.download();
+                const email = state.email && state.email.trim();
+                const filetype = state.filetype;
+                return email ? book.emailDelivery(email, filetype) : book.download(filetype);
             })
             .then(() => {
                 Browser.setLocalStorage({ downloadState: false });
