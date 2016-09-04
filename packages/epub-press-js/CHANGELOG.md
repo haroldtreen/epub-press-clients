@@ -1,5 +1,10 @@
 # Changelog
 
+### 0.3.1
+- Fix for filetype not being used.
+- Fix download.
+- Files built properly.
+
 ### 0.3.0
 - `book.download()` can accept a filetype.
 - New `book.emailDelivery()` method for email delivery.

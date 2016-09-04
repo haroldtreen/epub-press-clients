@@ -13,8 +13,7 @@ function isDownloadable(book) {
     }
 }
 
-function saveFile(book, data) {
-    const filename = `${book.getTitle()}.${book.getFiletype()}`;
+function saveFile(filename, data) {
     if (isBrowser()) {
         let file;
         if (typeof File === 'function') {
@@ -184,9 +183,10 @@ class EpubPress {
             .then((response) => {
                 return response.blob ? response.blob() : response.buffer();
             })
-            .then((bookData) => {
+            .then((bookFile) => {
                 if (process.env.NODE_ENV !== 'test') {
-                    saveFile(self, bookData);
+                    const filename = `${this.getTitle()}.${filetype || this.getFiletype()}`;
+                    saveFile(filename, bookFile);
                 }
                 resolve();
             })
