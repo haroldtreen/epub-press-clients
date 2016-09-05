@@ -126,15 +126,27 @@ describe('EpubPressJS', () => {
                 version: '0.3.0',
                 minCompatible: '0.8.0',
                 message: 'An update for EpubPress is available.',
+                clients: {
+                    'epub-press-chrome': {
+                        minCompatible: '0.8.0',
+                        message: 'Please update epub-press-chrome',
+                    },
+                    'epub-press-js': {
+                        minCompatible: '0.8.0',
+                        message: 'An update for EpubPress is available.',
+                    },
+                }
             };
 
-            describe('#checkForUpdate', () => {
-                it('can detect when an update is needed', (done) => {
+            describe('#checkForUpdates', () => {
+                beforeEach(() => {
                     fetchMock.get(EpubPress.VERSION_URL, VERSION_RESPONSE);
+                });
 
+                it('can detect when an update is needed', (done) => {
                     EpubPress.VERSION = '0.7.0';
 
-                    EpubPress.checkForUpdate().then((result) => {
+                    EpubPress.checkForUpdates().then((result) => {
                         assert.isTrue(fetchMock.called(EpubPress.VERSION_URL));
                         assert.equal(result, VERSION_RESPONSE.message);
                         done();
@@ -142,13 +154,36 @@ describe('EpubPressJS', () => {
                 });
 
                 it('can detect when an update is not needed', (done) => {
-                    fetchMock.get(EpubPress.VERSION_URL, VERSION_RESPONSE);
-
                     EpubPress.VERSION = '0.8.1';
 
-                    EpubPress.checkForUpdate().then((result) => {
+                    EpubPress.checkForUpdates().then((result) => {
                         assert.isTrue(fetchMock.called(EpubPress.VERSION_URL));
                         assert.isFalse(!!result);
+                        done();
+                    }).catch(done);
+                });
+
+                it('can tell version updates for client libraries', (done) => {
+                    EpubPress.checkForUpdates('epub-press-chrome', '0.7.0').then((result) => {
+                        assert.isTrue(fetchMock.called(EpubPress.VERSION_URL));
+                        assert.include(result, 'epub-press-chrome');
+                        done();
+                    }).catch(done);
+                });
+
+                it('can check for client library version updates', (done) => {
+                    EpubPress.checkForUpdates('epub-press-chrome', '0.9.0').then((result) => {
+                        assert.isTrue(fetchMock.called(EpubPress.VERSION_URL));
+                        assert.isFalse(!!result);
+                        done();
+                    }).catch(done);
+                });
+
+                it('rejects invalid clients', (done) => {
+                    EpubPress.checkForUpdates('epub-press-iphone').then(() => {
+                        done(new Error('#checkForUpdates should reject invalid clients.'));
+                    }).catch((e) => {
+                        assert.include(e.message, 'epub-press-iphone');
                         done();
                     }).catch(done);
                 });

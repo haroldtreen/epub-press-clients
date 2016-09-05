@@ -57,29 +57,43 @@ function checkStatus(response) {
     throw error;
 }
 
-function compareVersion(versionData) {
-    const apiSupported = Number(versionData.minCompatible.replace('.', ''));
-    const currentVersion = Number(EpubPress.getVersion().replace('.', ''));
+function normalizeError(err) {
+    const knownError = EpubPress.ERROR_CODES[err.message];
+    if (knownError) {
+        return new Error(knownError);
+    }
+    return err;
+}
 
-    if (apiSupported > currentVersion) {
-        return versionData.message;
+function compareVersion(currentVersion, apiVersion) {
+    const apiVersionNumber = Number(apiVersion.minCompatible.replace('.', ''));
+    const currentVersionNumber = Number(currentVersion.replace('.', ''));
+
+    if (apiVersionNumber > currentVersionNumber) {
+        return apiVersion.message;
     }
     return null;
 }
 
 class EpubPress {
-    static checkForUpdate() {
+    static checkForUpdates(client = 'epub-press-js', version = EpubPress.getVersion()) {
         return new Promise((resolve, reject) => {
             fetch(EpubPress.getVersionUrl())
             .then(checkStatus)
             .then((response) => response.json())
             .then((versionData) => {
                 console.log(versionData);
-                resolve(compareVersion(versionData));
+                const clientVersionData = versionData.clients[client];
+                if (clientVersionData) {
+                    resolve(compareVersion(version, clientVersionData));
+                } else {
+                    reject(new Error(`Version data for ${client} not found.`));
+                }
             })
             .catch((e) => {
-                console.log('Version check failed', e);
-                reject(e);
+                const error = normalizeError(e);
+                console.log('Version check failed', error);
+                reject(error);
             });
         });
     }
@@ -166,10 +180,11 @@ class EpubPress {
                 this.bookData.id = body.id;
                 resolve(body.id);
             })
-            .catch((err) => {
+            .catch((e) => {
                 this.isPublishing = false;
-                console.log('EbupPress: Publish failed', err);
-                reject(err);
+                const error = normalizeError(e);
+                console.log('EbupPress: Publish failed', error);
+                reject(error);
             });
         });
     }
@@ -190,9 +205,10 @@ class EpubPress {
                 }
                 resolve();
             })
-            .catch((err) => {
-                console.log('EpubPress: Download failed', err);
-                reject(err);
+            .catch((e) => {
+                const error = normalizeError(e);
+                console.log('EpubPress: Download failed', error);
+                reject(error);
             });
         });
     }
@@ -211,9 +227,10 @@ class EpubPress {
                 console.log('EpubPress: Book delivered.');
                 resolve();
             })
-            .catch((err) => {
+            .catch((e) => {
+                const error = normalizeError(e);
                 console.log('EpubPress: Email delivery failed.');
-                reject(err);
+                reject(error);
             });
         });
     }

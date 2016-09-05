@@ -1,5 +1,9 @@
 # Changelog
 
+### 0.4.0
+- API update for `checkForUpdates`.
+- Better error handling.
+
 ### 0.3.1
 - Fix for filetype not being used.
 - Fix download.

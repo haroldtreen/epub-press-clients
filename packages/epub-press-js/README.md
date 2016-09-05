@@ -17,7 +17,7 @@ npm test
 
 **Browser Test**
 ```
-serve && open tests/browserTest.html
+open tests/browserTest.html
 ```
 
 **NodeJS Test**
@@ -110,7 +110,9 @@ Valid properties for `metadata`:
 - `filetype`: `'mobi'` or `'epub'` (Default `'epub'`)
 - `email`: Email address to deliver ebook to.
 
-##### **`EpubPress.checkForUpdates() => Promise => Update Message | undefined`**
+##### **`EpubPress.checkForUpdates(clientName, clientVersion) => Promise => Update Message | undefined`**
+- `clientName`: EpubPress client library to check. (Default: 'epub-press-js')
+- `clientVersion`: Version of client. (Default: `EpubPress.VERSION`)
 
 ### Issues
 

@@ -39,6 +39,7 @@ if (process.env.NODE_ENV !== 'test') {
         },
         externals: [{
             fs: true,
+            'isomorphic-fetch': true,
         }],
         devServer: {
             hostname: 'localhost',
@@ -66,6 +67,7 @@ if (process.env.NODE_ENV !== 'test') {
         },
         externals: [{
             fs: true,
+            'isomorphic-fetch': true,
         }],
         devServer: {
             hostname: 'localhost',
