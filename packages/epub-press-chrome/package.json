@@ -18,7 +18,7 @@
   "homepage": "https://github.com/haroldtreen/epub-press-clients#readme",
   "dependencies": {
     "bluebird": "^3.4.1",
-    "epub-press-js": "^0.3.0",
+    "epub-press-js": "^0.4.0",
     "jquery": "^3.1.0"
   },
   "devDependencies": {

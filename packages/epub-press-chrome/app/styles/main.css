@@ -44,8 +44,8 @@ h4 {
     align-items: center;
     font-family: 'Quicksand', sans-serif;
     font-weight: bolder;
-    color: white;
-    background-color: black;
+    color: #f6f6f6;
+    background-color: #2a2a2a;
     padding: 10px 10px;
 }
 
@@ -66,7 +66,7 @@ Inputs
 select, input[type="text"] {
     height: 30px;
     width: 100%;
-    background-color: white;
+    background-color: #fafafa;
     border-radius: 5px;
     border: 1px solid #ccc;
     box-sizing: border-box;
@@ -81,10 +81,10 @@ Buttons
 
 .btn-box {
     height: 30px;
-    border: 5px solid black;
+    border: 5px solid #2a2a2a;
     border-radius: 5px;
     display: flex;
-    background-color: black;
+    background-color: #2a2a2a;
     flex-direction: row;
     margin: 5px 0px;
 }
@@ -95,7 +95,7 @@ Buttons
     height: 100%;
     border: 0px;
     border-radius: 5px;
-    background-color: black;
+    background-color: #2a2a2a;
     color: white;
     font-weight: bold;
     font-size: 14px;
@@ -103,8 +103,8 @@ Buttons
 }
 
 .btn-box > button:hover {
-    background-color: white;
-    color: black;
+    background-color: #fafafa;
+    color: #2a2a2a;
 }
 
 button.btn-left {

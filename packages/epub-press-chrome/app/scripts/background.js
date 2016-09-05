@@ -1,11 +1,12 @@
 import EpubPress from 'epub-press-js';
 import Browser from './browser';
 
+const manifest = Browser.getManifest();
 const defaultBase = EpubPress.BASE_URL;
 
-// ['BASE_URL', 'PUBLISH_URL', 'DOWNLOAD_URL', 'VERSION_URL'].forEach((url) => {
-//     EpubPress[url] = EpubPress[url] && EpubPress[url].replace(defaultBase, 'http://localhost:3000');
-// });
+['BASE_URL', 'PUBLISH_URL', 'DOWNLOAD_URL', 'VERSION_URL'].forEach((url) => {
+    EpubPress[url] = EpubPress[url] && EpubPress[url].replace(defaultBase, manifest.homepage_url);
+});
 
 Browser.onForegroundMessage((request) => {
     if (request.action === 'download') {

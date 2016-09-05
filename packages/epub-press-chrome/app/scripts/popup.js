@@ -3,11 +3,13 @@ import EpubPress from 'epub-press-js';
 import UI from './ui';
 import $ from 'jquery';
 
+const manifest = Browser.getManifest();
+
 const defaultBase = EpubPress.BASE_URL;
 
-// ['BASE_URL', 'PUBLISH_URL', 'DOWNLOAD_URL', 'VERSION_URL'].forEach((url) => {
-//     EpubPress[url] = EpubPress[url] && EpubPress[url].replace(defaultBase, 'http://localhost:3000');
-// });
+['BASE_URL', 'PUBLISH_URL', 'DOWNLOAD_URL', 'VERSION_URL'].forEach((url) => {
+    EpubPress[url] = EpubPress[url] && EpubPress[url].replace(defaultBase, manifest.homepage_url);
+});
 
 /*
 Download Form
@@ -118,6 +120,11 @@ window.onload = () => {
         if (state.downloadState) {
             UI.showSection('#downloadSpinner');
         } else {
+            EpubPress.checkForUpdates('epub-press-chrome', manifest.version).then((message) => {
+                if (message) {
+                    UI.setAlertMessage(message);
+                }
+            });
             UI.showSection('#downloadForm');
             UI.initializeTabList();
         }
