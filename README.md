@@ -18,7 +18,7 @@ EpubPress makes reading the web more enjoyable!
 - Lets you group information together (eg. "News from this week", "Top 10 travel articles").
 - Easy to sharing with friends.
 
-## Packages
+## Packages 📦
 
 ### epub-press-chrome
 
@@ -43,7 +43,7 @@ A set of ready to use widgets for integration by publishers. Give your users the
 See the Readme [here](./packages/epub-press-widgets/README.md)
 
 
-## Roadmap
+## Roadmap 🛣
 - Widgets.
 - Ability to share your generated creations with others.
 - Detection for pages with a list of links (eg. OneTab, Feedly, RSS Feeds) and show those links.
@@ -51,7 +51,7 @@ See the Readme [here](./packages/epub-press-widgets/README.md)
 Have any awesome ideas? Suggestions? Feature requests? Would love to hear them!  
 feedback@epub.press
 
-## Bug Reporting:
+## Bug Reporting 🐛
 Create an [issue](https://github.com/haroldtreen/epub-press-clients/issues) in Github.
 
 **OR**
@@ -59,7 +59,7 @@ Create an [issue](https://github.com/haroldtreen/epub-press-clients/issues) in G
 Send a help request to [support@epub.press](mailto:support@epub.press).  
 Please include as much information as possible (eg. version, os, reproduction steps, screenshots)
 
-## Acknowledgements
+## Acknowledgements 👏
 
 - Icon created by Picol.org (http://www.picol.org/)
 - Content extraction using `node-readability` (https://www.npmjs.com/package/node-readability)
