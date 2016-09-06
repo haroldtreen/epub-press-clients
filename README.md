@@ -22,6 +22,9 @@ EpubPress makes reading the web more enjoyable!
 
 ### epub-press-chrome
 
+[![Chrome Web Store](https://img.shields.io/chrome-web-store/v/pnhdnpnnffpijjbnhnipkehhibchdeok.svg?maxAge=2592000)](https://chrome.google.com/webstore/detail/epubpress-read-the-web-of/pnhdnpnnffpijjbnhnipkehhibchdeok)
+[![Chrome Web Store](https://img.shields.io/chrome-web-store/d/pnhdnpnnffpijjbnhnipkehhibchdeok.svg?maxAge=2592000)](https://chrome.google.com/webstore/detail/epubpress-read-the-web-of/pnhdnpnnffpijjbnhnipkehhibchdeok)
+
 Source code for the EpubPress chrome extension. The extension allows you to build ebooks by selecting articles from your currently open tabs.
 
 **It is available on the [Chrome Store](https://chrome.google.com/webstore/detail/epubpress/pnhdnpnnffpijjbnhnipkehhibchdeok)**  
@@ -29,6 +32,9 @@ Source code for the EpubPress chrome extension. The extension allows you to buil
 See the Readme [here](./packages/epub-press-chrome/README.md)
 
 ### epub-press-js
+
+[![npm](https://img.shields.io/npm/v/epub-press-js.svg?maxAge=2592000)](https://www.npmjs.com/package/epub-press-js)
+[![npm](https://img.shields.io/npm/dt/epub-press-js.svg?maxAge=2592000)](https://www.npmjs.com/package/epub-press-js)
 
 A javascript library for creating books with EpubPress.
 
