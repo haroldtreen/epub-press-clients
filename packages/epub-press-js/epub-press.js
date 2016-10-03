@@ -152,12 +152,23 @@ class EpubPress {
         return this.bookData.id;
     }
 
-    getDownloadUrl(options = {}) {
-        const urlParams = ['id', 'email', 'filetype'].map((param) => {
-            const value = options[param] || this.bookData[param] || '';
-            return `${param}=${encodeURIComponent(value)}`;
-        }).join('&');
-        return `${EpubPress.DOWNLOAD_URL}?${urlParams}`;
+    getStatusUrl() {
+        return `${EpubPress.STATUS_URL}?id=${this.getId()}`;
+    }
+
+    checkStatus() {
+        return new Promise((resolve, reject) => {
+            fetch(this.getStatusUrl())
+            .then(checkStatus)
+            .then((response) => response.json())
+            .then((body) => {
+                resolve(body);
+            })
+            .catch((e) => {
+                const error = normalizeError(e);
+                reject(error);
+            });
+        });
     }
 
     getPublishUrl() {
@@ -187,6 +198,14 @@ class EpubPress {
                 reject(error);
             });
         });
+    }
+
+    getDownloadUrl(options = {}) {
+        const urlParams = ['id', 'email', 'filetype'].map((param) => {
+            const value = options[param] || this.bookData[param] || '';
+            return `${param}=${encodeURIComponent(value)}`;
+        }).join('&');
+        return `${EpubPress.DOWNLOAD_URL}?${urlParams}`;
     }
 
     download(filetype) {
@@ -238,7 +257,8 @@ class EpubPress {
 
 EpubPress.BASE_URL = packageInfo.baseUrl;
 EpubPress.PUBLISH_URL = `${EpubPress.BASE_URL}/api/books`;
-EpubPress.DOWNLOAD_URL = `${EpubPress.BASE_URL}/api/books/download`;
+EpubPress.STATUS_URL = `${EpubPress.PUBLISH_URL}/status`;
+EpubPress.DOWNLOAD_URL = `${EpubPress.PUBLISH_URL}/download`;
 EpubPress.VERSION_URL = `${EpubPress.BASE_URL}/api/version`;
 
 EpubPress.VERSION = packageInfo.version;

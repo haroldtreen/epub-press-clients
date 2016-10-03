@@ -3,7 +3,7 @@
   "version": "0.4.0",
   "description": "Javascript client for building books with EpubPress.",
   "homepage": "https://github.com/haroldtreen/epub-press-clients#readme",
-  "baseUrl": "https://epub.press",
+  "baseUrl": "http://localhost:3000",
   "main": "build/index.js",
   "directories": {
     "tests": "test"

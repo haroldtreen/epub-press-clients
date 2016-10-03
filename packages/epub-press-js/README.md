@@ -94,6 +94,16 @@ EpubPress.checkForUpdates().then((message) => {
 });
 ```
 
+##### Check status
+
+```js
+book.checkStatus().then((status) => {
+    console.log(status); // Status message
+}).catch((err) => {
+    // Book has no status
+});
+```
+
 ### API
 
 ##### **`new EpubPress(metadata) => book`**
