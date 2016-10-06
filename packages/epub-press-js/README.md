@@ -115,7 +115,7 @@ EpubPress.checkForUpdates('epub-press-chrome', '0.9.0').then((message) => {
 
 ### API
 
-##### **`new EpubPress(metadata) => book`**
+##### **`new EpubPress(metadata) => ebook`**
 
 Valid properties for `metadata`:
 - `sections`: Object with the url and html for a chapter.
@@ -123,18 +123,20 @@ Valid properties for `metadata`:
 - `title`: Title for the book.
 - `description`: Description for the book.
 
-##### **`book.publish() => Promise`**
+##### **`ebook.publish() => Promise`**
 
-##### **`book.download(filetype) => Promise`**
+##### **`ebook.download(filetype) => Promise`**
 - `filetype`: `'mobi'` or `'epub'` (Default `'epub'`)
 
-##### **`book.email(email, filetype) => Promise`**
+##### **`ebook.email(email, filetype) => Promise`**
 - `filetype`: `'mobi'` or `'epub'` (Default `'epub'`)
 - `email`: Email address to deliver ebook to.
 
-##### **`book.on('statusUpdate', (status) => {})`**
+##### **`ebook.on('statusUpdate', (status) => {}) => callback`**
 - `status.progress`: Percentage complete. (0 -> 100)
 - `status.message`: Description of current step.
+
+##### **`ebook.removeListener(callback)`**
 
 ##### **`EpubPress.checkForUpdates(clientName, clientVersion) => Promise => Update Message | undefined`**
 - `clientName`: EpubPress client library to check. (Default: 'epub-press-js')
