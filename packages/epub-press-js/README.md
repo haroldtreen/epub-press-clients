@@ -3,7 +3,7 @@
 [![npm](https://img.shields.io/npm/v/epub-press-js.svg?maxAge=2592000)](https://www.npmjs.com/package/epub-press-js)
 [![npm](https://img.shields.io/npm/dt/epub-press-js.svg?maxAge=2592000)](https://www.npmjs.com/package/epub-press-js)
 
-A javascript client for building books with [EpubPress](https://epub.press).
+> A javascript client for building books with [EpubPress](https://epub.press).
 
 ### Install
 
@@ -40,14 +40,20 @@ npm start
 
 ### Usage
 
-#### Browser
+##### Browser
 ```html
 <script src="node_modules/epub-press-js/build/index.js"></script>
+<script>var EpubPress = window.EpubPress;</script>
 ```
 
+##### NodeJS
 ```js
-const EpubPress = window.EpubPress;
+const EpubPress = require('epub-press-js');
+```
 
+##### Creating a Book
+
+```js
 const ebook = new EpubPress({
     title: 'Best of HackerNews'
     description: 'Favorite articles from HackerNews in May, 2016',
@@ -68,10 +74,13 @@ const ebook = new EpubPress({
         'http://medium.com/@techBlogger/why-js-is-dead-long-live-php'
     ]
 });
+```
 
+##### Publishing
+```js
 ebook.publish().then(() =>
     ebook.download() // Default epub + download
-    // or ebook.emailDelivery('epubpress@gmail.com')
+    // or ebook.email('epubpress@gmail.com')
 ).then(() => {
     console.log('Success!');
 }).catch((error) => {
@@ -79,28 +88,28 @@ ebook.publish().then(() =>
 });
 ```
 
-##### NodeJS
+##### Event Listening
 ```js
-const EpubPress = require('epub-press-js');
+const onStatusUpdate = (status) => { console.log(status.message); };
 
-// Same as above
+// Adding callback
+ebook.on('statusUpdate', onStatusUpdate);
+
+// Removing callback
+ebook.removeListener('statusUpdate', onStatusUpdate)
 ```
 
 ##### Check for updates
 
 ```js
+// epub-press-js updates
 EpubPress.checkForUpdates().then((message) => {
     console.log(message); // Undefined if no update required
 });
-```
 
-##### Check status
-
-```js
-book.checkStatus().then((status) => {
-    console.log(status); // Status message
-}).catch((err) => {
-    // Book has no status
+// epub-press-chrome updates
+EpubPress.checkForUpdates('epub-press-chrome', '0.9.0').then((message) => {
+    console.log(message);
 });
 ```
 
@@ -119,9 +128,13 @@ Valid properties for `metadata`:
 ##### **`book.download(filetype) => Promise`**
 - `filetype`: `'mobi'` or `'epub'` (Default `'epub'`)
 
-##### **`book.emailDelivery(email, filetype) => Promise`**
+##### **`book.email(email, filetype) => Promise`**
 - `filetype`: `'mobi'` or `'epub'` (Default `'epub'`)
 - `email`: Email address to deliver ebook to.
+
+##### **`book.on('statusUpdate', (status) => {})`**
+- `status.progress`: Percentage complete. (0 -> 100)
+- `status.message`: Description of current step.
 
 ##### **`EpubPress.checkForUpdates(clientName, clientVersion) => Promise => Update Message | undefined`**
 - `clientName`: EpubPress client library to check. (Default: 'epub-press-js')
