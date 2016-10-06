@@ -116,12 +116,10 @@ EpubPress.checkForUpdates('epub-press-chrome', '0.9.0').then((message) => {
 ### API
 
 ##### **`new EpubPress(metadata) => ebook`**
-
-Valid properties for `metadata`:
-- `sections`: Object with the url and html for a chapter.
-- `urls`: Array of urls.
-- `title`: Title for the book.
-- `description`: Description for the book.
+- `metadata.sections`: Object with the url and html for a chapter.
+- `metadata.urls`: Array of urls.
+- `metadata.title`: Title for the book.
+- `metadata.description`: Description for the book.
 
 ##### **`ebook.publish() => Promise`**
 
