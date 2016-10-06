@@ -12,7 +12,7 @@
     "test": "export NODE_ENV=test && open http://localhost:5001/tests && webpack-dev-server",
     "start": "export NODE_ENV=development && webpack --watch --progress --color",
     "build": "export NODE_ENV=development && webpack",
-    "build-prod": "export NODE_ENV=production && webpack",
+    "build-prod": "export NODE_ENV=production && webpack --optimize-minimize --optimize-dedupe",
     "preversion": "npm run-script build-prod"
   },
   "repository": {

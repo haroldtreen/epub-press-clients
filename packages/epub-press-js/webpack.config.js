@@ -18,7 +18,6 @@ const MODULE_LOADERS = [
 let WebpackConfig;
 if (process.env.NODE_ENV !== 'test') {
     WebpackConfig = {
-        devtool: 'inline-source-map',
         entry: ['isomorphic-fetch', './epub-press.js'],
         output: {
             filename: 'index.js',
