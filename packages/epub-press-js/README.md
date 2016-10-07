@@ -88,6 +88,13 @@ ebook.publish().then(() =>
 });
 ```
 
+##### Checking Status
+```js
+ebook.checkStatus().then((status) => {
+
+}).catch((error) => {})
+```
+
 ##### Event Listening
 ```js
 const onStatusUpdate = (status) => { console.log(status.message); };
@@ -129,6 +136,10 @@ EpubPress.checkForUpdates('epub-press-chrome', '0.9.0').then((message) => {
 ##### **`ebook.email(email, filetype) => Promise`**
 - `filetype`: `'mobi'` or `'epub'` (Default `'epub'`)
 - `email`: Email address to deliver ebook to.
+
+##### **`ebook.checkStatus() => Promise => status`**
+- `status.progress`: Percentage complete. (0 -> 100) 
+- `status.message`: Status message.
 
 ##### **`ebook.on('statusUpdate', (status) => {}) => callback`**
 - `status.progress`: Percentage complete. (0 -> 100)
