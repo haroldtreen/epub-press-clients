@@ -1,6 +1,7 @@
 import { assert } from 'chai';
 import fetchMock from 'fetch-mock';
 import EpubPress from '../epub-press';
+import packageInfo from '../package.json';
 
 function isError(e) {
     if (typeof e === 'string') {
@@ -23,10 +24,13 @@ const MOCK_BOOK_DATA = {
     sections: MOCK_SECTIONS,
 };
 
+const MOCK_ERROR = { status: '422', detail: 'Error Message' };
+const MOCK_ERROR_RESPONSE = { errors: [MOCK_ERROR] };
+
 const EMAIL = 'epubpress@gmail.com';
 const FILETYPE = 'mobi';
 
-const DOWNLOAD_REGEX = new RegExp(EpubPress.DOWNLOAD_URL.replace(/\//g, '\/'));
+const DOWNLOAD_REGEX = new RegExp((`${EpubPress.getPublishUrl()}/\\d/download`).replace(/\//g, '\/'));
 
 const getMockBook = (props) => {
     const defaults = MOCK_BOOK_DATA;
@@ -34,7 +38,20 @@ const getMockBook = (props) => {
 };
 
 describe('EpubPressJS', () => {
-    describe('constructor', () => {
+    describe('.BASE_URLS', () => {
+        it('has a BASE_URL', () => {
+            assert.equal(EpubPress.BASE_URL, packageInfo.baseUrl);
+        });
+
+        it('has a BASE_API', () => {
+            const majorVersion = EpubPress.VERSION.split('.')[0];
+            assert.include(EpubPress.BASE_API, EpubPress.BASE_URL);
+            assert.include(EpubPress.BASE_API, 'api');
+            assert.include(EpubPress.BASE_API, majorVersion);
+        });
+    });
+
+    describe('Constructor', () => {
         it('accepts sections', () => {
             const props = getMockBook();
             const book = new EpubPress(props);
@@ -92,86 +109,46 @@ describe('EpubPressJS', () => {
         });
     });
 
-    describe('#getDownloadUrl', () => {
-        let book;
+    describe('Urls', () => {
+        const book = new EpubPress(getMockBook());
 
-        before(() => {
-            book = new EpubPress(getMockBook());
+        describe('#getDownloadUrl', () => {
+            it('returns a download url', () => {
+                book.bookData.id = 1;
+
+                const downloadUrl = book.getDownloadUrl();
+                assert.include(downloadUrl, `${book.getPublishUrl()}/1/download`);
+            });
+
+            it('accepts an email', () => {
+                const downloadUrl = book.getDownloadUrl({ email: EMAIL });
+                assert.include(downloadUrl, EMAIL.split('@')[1]);
+            });
+
+            it('accepts a filetype', () => {
+                const downloadUrl = book.getDownloadUrl({ filetype: FILETYPE });
+                assert.include(downloadUrl, FILETYPE);
+            });
         });
 
-        it('returns a download url', () => {
-            book.bookData.id = 1;
-
-            const downloadUrl = book.getDownloadUrl();
-            assert.include(downloadUrl, `${EpubPress.BASE_URL}/api/books/download?id=1`);
+        describe('#getPublishUrl', () => {
+            it('returns the publish url', () => {
+                const publishUrl = book.getPublishUrl();
+                assert.include(publishUrl, EpubPress.BASE_API);
+                assert.include(publishUrl, 'books');
+            });
         });
 
-        it('accepts an email', () => {
-            const downloadUrl = book.getDownloadUrl({ email: EMAIL });
-            assert.include(downloadUrl, EMAIL.split('@')[1]);
-        });
-
-        it('accepts a filetype', () => {
-            const downloadUrl = book.getDownloadUrl({ filetype: FILETYPE });
-            assert.include(downloadUrl, FILETYPE);
+        describe('#getStatusUrl', () => {
+            it('returns a status url for the book', () => {
+                const url = book.getStatusUrl();
+                assert.include(url, book.getId());
+                assert.include(url, 'status');
+            });
         });
     });
 
     describe('Server APIs', () => {
-        describe('status', () => {
-            let book;
-            const STATUS_RESPONSE = { message: 'Building', complete: true, error: false };
-
-            before(() => {
-                const props = getMockBook({ id: 1 });
-                book = new EpubPress(props);
-            });
-
-            describe('#getStatusUrl', () => {
-                it('returns a status url for the book', () => {
-                    const url = book.getStatusUrl();
-                    assert.include(url, book.getId());
-                    assert.include(url, 'status');
-                });
-            });
-
-
-            describe('#checkStatus', () => {
-                beforeEach(() => {
-                    fetchMock.reset();
-                });
-
-                it('calls the endpoint', () => {
-                    const url = book.getStatusUrl();
-                    fetchMock.get(url, STATUS_RESPONSE);
-
-                    return book.checkStatus().then(() => {
-                        assert.isTrue(fetchMock.called(url));
-                    });
-                });
-
-                it('parses the json', () => {
-                    fetchMock.get(book.getStatusUrl(), STATUS_RESPONSE);
-                    return book.checkStatus().then((status) => {
-                        assert.deepEqual(STATUS_RESPONSE, status);
-                    });
-                });
-
-                it('rejects when 404 codes are returned', () => {
-                    book = new EpubPress(getMockBook({ id: 10 }));
-                    fetchMock.get(book.getStatusUrl(), 404);
-
-                    return book.checkStatus().then(() =>
-                        Promise.reject('Promise should not resolve from 404')
-                    )
-                    .catch(isError)
-                    .then((e) => {
-                        assert.include(e.message.toLowerCase(), 'not found');
-                    });
-                });
-            });
-        });
-
         describe('versions', () => {
             const VERSION_RESPONSE = {
                 version: '0.3.0',
@@ -189,16 +166,16 @@ describe('EpubPressJS', () => {
                 },
             };
 
-            describe('#checkForUpdates', () => {
+            describe('.checkForUpdates', () => {
                 beforeEach(() => {
-                    fetchMock.get(EpubPress.VERSION_URL, VERSION_RESPONSE);
+                    fetchMock.get(EpubPress.getVersionUrl(), VERSION_RESPONSE);
                 });
 
                 it('can detect when an update is needed', () => {
                     EpubPress.VERSION = '0.7.0';
 
                     return EpubPress.checkForUpdates().then((result) => {
-                        assert.isTrue(fetchMock.called(EpubPress.VERSION_URL));
+                        assert.isTrue(fetchMock.called(EpubPress.getVersionUrl()));
                         assert.equal(result, VERSION_RESPONSE.message);
                     });
                 });
@@ -207,36 +184,36 @@ describe('EpubPressJS', () => {
                     EpubPress.VERSION = '0.8.1';
 
                     return EpubPress.checkForUpdates().then((result) => {
-                        assert.isTrue(fetchMock.called(EpubPress.VERSION_URL));
+                        assert.isTrue(fetchMock.called(EpubPress.getVersionUrl()));
                         assert.isFalse(!!result);
                     });
                 });
 
-                it('can tell version updates for client libraries', () => {
-                    return EpubPress.checkForUpdates('epub-press-chrome', '0.7.0')
+                it('can tell version updates for client libraries', () =>
+                    EpubPress.checkForUpdates('epub-press-chrome', '0.7.0')
                     .then((result) => {
-                        assert.isTrue(fetchMock.called(EpubPress.VERSION_URL));
+                        assert.isTrue(fetchMock.called(EpubPress.getVersionUrl()));
                         assert.include(result, 'epub-press-chrome');
-                    });
-                });
+                    })
+                );
 
-                it('can check for client library version updates', () => {
-                    return EpubPress.checkForUpdates('epub-press-chrome', '0.9.0')
+                it('can check for client library version updates', () =>
+                    EpubPress.checkForUpdates('epub-press-chrome', '0.9.0')
                     .then((result) => {
-                        assert.isTrue(fetchMock.called(EpubPress.VERSION_URL));
+                        assert.isTrue(fetchMock.called(EpubPress.getVersionUrl()));
                         assert.isFalse(!!result);
-                    });
-                });
+                    })
+                );
 
-                it('rejects invalid clients', () => {
-                    return EpubPress.checkForUpdates('epub-press-iphone').then(() =>
+                it('rejects invalid clients', () =>
+                    EpubPress.checkForUpdates('epub-press-iphone').then(() =>
                         Promise.reject('#checkForUpdates should reject invalid clients.')
                     )
                     .catch(isError)
                     .then((e) => {
                         assert.include(e.message, 'epub-press-iphone');
-                    });
-                });
+                    })
+                );
             });
         });
 
@@ -249,7 +226,7 @@ describe('EpubPressJS', () => {
                 },
                 body: { id: 1 },
             };
-            const PUBLISH_URL = EpubPress.PUBLISH_URL;
+            const PUBLISH_URL = EpubPress.getPublishUrl();
 
             beforeEach(() => {
                 fetchMock.restore();
@@ -260,7 +237,7 @@ describe('EpubPressJS', () => {
                     const props = getMockBook();
                     const book = new EpubPress(props);
 
-                    fetchMock.post(PUBLISH_URL, MOCK_RESPONSE);
+                    fetchMock.post(book.getPublishUrl(), MOCK_RESPONSE);
 
                     return book.publish().then(() => {
                         assert.isTrue(fetchMock.called(PUBLISH_URL));
@@ -287,15 +264,33 @@ describe('EpubPressJS', () => {
                     });
                 });
 
-                it('only attempts publish once', () => {
+                it('displays publish error responses', () => {
+                    const props = getMockBook();
+                    const book = new EpubPress(props);
+
+                    fetchMock.post(PUBLISH_URL, {
+                        status: 500,
+                        body: MOCK_ERROR_RESPONSE,
+                    });
+                    return book
+                        .publish()
+                        .then(() => Promise.reject('Publish should have rejected.'))
+                        .catch(isError)
+                        .then((e) => {
+                            assert.equal(e.message, MOCK_ERROR.detail);
+                        });
+                });
+
+                it('only attempts publish once', (done) => {
                     const props = getMockBook();
                     const book = new EpubPress(props);
 
                     fetchMock.post(PUBLISH_URL, MOCK_RESPONSE);
 
-                    return book.publish().then(() => {
+                    book.publish().then(() => {
                         assert.lengthOf(fetchMock.calls(PUBLISH_URL), 1);
-                    });
+                        done();
+                    }).catch(done);
                     book.publish().catch(() => {});
                     book.publish().catch(() => {});
                 });
@@ -359,7 +354,7 @@ describe('EpubPressJS', () => {
                 });
             });
 
-            describe('#emailDelivery', () => {
+            describe('#email', () => {
                 let book;
                 let props;
                 beforeEach(() => {
@@ -373,7 +368,7 @@ describe('EpubPressJS', () => {
 
                     fetchMock.get(DOWNLOAD_REGEX, 200);
 
-                    return book.emailDelivery(EMAIL, FILETYPE).then(() => {
+                    return book.email(EMAIL, FILETYPE).then(() => {
                         assert.isTrue(fetchMock.called(DOWNLOAD_REGEX));
                         assert.include(fetchMock.lastUrl(DOWNLOAD_REGEX), EMAIL.split('@')[1]);
                         assert.include(fetchMock.lastUrl(DOWNLOAD_REGEX), FILETYPE);
@@ -384,7 +379,7 @@ describe('EpubPressJS', () => {
                     props = getMockBook({ id: undefined });
                     book = new EpubPress(props);
 
-                    return book.emailDelivery(EMAIL, FILETYPE).then(() =>
+                    return book.email(EMAIL, FILETYPE).then(() =>
                         Promise.reject('Success sending book with no id.')
                     ).catch((err) => {
                         assert.include(err.message.toLowerCase(), 'no id');
@@ -394,7 +389,7 @@ describe('EpubPressJS', () => {
                 it('rejects when no email is provided', () => {
                     fetchMock.get(DOWNLOAD_REGEX, 200);
 
-                    return book.emailDelivery().then(() =>
+                    return book.email().then(() =>
                         Promise.reject('Success despite no email provided.')
                     )
                     .catch(isError)
@@ -407,7 +402,7 @@ describe('EpubPressJS', () => {
                 it('rejects when the server responds with an error', () => {
                     fetchMock.get(DOWNLOAD_REGEX, 500);
 
-                    return book.emailDelivery(EMAIL, FILETYPE).then(() =>
+                    return book.email(EMAIL, FILETYPE).then(() =>
                         Promise.reject('Success received when response was 500.')
                     )
                     .catch(isError)
@@ -419,8 +414,51 @@ describe('EpubPressJS', () => {
                 it('rejects when the book is not found', () => {
                     fetchMock.get(DOWNLOAD_REGEX, 404);
 
-                    return book.emailDelivery(EMAIL, FILETYPE).then(() =>
+                    return book.email(EMAIL, FILETYPE).then(() =>
                         Promise.reject('Success received when response was 404.')
+                    )
+                    .catch(isError)
+                    .then((e) => {
+                        assert.include(e.message.toLowerCase(), 'not found');
+                    });
+                });
+            });
+
+            describe('#checkStatus', () => {
+                let book;
+                const STATUS_RESPONSE = { message: 'Building', progress: 50 };
+
+                before(() => {
+                    const props = getMockBook({ id: 1 });
+                    book = new EpubPress(props);
+                });
+
+                beforeEach(() => {
+                    fetchMock.reset();
+                });
+
+                it('calls the endpoint', () => {
+                    const url = book.getStatusUrl();
+                    fetchMock.get(url, STATUS_RESPONSE);
+
+                    return book.checkStatus().then(() => {
+                        assert.isTrue(fetchMock.called(url));
+                    });
+                });
+
+                it('parses the json', () => {
+                    fetchMock.get(book.getStatusUrl(), STATUS_RESPONSE);
+                    return book.checkStatus().then((status) => {
+                        assert.deepEqual(STATUS_RESPONSE, status);
+                    });
+                });
+
+                it('rejects when 404 codes are returned', () => {
+                    book = new EpubPress(getMockBook({ id: 10 }));
+                    fetchMock.get(book.getStatusUrl(), 404);
+
+                    return book.checkStatus().then(() =>
+                        Promise.reject('Promise should not resolve from 404')
                     )
                     .catch(isError)
                     .then((e) => {

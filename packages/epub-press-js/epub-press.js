@@ -48,13 +48,19 @@ function getPublishParams(bookData) {
 }
 
 function checkStatus(response) {
+    const defaultErrorMsg = EpubPress.ERROR_CODES[response.status];
+
     if (response.status >= 200 && response.status < 300) {
         return response;
+    } else if (response.body) {
+        return response.json().then((body) => {
+            const hasErrorMsg = body.errors && body.errors.length > 0;
+            const errorMsg = hasErrorMsg ? body.errors[0].detail : defaultErrorMsg;
+            return Promise.reject(new Error(errorMsg));
+        });
     }
-
-    const error = new Error(EpubPress.ERROR_CODES[response.status]);
-    error.response = response;
-    throw error;
+    const error = new Error(defaultErrorMsg);
+    return Promise.reject(error);
 }
 
 function normalizeError(err) {
@@ -82,7 +88,6 @@ class EpubPress {
             .then(checkStatus)
             .then((response) => response.json())
             .then((versionData) => {
-                console.log(versionData);
                 const clientVersionData = versionData.clients[client];
                 if (clientVersionData) {
                     resolve(compareVersion(version, clientVersionData));
@@ -98,8 +103,12 @@ class EpubPress {
         });
     }
 
+    static getPublishUrl() {
+        return this.prototype.getPublishUrl();
+    }
+
     static getVersionUrl() {
-        return EpubPress.VERSION_URL;
+        return `${EpubPress.BASE_API}/version`;
     }
 
     static getVersion() {
@@ -153,7 +162,7 @@ class EpubPress {
     }
 
     getStatusUrl() {
-        return `${EpubPress.STATUS_URL}?id=${this.getId()}`;
+        return `${EpubPress.getPublishUrl()}/${this.getId()}/status`;
     }
 
     checkStatus() {
@@ -169,10 +178,6 @@ class EpubPress {
                 reject(error);
             });
         });
-    }
-
-    getPublishUrl() {
-        return EpubPress.PUBLISH_URL;
     }
 
     publish() {
@@ -200,12 +205,17 @@ class EpubPress {
         });
     }
 
+    getPublishUrl() {
+        return `${EpubPress.BASE_API}/books`;
+    }
+
     getDownloadUrl(options = {}) {
-        const urlParams = ['id', 'email', 'filetype'].map((param) => {
+        const urlParams = ['email', 'filetype'].map((param) => {
             const value = options[param] || this.bookData[param] || '';
             return `${param}=${encodeURIComponent(value)}`;
         }).join('&');
-        return `${EpubPress.DOWNLOAD_URL}?${urlParams}`;
+        const id = options.id || this.bookData.id;
+        return `${this.getPublishUrl()}/${id}/download?${urlParams}`;
     }
 
     download(filetype) {
@@ -232,7 +242,7 @@ class EpubPress {
         });
     }
 
-    emailDelivery(email, filetype) {
+    email(email, filetype) {
         return new Promise((resolve, reject) => {
             if (!email) {
                 return reject(new Error('EpubPress: No email provided.'));
@@ -256,10 +266,7 @@ class EpubPress {
 }
 
 EpubPress.BASE_URL = packageInfo.baseUrl;
-EpubPress.PUBLISH_URL = `${EpubPress.BASE_URL}/api/books`;
-EpubPress.STATUS_URL = `${EpubPress.PUBLISH_URL}/status`;
-EpubPress.DOWNLOAD_URL = `${EpubPress.PUBLISH_URL}/download`;
-EpubPress.VERSION_URL = `${EpubPress.BASE_URL}/api/version`;
+EpubPress.BASE_API = `${EpubPress.BASE_URL}/api/v${packageInfo.version.split('.')[0]}`;
 
 EpubPress.VERSION = packageInfo.version;
 
@@ -269,6 +276,7 @@ EpubPress.ERROR_CODES = {
     'Failed to fetch': 'Server is down. Please try again later.',
     400: 'There was a problem with the request. Is EpubPress up to date?',
     404: 'Resource not found.',
+    422: 'Request contained invalid data.',
     500: 'Unexpected server error.',
     503: 'Server took too long to respond.',
     timeout: 'Request took too long to complete.',
@@ -278,4 +286,4 @@ EpubPress.ERROR_CODES = {
     SERVER_BAD_CONTENT: 'Book could not be found',
 };
 
-module.exports = EpubPress;
+export default EpubPress;
