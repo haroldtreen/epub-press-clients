@@ -16,7 +16,8 @@
         "no-unused-vars": 2,
         "no-useless-escape": 0,
         "indent": [2,4],
-        "func-names": 0
+        "func-names": 0,
+        "import/no-extraneous-dependencies": ["error", {"devDependencies": ["**/*test.js"]}]
     },
     "extends": [
         "eslint:recommended",
