@@ -47,7 +47,25 @@ function getPublishParams(bookData) {
     };
 }
 
-function checkStatus(response) {
+function trackPublishStatus(book) {
+    return new Promise((resolve, reject) => {
+        const trackingCallback = (checkStatusCounter) => {
+            book.checkStatus().then((status) => {
+                book.emit('statusUpdate', status);
+                if (status.progress >= 100) {
+                    resolve(book);
+                } else if (checkStatusCounter >= EpubPress.CHECK_STATUS_LIMIT) {
+                    reject(new Error(EpubPress.ERROR_CODES[503]));
+                } else {
+                    setTimeout(trackingCallback, EpubPress.POLL_RATE, checkStatusCounter + 1);
+                }
+            }).catch(reject);
+        };
+        trackingCallback(1);
+    });
+}
+
+function checkResponseStatus(response) {
     const defaultErrorMsg = EpubPress.ERROR_CODES[response.status];
 
     if (response.status >= 200 && response.status < 300) {
@@ -85,8 +103,8 @@ class EpubPress {
     static checkForUpdates(client = 'epub-press-js', version = EpubPress.getVersion()) {
         return new Promise((resolve, reject) => {
             fetch(EpubPress.getVersionUrl())
-            .then(checkStatus)
-            .then((response) => response.json())
+            .then(checkResponseStatus)
+            .then(response => response.json())
             .then((versionData) => {
                 const clientVersionData = versionData.clients[client];
                 if (clientVersionData) {
@@ -126,6 +144,35 @@ class EpubPress {
         };
 
         this.bookData = Object.assign({}, defaults, bookData);
+        this.events = {};
+    }
+
+    on(eventName, callback) {
+        if (!this.events[eventName]) {
+            this.events[eventName] = [];
+        }
+
+        this.events[eventName].push(callback);
+        return callback;
+    }
+
+    emit(eventName, ...args) {
+        if (this.events[eventName]) {
+            this.events[eventName].forEach((cb) => {
+                cb(...args);
+            });
+        }
+    }
+
+    removeListener(eventName, callback) {
+        if (!this.events[eventName]) {
+            return;
+        }
+
+        const index = this.events[eventName].indexOf(callback);
+        if (index >= 0) {
+            this.events[eventName].splice(index, 1);
+        }
     }
 
     getUrls() {
@@ -168,8 +215,8 @@ class EpubPress {
     checkStatus() {
         return new Promise((resolve, reject) => {
             fetch(this.getStatusUrl())
-            .then(checkStatus)
-            .then((response) => response.json())
+            .then(checkResponseStatus)
+            .then(response => response.json())
             .then((body) => {
                 resolve(body);
             })
@@ -189,12 +236,13 @@ class EpubPress {
         this.isPublishing = true;
         return new Promise((resolve, reject) => {
             fetch(this.getPublishUrl(), getPublishParams(this.bookData))
-            .then(checkStatus)
-            .then((response) => response.json())
-            .then((body) => {
-                this.isPublishing = false;
-                this.bookData.id = body.id;
-                resolve(body.id);
+            .then(checkResponseStatus)
+            .then(response => response.json())
+            .then(({ id }) => {
+                this.bookData.id = id;
+                return trackPublishStatus(this).then(() => {
+                    resolve(id);
+                });
             })
             .catch((e) => {
                 this.isPublishing = false;
@@ -223,7 +271,7 @@ class EpubPress {
             isDownloadable(this);
 
             fetch(this.getDownloadUrl({ filetype }))
-            .then(checkStatus)
+            .then(checkResponseStatus)
             .then((response) => {
                 return response.blob ? response.blob() : response.buffer();
             })
@@ -251,7 +299,7 @@ class EpubPress {
             isDownloadable(this);
 
             return fetch(this.getDownloadUrl({ email, filetype }))
-            .then(checkStatus)
+            .then(checkResponseStatus)
             .then(() => {
                 console.log('EpubPress: Book delivered.');
                 resolve();
@@ -269,6 +317,8 @@ EpubPress.BASE_URL = packageInfo.baseUrl;
 EpubPress.BASE_API = `${EpubPress.BASE_URL}/api/v${packageInfo.version.split('.')[0]}`;
 
 EpubPress.VERSION = packageInfo.version;
+EpubPress.POLL_RATE = 3000;
+EpubPress.CHECK_STATUS_LIMIT = 20;
 
 EpubPress.ERROR_CODES = {
     // Book Create Errors

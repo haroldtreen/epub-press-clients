@@ -48,6 +48,8 @@
     "fetch-mock": "^5.0.3",
     "mocha": "^2.5.3",
     "mocha-loader": "^1.0.0",
+    "sinon": "git+https://github.com/sinonjs/sinon.git",
+    "sinon-as-promised": "^4.0.2",
     "webpack": "^1.13.1"
   },
   "dependencies": {

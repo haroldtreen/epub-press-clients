@@ -79,7 +79,7 @@ const ebook = new EpubPress({
 ##### Publishing
 ```js
 ebook.publish().then(() =>
-    ebook.download() // Default epub + download
+    return ebook.download();  // Default epub + download
     // or ebook.email('epubpress@gmail.com')
 ).then(() => {
     console.log('Success!');
@@ -138,14 +138,14 @@ EpubPress.checkForUpdates('epub-press-chrome', '0.9.0').then((message) => {
 - `email`: Email address to deliver ebook to.
 
 ##### **`ebook.checkStatus() => Promise => status`**
-- `status.progress`: Percentage complete. (0 -> 100) 
+- `status.progress`: Percentage complete. (0 -> 100)
 - `status.message`: Status message.
 
 ##### **`ebook.on('statusUpdate', (status) => {}) => callback`**
 - `status.progress`: Percentage complete. (0 -> 100)
 - `status.message`: Description of current step.
 
-##### **`ebook.removeListener(callback)`**
+##### **`ebook.removeListener(eventName, callback)`**
 
 ##### **`EpubPress.checkForUpdates(clientName, clientVersion) => Promise => Update Message | undefined`**
 - `clientName`: EpubPress client library to check. (Default: 'epub-press-js')
