@@ -14,10 +14,8 @@ describe('EpubPress', () => {
         });
 
         it('has a BASE_API', () => {
-            const majorVersion = EpubPress.VERSION.split('.')[0];
             assert.include(EpubPress.BASE_API, EpubPress.BASE_URL);
             assert.include(EpubPress.BASE_API, 'api');
-            assert.include(EpubPress.BASE_API, majorVersion);
         });
     });
 

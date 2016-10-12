@@ -73,7 +73,6 @@ function trackPublishStatus(book) {
 
 function checkResponseStatus(response) {
     const defaultErrorMsg = EpubPress.ERROR_CODES[response.status];
-
     if (response.status >= 200 && response.status < 300) {
         return response;
     } else if (response.body) {
@@ -320,7 +319,7 @@ class EpubPress {
 }
 
 EpubPress.BASE_URL = packageInfo.baseUrl;
-EpubPress.BASE_API = `${EpubPress.BASE_URL}/api/v${packageInfo.version.split('.')[0]}`;
+EpubPress.BASE_API = `${EpubPress.BASE_URL}/api/v1`;
 
 EpubPress.VERSION = packageInfo.version;
 EpubPress.POLL_RATE = 3000;
