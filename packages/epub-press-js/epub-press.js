@@ -7,6 +7,12 @@ function isBrowser() {
     return typeof window !== 'undefined';
 }
 
+function log(...args) {
+    if (EpubPress.DEBUG) {
+        console.log(...args);
+    }
+}
+
 function isDownloadable(book) {
     if (!book.getId()) {
         throw new Error('Book has no id. Have you published?');
@@ -52,7 +58,7 @@ function trackPublishStatus(book) {
         const trackingCallback = (checkStatusCounter) => {
             book.checkStatus().then((status) => {
                 book.emit('statusUpdate', status);
-                if (status.progress >= 100) {
+                if (Number(status.progress) >= 100) {
                     resolve(book);
                 } else if (checkStatusCounter >= EpubPress.CHECK_STATUS_LIMIT) {
                     reject(new Error(EpubPress.ERROR_CODES[503]));
@@ -82,7 +88,7 @@ function checkResponseStatus(response) {
 }
 
 function normalizeError(err) {
-    const knownError = EpubPress.ERROR_CODES[err.message];
+    const knownError = EpubPress.ERROR_CODES[err.message] || EpubPress.ERROR_CODES[err.name];
     if (knownError) {
         return new Error(knownError);
     }
@@ -115,7 +121,7 @@ class EpubPress {
             })
             .catch((e) => {
                 const error = normalizeError(e);
-                console.log('Version check failed', error);
+                log('Version check failed', error);
                 reject(error);
             });
         });
@@ -247,7 +253,7 @@ class EpubPress {
             .catch((e) => {
                 this.isPublishing = false;
                 const error = normalizeError(e);
-                console.log('EbupPress: Publish failed', error);
+                log('EbupPress: Publish failed', error);
                 reject(error);
             });
         });
@@ -284,7 +290,7 @@ class EpubPress {
             })
             .catch((e) => {
                 const error = normalizeError(e);
-                console.log('EpubPress: Download failed', error);
+                log('EpubPress: Download failed', error);
                 reject(error);
             });
         });
@@ -301,12 +307,12 @@ class EpubPress {
             return fetch(this.getDownloadUrl({ email, filetype }))
             .then(checkResponseStatus)
             .then(() => {
-                console.log('EpubPress: Book delivered.');
+                log('EpubPress: Book delivered.');
                 resolve();
             })
             .catch((e) => {
                 const error = normalizeError(e);
-                console.log('EpubPress: Email delivery failed.');
+                log('EpubPress: Email delivery failed.');
                 reject(error);
             });
         });
@@ -318,12 +324,13 @@ EpubPress.BASE_API = `${EpubPress.BASE_URL}/api/v${packageInfo.version.split('.'
 
 EpubPress.VERSION = packageInfo.version;
 EpubPress.POLL_RATE = 3000;
-EpubPress.CHECK_STATUS_LIMIT = 20;
+EpubPress.CHECK_STATUS_LIMIT = 40;
 
 EpubPress.ERROR_CODES = {
     // Book Create Errors
     0: 'Server is down. Please try again later.',
     'Failed to fetch': 'Server is down. Please try again later.',
+    'FetchError': 'Server is down. Please try again later.',
     400: 'There was a problem with the request. Is EpubPress up to date?',
     404: 'Resource not found.',
     422: 'Request contained invalid data.',
@@ -336,4 +343,4 @@ EpubPress.ERROR_CODES = {
     SERVER_BAD_CONTENT: 'Book could not be found',
 };
 
-export default EpubPress;
+module.exports = EpubPress;
