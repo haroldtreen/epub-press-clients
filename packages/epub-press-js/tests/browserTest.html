@@ -17,4 +17,8 @@ book.publish().then(function() {
 }).catch(function() {
     console.log('failed', arguments);
 });
+
+book.on('statusUpdate', (status) => {
+    console.log(status)
+});
 </script>

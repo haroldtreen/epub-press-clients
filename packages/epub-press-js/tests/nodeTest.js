@@ -16,18 +16,11 @@ const book = new EpubPress({
 });
 
 book.publish().then(() => {
-    checkStatus();
-    // return book.download();
+    return book.download();
 }).then(() => {
     console.log('done');
 }).catch(console.error);
 
-
-function checkStatus() {
-    setTimeout(() => {
-        book.checkStatus().then((status) => {
-            console.log(status);
-            checkStatus();
-        });
-    }, 10);
-}
+book.on('statusUpdate', (status) => {
+    console.log(status);
+});
