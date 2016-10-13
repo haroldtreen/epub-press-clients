@@ -36,7 +36,8 @@ const MOCK_ERROR_RESPONSE = { errors: [MOCK_ERROR] };
 const EMAIL = 'epubpress@gmail.com';
 const FILETYPE = 'mobi';
 
-const DOWNLOAD_REGEX = new RegExp((`${EpubPress.getPublishUrl()}/\\d/download`).replace(/\//g, '\/'));
+const DOWNLOAD_REGEX = new RegExp((`${EpubPress.getPublishUrl()}/[\\w|-]+/download`).replace(/\//g, '\/'));
+const EMAIL_REGEX = new RegExp((`${EpubPress.getPublishUrl()}/[\\w|-]+/email`).replace(/\//g, '\/'));
 
 const getMockBook = (props) => {
     const defaults = MOCK_BOOK_DATA;
@@ -92,8 +93,12 @@ describe('ebook', () => {
             const book = new EpubPress(getMockBook(settings));
 
             const downloadUrl = book.getDownloadUrl();
-            assert.include(downloadUrl, encodeURIComponent(settings.email));
+            assert.notInclude(downloadUrl, encodeURIComponent(settings.email));
             assert.include(downloadUrl, encodeURIComponent(settings.filetype));
+
+            const emailUrl = book.getEmailUrl();
+            assert.include(emailUrl, encodeURIComponent(settings.email));
+            assert.include(emailUrl, encodeURIComponent(settings.filetype));
         });
 
         it('accepts a filetype', () => {
@@ -183,14 +188,26 @@ describe('ebook', () => {
                 assert.include(downloadUrl, `${book.getPublishUrl()}/1/download`);
             });
 
-            it('accepts an email', () => {
+            it('no longer accepts an email', () => {
                 const downloadUrl = book.getDownloadUrl({ email: EMAIL });
-                assert.include(downloadUrl, EMAIL.split('@')[1]);
+                assert.notInclude(downloadUrl, EMAIL.split('@')[1]);
             });
 
             it('accepts a filetype', () => {
-                const downloadUrl = book.getDownloadUrl({ filetype: FILETYPE });
+                const downloadUrl = book.getDownloadUrl(FILETYPE);
                 assert.include(downloadUrl, FILETYPE);
+            });
+        });
+
+        describe('#getEmailUrl', () => {
+            it('accepts an email', () => {
+                const emailUrl = book.getEmailUrl(EMAIL);
+                assert.include(emailUrl, encodeURIComponent(EMAIL));
+            });
+
+            it('accepts a filetype', () => {
+                const emailUrl = book.getEmailUrl(EMAIL, FILETYPE);
+                assert.include(emailUrl, FILETYPE);
             });
         });
 
@@ -413,12 +430,12 @@ describe('ebook', () => {
                 props = getMockBook({ id: 1 });
                 book = new EpubPress(props);
 
-                fetchMock.get(DOWNLOAD_REGEX, 200);
+                fetchMock.get(EMAIL_REGEX, 200);
 
                 return book.email(EMAIL, FILETYPE).then(() => {
-                    assert.isTrue(fetchMock.called(DOWNLOAD_REGEX));
-                    assert.include(fetchMock.lastUrl(DOWNLOAD_REGEX), EMAIL.split('@')[1]);
-                    assert.include(fetchMock.lastUrl(DOWNLOAD_REGEX), FILETYPE);
+                    assert.isTrue(fetchMock.called(EMAIL_REGEX));
+                    assert.include(fetchMock.lastUrl(EMAIL_REGEX), EMAIL.split('@')[1]);
+                    assert.include(fetchMock.lastUrl(EMAIL_REGEX), FILETYPE);
                 });
             });
 
@@ -434,20 +451,20 @@ describe('ebook', () => {
             });
 
             it('rejects when no email is provided', () => {
-                fetchMock.get(DOWNLOAD_REGEX, 200);
+                fetchMock.get(EMAIL_REGEX, 200);
 
                 return book.email().then(() =>
                     Promise.reject('Success despite no email provided.')
                 )
                 .catch(isError)
                 .then((err) => {
-                    assert.isFalse(fetchMock.called(DOWNLOAD_REGEX));
+                    assert.isFalse(fetchMock.called(EMAIL_REGEX));
                     assert.include(err.message.toLowerCase(), 'no email');
                 });
             });
 
             it('rejects when the server responds with an error', () => {
-                fetchMock.get(DOWNLOAD_REGEX, 500);
+                fetchMock.get(EMAIL_REGEX, 500);
 
                 return book.email(EMAIL, FILETYPE).then(() =>
                     Promise.reject('Success received when response was 500.')
@@ -459,7 +476,7 @@ describe('ebook', () => {
             });
 
             it('rejects when the book is not found', () => {
-                fetchMock.get(DOWNLOAD_REGEX, 404);
+                fetchMock.get(EMAIL_REGEX, 404);
 
                 return book.email(EMAIL, FILETYPE).then(() =>
                     Promise.reject('Success received when response was 404.')

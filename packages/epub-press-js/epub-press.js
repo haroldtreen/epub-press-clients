@@ -104,6 +104,13 @@ function compareVersion(currentVersion, apiVersion) {
     return null;
 }
 
+function buildQuery(params) {
+    const query = ['email', 'filetype'].map((paramName) =>
+        params[paramName] ? `${paramName}=${encodeURIComponent(params[paramName])}` : ''
+    ).filter(paramStr => paramStr).join('&');
+    return query ? `?${query}` : '';
+}
+
 class EpubPress {
     static checkForUpdates(client = 'epub-press-js', version = EpubPress.getVersion()) {
         return new Promise((resolve, reject) => {
@@ -201,6 +208,10 @@ class EpubPress {
         return ['mobi', 'epub'].find((type) => filetype.toLowerCase() === type) || 'epub';
     }
 
+    getEmail() {
+        return this.bookData.email;
+    }
+
     getTitle() {
         return this.bookData.title;
     }
@@ -215,6 +226,20 @@ class EpubPress {
 
     getStatusUrl() {
         return `${EpubPress.getPublishUrl()}/${this.getId()}/status`;
+    }
+
+    getPublishUrl() {
+        return `${EpubPress.BASE_API}/books`;
+    }
+
+    getDownloadUrl(filetype = this.getFiletype()) {
+        const query = buildQuery({ filetype });
+        return `${this.getPublishUrl()}/${this.getId()}/download${query}`;
+    }
+
+    getEmailUrl(email = this.getEmail(), filetype = this.getFiletype()) {
+        const query = buildQuery({ email, filetype });
+        return `${this.getPublishUrl()}/${this.getId()}/email${query}`;
     }
 
     checkStatus() {
@@ -258,24 +283,11 @@ class EpubPress {
         });
     }
 
-    getPublishUrl() {
-        return `${EpubPress.BASE_API}/books`;
-    }
-
-    getDownloadUrl(options = {}) {
-        const urlParams = ['email', 'filetype'].map((param) => {
-            const value = options[param] || this.bookData[param] || '';
-            return `${param}=${encodeURIComponent(value)}`;
-        }).join('&');
-        const id = options.id || this.bookData.id;
-        return `${this.getPublishUrl()}/${id}/download?${urlParams}`;
-    }
-
     download(filetype) {
         return new Promise((resolve, reject) => {
             isDownloadable(this);
 
-            fetch(this.getDownloadUrl({ filetype }))
+            fetch(this.getDownloadUrl(filetype))
             .then(checkResponseStatus)
             .then((response) => {
                 return response.blob ? response.blob() : response.buffer();
@@ -303,7 +315,7 @@ class EpubPress {
 
             isDownloadable(this);
 
-            return fetch(this.getDownloadUrl({ email, filetype }))
+            return fetch(this.getEmailUrl(email, filetype))
             .then(checkResponseStatus)
             .then(() => {
                 log('EpubPress: Book delivered.');
