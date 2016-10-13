@@ -1,5 +1,10 @@
 # Changelog
 
+### 0.5.0
+- New methods for handling progress events: `ebook.on`, `ebook.removeListener`
+- Ability to get progress updates through `ebook.on('statusUpdate', () => {})`
+- Switch to `v1` api. Book publishes are now asynchronous.
+
 ### 0.4.0
 - API update for `checkForUpdates`.
 - Better error handling.
