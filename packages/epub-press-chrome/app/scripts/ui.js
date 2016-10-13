@@ -25,6 +25,32 @@ class UI {
         $('#alert-message').text(message);
     }
 
+    static updateStatus(progress, message) {
+        $('h4#progress-msg').text(message);
+        if (progress) {
+            return this.animateValueChange($('progress'), progress);
+        }
+        return Promise.resolve();
+    }
+
+    static animateValueChange($el, finalValue) {
+        return new Promise((resolve) => {
+            const animateFrom = (currentValue) => {
+                requestAnimationFrame(() => {
+                    if (currentValue === finalValue) {
+                        setTimeout(resolve, 300);
+                        return;
+                    }
+                    const diff = currentValue < finalValue ? 1 : -1;
+                    const newValue = diff + currentValue;
+                    $el.val(newValue);
+                    animateFrom(newValue);
+                });
+            };
+            animateFrom($el.val());
+        });
+    }
+
     static getCheckbox(props) {
         const html = `<div class="checkbox">
         <label>

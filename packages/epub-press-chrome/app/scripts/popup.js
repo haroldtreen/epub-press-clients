@@ -1,15 +1,10 @@
-import Browser from './browser';
 import EpubPress from 'epub-press-js';
-import UI from './ui';
 import $ from 'jquery';
 
+import Browser from './browser';
+import UI from './ui';
+
 const manifest = Browser.getManifest();
-
-const defaultBase = EpubPress.BASE_URL;
-
-['BASE_URL', 'PUBLISH_URL', 'DOWNLOAD_URL', 'VERSION_URL'].forEach((url) => {
-    EpubPress[url] = EpubPress[url] && EpubPress[url].replace(defaultBase, manifest.homepage_url);
-});
 
 /*
 Download Form
@@ -100,13 +95,17 @@ Messaging
 Browser.onBackgroundMessage((request) => {
     if (request.action === 'download') {
         if (request.status === 'complete') {
-            UI.showSection('#downloadSuccess');
+            UI.updateStatus(100, 'Done!').then(() => {
+                UI.showSection('#downloadSuccess');
+            });
         } else {
             UI.showSection('#downloadFailed');
             if (request.error) {
                 UI.setErrorMessage(request.error);
             }
         }
+    } else if (request.action === 'publish') {
+        UI.updateStatus(request.progress, request.message);
     }
 });
 
@@ -118,7 +117,11 @@ window.onload = () => {
     UI.initializeUi();
     Browser.getLocalStorage('downloadState').then((state) => {
         if (state.downloadState) {
-            UI.showSection('#downloadSpinner');
+            Browser.getLocalStorage('publishStatus').then((publishState) => {
+                const status = JSON.parse(publishState.publishStatus);
+                UI.updateStatus(status.progress, status.message);
+                UI.showSection('#downloadSpinner');
+            });
         } else {
             EpubPress.checkForUpdates('epub-press-chrome', manifest.version).then((message) => {
                 if (message) {
