@@ -1,9 +1,11 @@
 {
   "description": "Chrome extension for epub-press",
   "main": "index.js",
+  "private": true,
   "scripts": {
     "test": "export ENV=test && open http://localhost:5001/tests && webpack-dev-server",
     "build": "export ENV=development && webpack",
+    "build-prod": "export NODE_ENV=production && webpack --optimize-minimize --optimize-dedupe",
     "start": "export ENV=development && webpack --watch --color --progress"
   },
   "repository": {
@@ -18,7 +20,7 @@
   "homepage": "https://github.com/haroldtreen/epub-press-clients#readme",
   "dependencies": {
     "bluebird": "^3.4.1",
-    "epub-press-js": "^0.4.0",
+    "epub-press-js": "^0.5.0",
     "jquery": "^3.1.0"
   },
   "devDependencies": {
