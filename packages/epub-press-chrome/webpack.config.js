@@ -20,8 +20,8 @@ if (process.env.ENV !== 'test') {
     WebpackConfig = {
         devtool: 'inline-source-map',
         entry: {
-            popup: ['whatwg-fetch', './app/scripts/popup.js'],
-            background: ['whatwg-fetch', './app/scripts/background.js'],
+            popup: ['whatwg-fetch', './scripts/popup.js'],
+            background: ['whatwg-fetch', './scripts/background.js'],
         },
         output: {
             filename: '[name].js',
