@@ -157,16 +157,23 @@ progress {
     appearance: none;
     height: 25px;
     width: 250px;
+    border-radius: 5px;
+    background-color: #eee;
 }
 
 progress::-webkit-progress-value {
     border-radius: 5px;
-    background: #333;
+    background-color: #333;
 }
 
 progress::-webkit-progress-bar {
     border-radius: 5px;
     background-color: #eee;
+}
+
+progress::-moz-progress-bar {
+    border-radius: 5px;
+    background-color: #333;
 }
 
 /*
