@@ -20,7 +20,10 @@ Browser.onForegroundMessage((request) => {
                 .then(() => { // eslint-disable-line
                     const email = state.email && state.email.trim();
                     const filetype = state.filetype;
-                    return email ? book.email(email, filetype) : book.download(filetype);
+                    return email ? book.email(email, filetype) : Browser.download({
+                        filename: `${book.getTitle()}.${filetype || book.getFiletype()}`,
+                        url: book.getDownloadUrl(filetype),
+                    });
                 })
                 .then(() => {
                     Browser.setLocalStorage({ downloadState: false, publishStatus: '{}' });
