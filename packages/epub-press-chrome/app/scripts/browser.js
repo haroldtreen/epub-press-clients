@@ -23,7 +23,7 @@ class Browser {
     }
 
     static isBackgroundMsg(sender) {
-        return sender.url.indexOf('background_page') > -1;
+        return sender.url.indexOf('popup') < 0;
     }
 
     static isPopupMsg(sender) {
@@ -87,7 +87,7 @@ class Browser {
     }
 
     static sendMessage(...args) {
-        chrome.runtime.sendMessage.apply(chrome.runtime, args);
+        chrome.runtime.sendMessage(...args);
     }
 
     static onBackgroundMessage(cb) {
@@ -111,19 +111,18 @@ class Browser {
         if (chrome) {
             promise = new Promise((resolve, reject) => {
                 chrome.downloads.download(params, (downloadId) => {
-                    const downloadListener = chrome.downloads.onChanged.addListener((downloadInfo) => { // eslint-disable-line
+                    const downloadListener = (downloadInfo) => { // eslint-disable-line
                         if (downloadInfo.id === downloadId) {
                             if (downloadInfo.error) {
-                                console.log(downloadInfo.error);
                                 chrome.downloads.onChanged.removeListener(downloadListener);
                                 reject(downloadInfo.error);
-                            } else if (downloadInfo.endTime) {
-                                console.log('end time: ', downloadInfo.endTime);
+                            } else if (downloadInfo.endTime || downloadInfo.state.current === 'complete') {
                                 chrome.downloads.onChanged.removeListener(downloadListener);
-                                resolve(downloadInfo.endTime);
+                                resolve();
                             }
                         }
-                    });
+                    };
+                    chrome.downloads.onChanged.addListener(downloadListener);
                 });
             });
         }

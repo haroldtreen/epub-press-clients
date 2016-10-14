@@ -10,7 +10,7 @@ Browser.onForegroundMessage((request) => {
             const book = new EpubPress(Object.assign({}, request.book));
             book.on('statusUpdate', (status) => {
                 Browser.setLocalStorage({ publishStatus: JSON.stringify(status) });
-                Browser.sendMessage(null, {
+                Browser.sendMessage({
                     action: 'publish',
                     progress: status.progress,
                     message: status.message,
@@ -24,14 +24,11 @@ Browser.onForegroundMessage((request) => {
                 })
                 .then(() => {
                     Browser.setLocalStorage({ downloadState: false, publishStatus: '{}' });
-                    Browser.sendMessage(null, { action: 'download', status: 'complete' });
+                    Browser.sendMessage({ action: 'download', status: 'complete' });
                 })
                 .catch((e) => {
                     Browser.setLocalStorage({ downloadState: false, publishStatus: '{}' });
-                    Browser.sendMessage(
-                        null,
-                        { action: 'download', status: 'failed', error: e.message }
-                    );
+                    Browser.sendMessage({ action: 'download', status: 'failed', error: e.message });
                 });
         });
     }

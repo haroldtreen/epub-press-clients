@@ -38,7 +38,7 @@ class UI {
             const animateFrom = (currentValue) => {
                 requestAnimationFrame(() => {
                     if (currentValue === finalValue) {
-                        setTimeout(resolve, 300);
+                        setTimeout(resolve, 100);
                         return;
                     }
                     const diff = currentValue < finalValue ? 1 : -1;

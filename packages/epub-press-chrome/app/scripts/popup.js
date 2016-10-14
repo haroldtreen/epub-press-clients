@@ -39,16 +39,14 @@ $('#download').click(() => {
     } else {
         Browser.getTabsHtml(selectedItems).then((sections) => {
             UI.showSection('#downloadSpinner');
-            Browser.sendMessage(null,
-                {
-                    action: 'download',
-                    book: {
-                        title: $('#book-title').val() || undefined,
-                        description: $('#book-description').val() || undefined,
-                        sections,
-                    },
-                }
-            );
+            Browser.sendMessage({
+                action: 'download',
+                book: {
+                    title: $('#book-title').val() || $('#book-title').attr('placeholder'),
+                    description: $('#book-description').val() || undefined,
+                    sections,
+                },
+            });
         }).catch((error) => {
             UI.setErrorMessage(`Could not find tab content: ${error}`);
         });
