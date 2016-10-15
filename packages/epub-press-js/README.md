@@ -30,11 +30,11 @@ node tests/nodeTest.js
 
 ### Build
 
-```
-// Single build
+```bash
+# Single build
 npm run-script build
 
-// Build + watch
+# Build + watch
 npm start
 ```
 
@@ -79,7 +79,7 @@ const ebook = new EpubPress({
 ##### Publishing
 ```js
 ebook.publish().then(() =>
-    return ebook.download();  // Default epub + download
+    return ebook.download();  // Default epub
     // or ebook.email('epubpress@gmail.com')
 ).then(() => {
     console.log('Success!');
@@ -127,6 +127,7 @@ EpubPress.checkForUpdates('epub-press-chrome', '0.9.0').then((message) => {
 - `metadata.urls`: Array of urls.
 - `metadata.title`: Title for the book.
 - `metadata.description`: Description for the book.
+- `metadata.filetype`: File format to use for downloads.
 
 ##### **`ebook.publish() => Promise`**
 
@@ -146,9 +147,11 @@ EpubPress.checkForUpdates('epub-press-chrome', '0.9.0').then((message) => {
 - `status.message`: Description of current step.
 
 ##### **`ebook.removeListener(eventName, callback)`**
+- `eventName`: Name of the event `callback` exists on.
+- `callback`: Listener to be removed.
 
 ##### **`EpubPress.checkForUpdates(clientName, clientVersion) => Promise => Update Message | undefined`**
-- `clientName`: EpubPress client library to check. (Default: 'epub-press-js')
+- `clientName`: EpubPress client library to check. (Default: `epub-press-js`)
 - `clientVersion`: Version of client. (Default: `EpubPress.VERSION`)
 
 ### Issues
@@ -162,5 +165,5 @@ Feel free to report any other issues:
 
 ### Related
 
- - Website: https://epub.press
- - Chrome Extension: https://chrome.google.com/webstore/detail/epubpress-create-ebooks-f/pnhdnpnnffpijjbnhnipkehhibchdeok
+- Website: https://epub.press
+- Chrome Extension: https://chrome.google.com/webstore/detail/epubpress-create-ebooks-f/pnhdnpnnffpijjbnhnipkehhibchdeok

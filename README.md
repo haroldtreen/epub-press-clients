@@ -2,7 +2,7 @@
 </p>
 
 # epub-press-clients
-Easy to use clients for building ebooks with [EpubPress](https://epub.press).
+> Easy to use clients for building ebooks with [EpubPress](https://epub.press).
 
 Follow us on [Twitter](https://twitter.com/Epub_Press).
 
@@ -44,7 +44,9 @@ See the Readme [here](./packages/epub-press-js/README.md)
 
 ### epub-press-widgets
 
-A set of ready to use widgets for integration by publishers. Give your users the ability to download your content in an ebook!
+A set of ready to use widgets for integration by publishers. Give your users the ability to download your content in an ebook.
+
+**Development/release is on the Roadmap.***
 
 See the Readme [here](./packages/epub-press-widgets/README.md)
 
@@ -52,6 +54,8 @@ See the Readme [here](./packages/epub-press-widgets/README.md)
 ## Roadmap 🛣
 - Widgets.
 - Ability to share your generated creations with others.
+- Custom cover page.
+- Extra metadata (eg. author).
 - Detection for pages with a list of links (eg. OneTab, Feedly, RSS Feeds) and show those links.
 
 Have any awesome ideas? Suggestions? Feature requests? Would love to hear them!  
