@@ -18,7 +18,6 @@ const MODULE_LOADERS = [
 let WebpackConfig;
 if (process.env.ENV !== 'test') {
     WebpackConfig = {
-        devtool: 'inline-source-map',
         entry: {
             popup: ['whatwg-fetch', './scripts/popup.js'],
             background: ['whatwg-fetch', './scripts/background.js'],
