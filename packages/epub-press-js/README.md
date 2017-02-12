@@ -55,7 +55,7 @@ const EpubPress = require('epub-press-js');
 
 ```js
 const ebook = new EpubPress({
-    title: 'Best of HackerNews'
+    title: 'Best of HackerNews',
     description: 'Favorite articles from HackerNews in May, 2016',
     sections: [
         {
@@ -68,7 +68,7 @@ const ebook = new EpubPress({
 // OR
 
 const ebook = new EpubPress({
-    title: 'Best of HackerNews'
+    title: 'Best of HackerNews',
     description: 'Favorite articles from HackerNews in May, 2016',
     urls: [
         'http://medium.com/@techBlogger/why-js-is-dead-long-live-php'
@@ -79,7 +79,7 @@ const ebook = new EpubPress({
 ##### Publishing
 ```js
 ebook.publish().then(() =>
-    return ebook.download();  // Default epub
+    ebook.download();  // Default epub
     // or ebook.email('epubpress@gmail.com')
 ).then(() => {
     console.log('Success!');
@@ -92,7 +92,7 @@ ebook.publish().then(() =>
 ```js
 ebook.checkStatus().then((status) => {
 
-}).catch((error) => {})
+}).catch((error) => {});
 ```
 
 ##### Event Listening
