@@ -513,6 +513,8 @@
 
 	var manifest = _browser2.default.getManifest();
 
+	_epubPressJs2.default.BASE_API = manifest.homepage_url + '/api/v1';
+
 	_browser2.default.onForegroundMessage(function (request) {
 	    if (request.action === 'download') {
 	        _browser2.default.setLocalStorage({ downloadState: true, publishStatus: '{}' });

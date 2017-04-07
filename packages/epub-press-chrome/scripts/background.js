@@ -3,6 +3,8 @@ import Browser from './browser';
 
 const manifest = Browser.getManifest();
 
+EpubPress.BASE_API = `${manifest.homepage_url}/api/v1`;
+
 Browser.onForegroundMessage((request) => {
     if (request.action === 'download') {
         Browser.setLocalStorage({ downloadState: true, publishStatus: '{}' });
