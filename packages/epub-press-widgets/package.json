@@ -1,41 +1,41 @@
 {
-  "name": "epub-press-widgets",
-  "version": "0.0.1",
-  "description": "A set of widgets for integrating EpubPress into webpages.",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/haroldtreen/epub-press-clients.git"
-  },
-  "keywords": [
-    "widget",
-    "epubpress",
-    "ebooks",
-    "epub",
-    "mobi",
-    "productivity",
-    "publishing",
-    "ereading",
-    "books"
-  ],
-  "author": "EpubPress",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/haroldtreen/epub-press-clients/issues"
-  },
-  "homepage": "https://github.com/haroldtreen/epub-press-clients#readme",
-  "devDependencies": {
-    "babel-core": "^6.11.4",
-    "babel-loader": "^6.2.4",
-    "babel-plugin-transform-runtime": "^6.9.0",
-    "babel-preset-es2015": "^6.9.0",
-    "chai": "^3.5.0",
-    "fetch-mock": "^5.0.3",
-    "mocha": "^2.5.3",
-    "mocha-loader": "^0.7.1",
-    "webpack": "^1.13.1"
-  }
+    "name": "epub-press-widgets",
+    "version": "0.0.1",
+    "description": "A set of widgets for integrating EpubPress into webpages.",
+    "main": "index.js",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/haroldtreen/epub-press-clients.git"
+    },
+    "keywords": [
+        "widget",
+        "epubpress",
+        "ebooks",
+        "epub",
+        "mobi",
+        "productivity",
+        "publishing",
+        "ereading",
+        "books"
+    ],
+    "author": "EpubPress",
+    "license": "GPL-3.0+",
+    "bugs": {
+        "url": "https://github.com/haroldtreen/epub-press-clients/issues"
+    },
+    "homepage": "https://github.com/haroldtreen/epub-press-clients#readme",
+    "devDependencies": {
+        "babel-core": "^6.11.4",
+        "babel-loader": "^6.2.4",
+        "babel-plugin-transform-runtime": "^6.9.0",
+        "babel-preset-es2015": "^6.9.0",
+        "chai": "^3.5.0",
+        "fetch-mock": "^5.0.3",
+        "mocha": "^2.5.3",
+        "mocha-loader": "^0.7.1",
+        "webpack": "^1.13.1"
+    }
 }
