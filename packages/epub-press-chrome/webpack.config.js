@@ -1,4 +1,3 @@
-'use strict';
 const path = require('path');
 const webpack = require('webpack');
 
@@ -19,8 +18,8 @@ let WebpackConfig;
 if (process.env.ENV !== 'test') {
     WebpackConfig = {
         entry: {
-            popup: ['whatwg-fetch', './scripts/popup.js'],
-            background: ['whatwg-fetch', './scripts/background.js'],
+            popup: ['./scripts/popup.js'],
+            background: ['./scripts/background.js'],
         },
         output: {
             filename: '[name].js',
@@ -31,11 +30,11 @@ if (process.env.ENV !== 'test') {
         },
         plugins: [
             new webpack.DefinePlugin({
-                'process.env.ENV': JSON.stringify(process.env.NODE_ENV || 'development')
+                'process.env.ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
             }),
             new webpack.ProvidePlugin({
-                $: "jquery",
-                jQuery: "jquery",
+                $: 'jquery',
+                jQuery: 'jquery',
             }),
         ],
         resolve: {
@@ -48,7 +47,7 @@ if (process.env.ENV !== 'test') {
         },
         node: {
             fs: 'empty',
-        }
+        },
     };
 } else {
     WebpackConfig = {
@@ -62,7 +61,7 @@ if (process.env.ENV !== 'test') {
         },
         plugins: [
             new webpack.DefinePlugin({
-                'process.env.ENV': JSON.stringify(process.env.NODE_ENV || 'test')
+                'process.env.ENV': JSON.stringify(process.env.NODE_ENV || 'test'),
             }),
         ],
         resolve: {
