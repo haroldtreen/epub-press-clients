@@ -1,37 +1,35 @@
 {
-  "name": "__MSG_appName__",
-  "short_name": "__MSG_appShortName__",
-  "version": "0.10.0",
-  "author": "Harold Treen",
-  "homepage_url": "https://epub.press",
-  "manifest_version": 2,
-  "description": "__MSG_appDescription__",
-  "icons": {
-    "16": "images/download-icon-16.png",
-    "128": "images/download-icon-128.png"
-  },
-  "default_locale": "en",
-  "background": {
-    "scripts": [
-      "build/background.js"
-    ]
-  },
-  "permissions": [
-    "pageCapture",
-    "tabs",
-    "topSites",
-    "webRequest",
-    "downloads",
-    "storage",
-    "http://*/",
-    "https://*/"
-  ],
-  "browser_action": {
-    "default_icon": {
-      "20": "images/download-icon-20.png",
-      "32": "images/download-icon-32.png"
+    "name": "__MSG_appName__",
+    "short_name": "__MSG_appShortName__",
+    "version": "0.10.1",
+    "author": "Harold Treen",
+    "homepage_url": "https://epub.press",
+    "manifest_version": 2,
+    "description": "__MSG_appDescription__",
+    "icons": {
+        "16": "images/download-icon-16.png",
+        "128": "images/download-icon-128.png"
     },
-    "default_title": "EpubPress",
-    "default_popup": "popup.html"
-  }
+    "default_locale": "en",
+    "background": {
+        "scripts": ["build/background.js"]
+    },
+    "permissions": [
+        "pageCapture",
+        "tabs",
+        "topSites",
+        "webRequest",
+        "downloads",
+        "storage",
+        "http://*/",
+        "https://*/"
+    ],
+    "browser_action": {
+        "default_icon": {
+            "20": "images/download-icon-20.png",
+            "32": "images/download-icon-32.png"
+        },
+        "default_title": "EpubPress",
+        "default_popup": "popup.html"
+    }
 }
