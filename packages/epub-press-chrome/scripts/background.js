@@ -3,7 +3,7 @@ import Browser from './browser';
 
 const manifest = Browser.getManifest();
 
-EpubPress.BASE_API = `${manifest.homepage_url}/api/v1`;
+EpubPress.BASE_API = `${manifest.homepage_url}api/v1`;
 
 Browser.onForegroundMessage((request) => {
     if (request.action === 'download') {
@@ -18,14 +18,18 @@ Browser.onForegroundMessage((request) => {
                     message: status.message,
                 });
             });
-            book.publish()
-                .then(() => { // eslint-disable-line
+            book
+                .publish()
+                .then(() => {
+                    // eslint-disable-line
                     const email = state.email && state.email.trim();
                     const filetype = state.filetype;
-                    return email ? book.email(email, filetype) : Browser.download({
-                        filename: `${book.getTitle()}.${filetype || book.getFiletype()}`,
-                        url: book.getDownloadUrl(filetype),
-                    });
+                    return email
+                        ? book.email(email, filetype)
+                        : Browser.download({
+                            filename: `${book.getTitle()}.${filetype || book.getFiletype()}`,
+                            url: book.getDownloadUrl(filetype),
+                        });
                 })
                 .then(() => {
                     Browser.setLocalStorage({ downloadState: false, publishStatus: '{}' });
