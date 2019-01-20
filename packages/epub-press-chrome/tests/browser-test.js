@@ -1,5 +1,5 @@
 import { assert } from 'chai';
-import Browser from '../app/scripts/browser.js';
+import Browser from '../scripts/browser.js';
 
 describe('Browser', () => {
     it('is a function', () => {

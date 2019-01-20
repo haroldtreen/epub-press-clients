@@ -84,4 +84,4 @@ UI.SECTIONS_SELECTORS = [
     '#downloadFailed',
 ];
 
-module.exports = UI;
+export default UI;

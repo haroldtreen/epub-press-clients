@@ -1,12 +1,7 @@
 const path = require('path');
 const webpack = require('webpack');
 
-const MODULE_LOADERS = [
-    {
-        test: /\.json$/,
-        exclude: /node_modules/,
-        loader: 'json-loader',
-    },
+const MODULE_RULES = [
     {
         test: /\.(js|jsx)$/,
         exclude: /node_modules/,
@@ -17,6 +12,7 @@ const MODULE_LOADERS = [
 let WebpackConfig;
 if (process.env.ENV !== 'test') {
     WebpackConfig = {
+        mode: 'production',
         entry: {
             popup: ['./scripts/popup.js'],
             background: ['./scripts/background.js'],
@@ -26,7 +22,7 @@ if (process.env.ENV !== 'test') {
             path: path.join(__dirname, 'app', 'build'),
         },
         module: {
-            loaders: MODULE_LOADERS,
+            rules: MODULE_RULES,
         },
         plugins: [
             new webpack.DefinePlugin({
@@ -38,7 +34,7 @@ if (process.env.ENV !== 'test') {
             }),
         ],
         resolve: {
-            extensions: ['', '.js'],
+            extensions: ['.js'],
         },
         devServer: {
             hostname: 'localhost',
@@ -51,13 +47,14 @@ if (process.env.ENV !== 'test') {
     };
 } else {
     WebpackConfig = {
-        entry: ['fetch-mock', 'mocha!./tests/index.js'],
+        mode: 'development',
+        entry: ['fetch-mock', 'mocha-loader!./tests/index.js'],
         output: {
             filename: 'test.build.js',
             path: path.join(__dirname, 'tests'),
         },
         module: {
-            loaders: MODULE_LOADERS,
+            rules: MODULE_RULES,
         },
         plugins: [
             new webpack.DefinePlugin({
@@ -65,10 +62,9 @@ if (process.env.ENV !== 'test') {
             }),
         ],
         resolve: {
-            extensions: ['', '.js'],
+            extensions: ['.js'],
         },
         devServer: {
-            hostname: 'localhost',
             port: '5001',
             inline: true,
         },

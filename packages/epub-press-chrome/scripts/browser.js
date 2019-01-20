@@ -164,4 +164,4 @@ Browser.ERROR_CODES = {
     SERVER_BAD_CONTENT: 'Book could not be found',
 };
 
-module.exports = Browser;
+export default Browser;
