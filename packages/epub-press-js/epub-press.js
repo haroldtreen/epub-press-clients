@@ -354,4 +354,4 @@ EpubPress.ERROR_CODES = {
     SERVER_BAD_CONTENT: 'Book could not be found',
 };
 
-module.exports = EpubPress;
+export default EpubPress;

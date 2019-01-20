@@ -2,12 +2,7 @@
 const path = require('path');
 const webpack = require('webpack');
 
-const MODULE_LOADERS = [
-    {
-        test: /\.json$/,
-        exclude: /node_modules/,
-        loader: 'json-loader',
-    },
+const MODULE_RULES = [
     {
         test: /\.(js|jsx)$/,
         exclude: /node_modules/,
@@ -18,6 +13,7 @@ const MODULE_LOADERS = [
 let WebpackConfig;
 if (process.env.NODE_ENV !== 'test') {
     WebpackConfig = {
+        mode: 'production',
         entry: ['isomorphic-fetch', './epub-press.js'],
         output: {
             filename: 'index.js',
@@ -26,50 +22,49 @@ if (process.env.NODE_ENV !== 'test') {
             libraryTarget: 'umd',
         },
         module: {
-            loaders: MODULE_LOADERS,
+            rules: MODULE_RULES,
         },
         plugins: [
             new webpack.DefinePlugin({
-                'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development')
+                'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
             }),
         ],
         resolve: {
-            extensions: ['', '.js'],
+            extensions: ['.js'],
         },
         externals: [{
             fs: true,
             'isomorphic-fetch': true,
         }],
         devServer: {
-            hostname: 'localhost',
             port: '5000',
             inline: true,
         },
     };
 } else {
     WebpackConfig = {
-        entry: ['fetch-mock', 'mocha!./tests/index.js'],
+        mode: 'development',
+        entry: ['fetch-mock', 'mocha-loader!./tests/index.js'],
         output: {
             filename: 'test.build.js',
             path: path.join(__dirname, 'tests'),
         },
         module: {
-            loaders: MODULE_LOADERS,
+            rules: MODULE_RULES,
         },
         plugins: [
             new webpack.DefinePlugin({
-                'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'test')
+                'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'test'),
             }),
         ],
         resolve: {
-            extensions: ['', '.js'],
+            extensions: ['.js'],
         },
         externals: [{
             fs: true,
             'isomorphic-fetch': true,
         }],
         devServer: {
-            hostname: 'localhost',
             port: '5001',
             inline: true,
         },

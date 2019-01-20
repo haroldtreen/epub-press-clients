@@ -258,7 +258,7 @@ describe('ebook', () => {
 
                 const statusStub = sandbox
                     .stub(book, 'checkStatus')
-                    .returns(Promise.resolve({ message: 'Done!', progress: 100 }));
+                    .resolves({ message: 'Done!', progress: 100 });
 
                 return book.publish().then(() => {
                     assert.isTrue(fetchMock.called(PUBLISH_URL));
@@ -310,7 +310,7 @@ describe('ebook', () => {
 
                 const statusStub = sandbox
                     .stub(book, 'checkStatus')
-                    .returns(Promise.resolve({ message: 'Done!', progress: 100 }));
+                    .resolves({ message: 'Done!', progress: 100 });
 
                 book.publish().then(() => {
                     assert.lengthOf(fetchMock.calls(PUBLISH_URL), 1);
@@ -326,9 +326,9 @@ describe('ebook', () => {
                 fetchMock.post(PUBLISH_URL, MOCK_RESPONSE);
 
                 sandbox.stub(book, 'checkStatus')
-                    .returns(Promise.resolve({ message: 'Almost done!', progress: 90 }));
-                sandbox.stub(EpubPress, 'POLL_RATE', 0);
-                sandbox.stub(EpubPress, 'CHECK_STATUS_LIMIT', 4);
+                    .resolves({ message: 'Almost done!', progress: 90 });
+                sandbox.stub(EpubPress, 'POLL_RATE').value(0);
+                sandbox.stub(EpubPress, 'CHECK_STATUS_LIMIT').value(4);
 
                 return book
                     .publish()
@@ -347,7 +347,7 @@ describe('ebook', () => {
 
                 fetchMock.post(PUBLISH_URL, MOCK_RESPONSE);
 
-                sandbox.stub(EpubPress, 'POLL_RATE', 0);
+                sandbox.stub(EpubPress, 'POLL_RATE').value(0);
                 const statusStub = sandbox.stub(book, 'checkStatus');
                 MOCK_STATUSES.forEach((status, index) => {
                     statusStub.onCall(index).returns(Promise.resolve(status));

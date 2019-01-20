@@ -36,22 +36,23 @@
         "url": "https://github.com/haroldtreen/epub-press-clients/issues"
     },
     "devDependencies": {
-        "babel-core": "^6.17.0",
-        "babel-loader": "^6.2.4",
-        "babel-plugin-transform-runtime": "^6.9.0",
-        "babel-preset-es2015": "^6.9.0",
+        "@babel/core": "^7.2.2",
+        "@babel/plugin-transform-runtime": "^7.2.0",
+        "@babel/preset-env": "^7.2.3",
+        "@babel/runtime": "^7.2.0",
+        "babel-loader": "^8.0.5",
         "chai": "^3.5.0",
         "fetch-mock": "^5.0.3",
-        "mocha": "^2.5.3",
-        "mocha-loader": "^1.0.0",
-        "sinon": "git+https://github.com/sinonjs/sinon.git",
-        "sinon-as-promised": "^4.0.2",
-        "webpack": "^1.13.1"
+        "mocha": "^5.2.0",
+        "mocha-loader": "^2.0.0",
+        "sinon": "^7.2.3",
+        "webpack": "^4.0.0",
+        "webpack-cli": "^3.2.1",
+        "webpack-dev-server": "^3.1.14"
     },
     "dependencies": {
         "bluebird": "^3.4.6",
         "file-saver": "^1.3.3",
-        "isomorphic-fetch": "^2.2.1",
-        "json-loader": "^0.5.4"
+        "isomorphic-fetch": "^2.2.1"
     }
 }
