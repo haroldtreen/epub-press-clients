@@ -2,12 +2,24 @@ import EpubPress from 'epub-press-js';
 import Browser from './browser';
 
 const manifest = Browser.getManifest();
+const DOWNLOAD_TIMEOUT = 300000; // 30 second timeout for downloads
 
 EpubPress.BASE_API = `${manifest.homepage_url}api/v1`;
+
+function timeoutDownload() {
+    Browser.setLocalStorage({ downloadState: false, publishStatus: '{}' });
+    Browser.sendMessage({
+        action: 'download',
+        status: 'failed',
+        error: 'Download timed out',
+    });
+}
 
 Browser.onForegroundMessage((request) => {
     if (request.action === 'download') {
         Browser.setLocalStorage({ downloadState: true, publishStatus: '{}' });
+        const timeout = setTimeout(timeoutDownload, DOWNLOAD_TIMEOUT);
+
         Browser.getLocalStorage(['email', 'filetype']).then((state) => {
             const book = new EpubPress(Object.assign({}, request.book));
             book.on('statusUpdate', (status) => {
@@ -18,12 +30,10 @@ Browser.onForegroundMessage((request) => {
                     message: status.message,
                 });
             });
-            book
-                .publish()
+            book.publish()
                 .then(() => {
-                    // eslint-disable-line
                     const email = state.email && state.email.trim();
-                    const filetype = state.filetype;
+                    const { filetype } = state;
                     return email
                         ? book.email(email, filetype)
                         : Browser.download({
@@ -32,10 +42,12 @@ Browser.onForegroundMessage((request) => {
                         });
                 })
                 .then(() => {
+                    clearTimeout(timeout);
                     Browser.setLocalStorage({ downloadState: false, publishStatus: '{}' });
                     Browser.sendMessage({ action: 'download', status: 'complete' });
                 })
                 .catch((e) => {
+                    clearTimeout(timeout);
                     Browser.setLocalStorage({ downloadState: false, publishStatus: '{}' });
                     Browser.sendMessage({ action: 'download', status: 'failed', error: e.message });
                 });
