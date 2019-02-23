@@ -1,4 +1,5 @@
 import Promise from 'bluebird';
+import sanitize from 'sanitize-filename';
 
 class Browser {
     static isValidUrl(url) {
@@ -36,9 +37,7 @@ class Browser {
             promise = new Promise((resolve, reject) => {
                 chrome.windows.getCurrent({ populate: true }, (currentWindow) => {
                     if (currentWindow.tabs) {
-                        const websiteTabs = currentWindow.tabs.filter(
-                            (tab) => Browser.isValidUrl(tab.url)
-                        );
+                        const websiteTabs = currentWindow.tabs.filter(tab => Browser.isValidUrl(tab.url));
                         resolve(websiteTabs);
                     } else {
                         reject(new Error('No tabs!'));
@@ -46,15 +45,17 @@ class Browser {
                 });
             });
         } else {
-            promise = new Promise((resolve) => { resolve(null); });
+            promise = new Promise((resolve) => {
+                resolve(null);
+            });
         }
         return promise;
     }
 
     static getTabsHtml(tabs) {
         const code = 'document.documentElement.outerHTML';
-        const htmlPromises = tabs.map((tab) => { // eslint-disable-line
-            return new Promise((resolve) => {
+        const htmlPromises = tabs.map(
+            tab => new Promise((resolve) => {
                 chrome.tabs.executeScript(tab.id, { code }, (html) => {
                     const updatedTab = tab;
                     if (html && html[0] && html[0].match(/html/i)) {
@@ -64,8 +65,8 @@ class Browser {
                     }
                     resolve(updatedTab);
                 });
-            });
-        });
+            }),
+        );
 
         return Promise.all(htmlPromises);
     }
@@ -108,18 +109,24 @@ class Browser {
 
     static download(params) {
         let promise;
+        const sanitizedParams = { ...params, filename: sanitize(params.filename) };
         if (chrome) {
             promise = new Promise((resolve, reject) => {
-                chrome.downloads.download(params, (downloadId) => {
-                    const downloadListener = (downloadInfo) => { // eslint-disable-line
-                        if (downloadInfo.id === downloadId) {
+                chrome.downloads.download(sanitizedParams, (downloadId) => {
+                    const downloadListener = (downloadInfo) => {
+                        if (downloadInfo && downloadInfo.id === downloadId) {
                             if (downloadInfo.error) {
                                 chrome.downloads.onChanged.removeListener(downloadListener);
                                 reject(downloadInfo.error);
-                            } else if (downloadInfo.endTime || downloadInfo.state.current === 'complete') {
+                            } else if (
+                                downloadInfo.endTime
+                                || downloadInfo.state.current === 'complete'
+                            ) {
                                 chrome.downloads.onChanged.removeListener(downloadListener);
                                 resolve();
                             }
+                        } else {
+                            reject(chrome.runtime.lastError);
                         }
                     };
                     chrome.downloads.onChanged.addListener(downloadListener);
@@ -140,11 +147,12 @@ class Browser {
     static getErrorMsg(location, xhr) {
         let msg = location ? `${location}:  ` : '';
 
-        msg += xhr.responseText ||
-                Browser.ERROR_CODES[xhr.statusText] ||
-                Browser.ERROR_CODES[xhr.status] ||
-                Browser.ERROR_CODES[xhr.current] ||
-                'Unknown';
+        msg
+            += xhr.responseText
+            || Browser.ERROR_CODES[xhr.statusText]
+            || Browser.ERROR_CODES[xhr.status]
+            || Browser.ERROR_CODES[xhr.current]
+            || 'Unknown';
 
         return msg;
     }
