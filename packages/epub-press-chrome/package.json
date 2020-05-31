@@ -19,24 +19,24 @@
     },
     "homepage": "https://github.com/haroldtreen/epub-press-clients#readme",
     "dependencies": {
-        "bluebird": "^3.5.3",
+        "bluebird": "^3.7.2",
         "epub-press-js": "^0.5.0",
-        "jquery": "^3.5.0",
+        "jquery": "^3.5.1",
         "sanitize-filename": "^1.6.1"
     },
     "devDependencies": {
-        "@babel/core": "^7.7.4",
-        "@babel/plugin-transform-runtime": "^7.7.4",
-        "@babel/preset-env": "^7.7.4",
-        "@babel/runtime": "^7.7.4",
-        "babel-loader": "^8.0.6",
+        "@babel/core": "^7.10.2",
+        "@babel/plugin-transform-runtime": "^7.10.1",
+        "@babel/preset-env": "^7.10.2",
+        "@babel/runtime": "^7.10.2",
+        "babel-loader": "^8.1.0",
         "chai": "^4.2.0",
         "fetch-mock": "^5.1.1",
-        "mocha": "^6.2.2",
+        "mocha": "^6.2.3",
         "mocha-loader": "^2.0.1",
         "sinon": "^7.5.0",
-        "webpack": "^4.41.2",
-        "webpack-cli": "^3.3.10",
-        "webpack-dev-server": "^3.9.0"
+        "webpack": "^4.43.0",
+        "webpack-cli": "^3.3.11",
+        "webpack-dev-server": "^3.11.0"
     }
 }

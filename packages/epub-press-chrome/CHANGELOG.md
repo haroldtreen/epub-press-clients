@@ -1,5 +1,9 @@
 # Changelog
 
+### 0.12.0
+
+-   Removes unused permissions.
+
 ### 0.11.0
 
 -   Fix for invalid filenames causing the extension to break.
