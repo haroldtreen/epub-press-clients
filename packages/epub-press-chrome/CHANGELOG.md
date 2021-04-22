@@ -1,5 +1,9 @@
 # Changelog
 
+### 0.12.1
+
+-   Unminified to simplify extension store review process.
+
 ### 0.12.0
 
 -   Removes unused permissions.

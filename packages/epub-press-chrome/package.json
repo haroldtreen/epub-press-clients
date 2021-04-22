@@ -5,6 +5,7 @@
     "scripts": {
         "test": "export ENV=test && open http://localhost:5001/tests && webpack-dev-server",
         "build": "export ENV=development && webpack",
+        "webpackVer": "webpack --version",
         "build-prod": "export NODE_ENV=production && webpack",
         "start": "export ENV=development && webpack --watch --color --progress"
     },

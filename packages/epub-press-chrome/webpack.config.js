@@ -21,6 +21,9 @@ if (process.env.ENV !== 'test') {
             filename: '[name].js',
             path: path.join(__dirname, 'app', 'build'),
         },
+        optimization: {
+            minimize: false,
+        },
         module: {
             rules: MODULE_RULES,
         },

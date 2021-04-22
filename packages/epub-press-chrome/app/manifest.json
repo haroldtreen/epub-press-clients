@@ -1,7 +1,7 @@
 {
     "name": "__MSG_appName__",
     "short_name": "__MSG_appShortName__",
-    "version": "0.12.0",
+    "version": "0.12.1",
     "author": "Harold Treen",
     "homepage_url": "https://epub.press/",
     "manifest_version": 2,
