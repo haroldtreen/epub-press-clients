@@ -32,6 +32,7 @@
         "@babel/runtime": "^7.10.2",
         "babel-loader": "^8.1.0",
         "chai": "^4.2.0",
+        "cross-env": "^7.0.3",
         "fetch-mock": "^5.1.1",
         "mocha": "^6.2.3",
         "mocha-loader": "^2.0.1",
