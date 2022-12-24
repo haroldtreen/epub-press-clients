@@ -43,6 +43,7 @@ $('#download').click(() => {
                 action: 'download',
                 book: {
                     title: $('#book-title').val() || $('#book-title').attr('placeholder'),
+                    author: $('#book-author').val() || 'EpubPress',
                     description: $('#book-description').val() || undefined,
                     sections,
                 },
