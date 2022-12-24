@@ -3,11 +3,11 @@
     "main": "index.js",
     "private": true,
     "scripts": {
-        "test": "export ENV=test && open http://localhost:5001/tests && webpack-dev-server",
-        "build": "export ENV=development && webpack",
+        "test": "cross-env ENV=test && open http://localhost:5001/tests && webpack-dev-server",
+        "build": "cross-env ENV=development && webpack",
         "webpackVer": "webpack --version",
-        "build-prod": "export NODE_ENV=production && webpack",
-        "start": "export ENV=development && webpack --watch --color --progress"
+        "build-prod": "cross-env NODE_ENV=production && webpack",
+        "start": "cross-env ENV=development && webpack --watch --color --progress"
     },
     "repository": {
         "type": "git",
@@ -32,6 +32,7 @@
         "@babel/runtime": "^7.10.2",
         "babel-loader": "^8.1.0",
         "chai": "^4.2.0",
+        "cross-env": "^7.0.3",
         "fetch-mock": "^5.1.1",
         "mocha": "^6.2.3",
         "mocha-loader": "^2.0.1",
