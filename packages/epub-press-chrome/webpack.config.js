@@ -11,14 +11,11 @@ const MODULE_RULES = [
 
 let WebpackConfig;
 if (process.env.ENV !== 'test') {
-    WebpackConfig = {
+    const popupConfig = {
         mode: 'production',
-        entry: {
-            popup: ['./scripts/popup.js'],
-            background: ['./scripts/background.js'],
-        },
+        entry: './scripts/popup.js',
         output: {
-            filename: '[name].js',
+            filename: 'popup.js',
             path: path.join(__dirname, 'app', 'build'),
         },
         optimization: {
@@ -48,6 +45,35 @@ if (process.env.ENV !== 'test') {
             fs: 'empty',
         },
     };
+
+    const backgroundConfig = {
+        mode: 'production',
+        entry: './scripts/background.js',
+        output: {
+            filename: 'background.js',
+            path: path.join(__dirname, 'app', 'build'),
+        },
+        optimization: {
+            minimize: false,
+        },
+        module: {
+            rules: MODULE_RULES,
+        },
+        plugins: [
+            new webpack.DefinePlugin({
+                'process.env.ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
+            }),
+        ],
+        resolve: {
+            extensions: ['.js'],
+        },
+        target: 'webworker',
+        node: {
+            fs: 'empty',
+        },
+    };
+
+    WebpackConfig = [popupConfig, backgroundConfig];
 } else {
     WebpackConfig = {
         mode: 'development',

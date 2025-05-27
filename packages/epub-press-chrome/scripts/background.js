@@ -1,56 +1,265 @@
-import EpubPress from 'epub-press-js';
-import Browser from './browser';
+// Service worker compatible version - implements EpubPress functionality without DOM dependencies
 
-const manifest = Browser.getManifest();
-const DOWNLOAD_TIMEOUT = 300000; // 30 second timeout for downloads
+const manifest = chrome.runtime.getManifest();
+const DOWNLOAD_TIMEOUT = 300000; // 5 minutes timeout for downloads
+const BASE_API = `${manifest.homepage_url}api/v1`;
+const POLL_RATE = 3000; // 3 seconds between status checks
+const CHECK_STATUS_LIMIT = 100; // Maximum status checks
 
-EpubPress.BASE_API = `${manifest.homepage_url}api/v1`;
+// Error codes from EpubPress library
+const ERROR_CODES = {
+    0: 'Server is down. Please try again later.',
+    400: 'There was a problem with the request. Is EpubPress up to date?',
+    404: 'Resource not found.',
+    500: 'Unexpected server error.',
+    503: 'Server took too long to respond.',
+    timeout: 'Request took too long to complete.',
+    error: undefined,
+    // Download Errors
+    SERVER_FAILED: 'Server error while downloading.',
+    SERVER_BAD_CONTENT: 'Book could not be found',
+};
+
+function isPopupMsg(sender) {
+    return sender.url.indexOf('popup') > -1;
+}
 
 function timeoutDownload() {
-    Browser.setLocalStorage({ downloadState: false, publishStatus: '{}' });
-    Browser.sendMessage({
+    chrome.storage.local.set({ downloadState: false, publishStatus: '{}' });
+    chrome.runtime.sendMessage({
         action: 'download',
         status: 'failed',
         error: 'Download timed out',
     });
 }
 
-Browser.onForegroundMessage((request) => {
-    if (request.action === 'download') {
-        Browser.setLocalStorage({ downloadState: true, publishStatus: '{}' });
+function checkResponseStatus(response) {
+    const defaultErrorMsg = ERROR_CODES[response.status];
+    if (response.status >= 200 && response.status < 300) {
+        return response;
+    } else if (response.body) {
+        return response.json().then((body) => {
+            const hasErrorMsg = body.errors && body.errors.length > 0;
+            const errorMsg = hasErrorMsg ? body.errors[0].detail : defaultErrorMsg;
+            return Promise.reject(new Error(errorMsg));
+        });
+    }
+    const error = new Error(defaultErrorMsg);
+    return Promise.reject(error);
+}
+
+function normalizeError(err) {
+    const knownError = ERROR_CODES[err.message] || ERROR_CODES[err.name];
+    if (knownError) {
+        return new Error(knownError);
+    }
+    return err;
+}
+
+function buildQuery(params) {
+    const query = ['email', 'filetype'].map((paramName) =>
+        params[paramName] ? `${paramName}=${encodeURIComponent(params[paramName])}` : ''
+    ).filter(paramStr => paramStr).join('&');
+    return query ? `?${query}` : '';
+}
+
+function getPublishParams(bookData) {
+    const body = {
+        title: bookData.title,
+        description: bookData.description,
+    };
+
+    if (bookData.sections) {
+        body.sections = bookData.sections;
+    } else {
+        body.urls = bookData.urls.slice();
+    }
+
+    return {
+        method: 'POST',
+        headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+    };
+}
+
+// Service worker compatible EpubPress client
+class ServiceWorkerEpubPress {
+    constructor(bookData) {
+        this.bookData = Object.assign({}, bookData);
+        this.isPublishing = false;
+    }
+
+    getId() {
+        return this.bookData.id;
+    }
+
+    getTitle() {
+        return this.bookData.title || 'Untitled';
+    }
+
+    getFiletype() {
+        return this.bookData.filetype || 'epub';
+    }
+
+    getPublishUrl() {
+        return `${BASE_API}/books`;
+    }
+
+    getStatusUrl() {
+        return `${this.getPublishUrl()}/${this.getId()}/status`;
+    }
+
+    getDownloadUrl(filetype = this.getFiletype()) {
+        const query = buildQuery({ filetype });
+        return `${this.getPublishUrl()}/${this.getId()}/download${query}`;
+    }
+
+    getEmailUrl(email, filetype = this.getFiletype()) {
+        const query = buildQuery({ email, filetype });
+        return `${this.getPublishUrl()}/${this.getId()}/email${query}`;
+    }
+
+    checkStatus() {
+        return new Promise((resolve, reject) => {
+            fetch(this.getStatusUrl())
+            .then(checkResponseStatus)
+            .then(response => response.json())
+            .then((body) => {
+                resolve(body);
+            })
+            .catch((e) => {
+                const error = normalizeError(e);
+                reject(error);
+            });
+        });
+    }
+
+    trackPublishStatus() {
+        return new Promise((resolve, reject) => {
+            const trackingCallback = (checkStatusCounter) => {
+                this.checkStatus().then((status) => {
+                    // Emit status update via Chrome messaging
+                    chrome.storage.local.set({ publishStatus: JSON.stringify(status) });
+                    chrome.runtime.sendMessage({
+                        action: 'publish',
+                        progress: status.progress,
+                        message: status.message,
+                    });
+
+                    if (Number(status.progress) >= 100) {
+                        resolve(this);
+                    } else if (checkStatusCounter >= CHECK_STATUS_LIMIT) {
+                        reject(new Error(ERROR_CODES[503]));
+                    } else {
+                        setTimeout(trackingCallback, POLL_RATE, checkStatusCounter + 1);
+                    }
+                }).catch(reject);
+            };
+            trackingCallback(1);
+        });
+    }
+
+    publish() {
+        if (this.isPublishing) {
+            return Promise.reject(new Error('Publishing in progress'));
+        } else if (this.getId()) {
+            return Promise.resolve(this.getId());
+        }
+        
+        this.isPublishing = true;
+        return new Promise((resolve, reject) => {
+            fetch(this.getPublishUrl(), getPublishParams(this.bookData))
+            .then(checkResponseStatus)
+            .then(response => response.json())
+            .then(({ id }) => {
+                this.bookData.id = id;
+                return this.trackPublishStatus().then(() => {
+                    resolve(id);
+                });
+            })
+            .catch((e) => {
+                this.isPublishing = false;
+                const error = normalizeError(e);
+                reject(error);
+            });
+        });
+    }
+
+    email(email, filetype) {
+        return new Promise((resolve, reject) => {
+            const emailData = { email, filetype };
+            fetch(this.getEmailUrl(email, filetype), {
+                method: 'POST',
+                headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
+                body: JSON.stringify(emailData),
+            })
+            .then(checkResponseStatus)
+            .then(() => resolve())
+            .catch((e) => {
+                const error = normalizeError(e);
+                reject(error);
+            });
+        });
+    }
+
+    download(params) {
+        return new Promise((resolve, reject) => {
+            chrome.downloads.download(params, (downloadId) => {
+                const downloadListener = (downloadInfo) => {
+                    if (downloadInfo && downloadInfo.id === downloadId) {
+                        if (downloadInfo.error) {
+                            chrome.downloads.onChanged.removeListener(downloadListener);
+                            reject(downloadInfo.error);
+                        } else if (
+                            downloadInfo.endTime
+                            || downloadInfo.state.current === 'complete'
+                        ) {
+                            chrome.downloads.onChanged.removeListener(downloadListener);
+                            resolve();
+                        }
+                    } else {
+                        reject(chrome.runtime.lastError);
+                    }
+                };
+                chrome.downloads.onChanged.addListener(downloadListener);
+            });
+        });
+    }
+}
+
+// Register message listener at the top level (required for service workers)
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    if (isPopupMsg(sender) && request.action === 'download') {
+        chrome.storage.local.set({ downloadState: true, publishStatus: '{}' });
         const timeout = setTimeout(timeoutDownload, DOWNLOAD_TIMEOUT);
 
-        Browser.getLocalStorage(['email', 'filetype']).then((state) => {
-            const book = new EpubPress(Object.assign({}, request.book));
-            book.on('statusUpdate', (status) => {
-                Browser.setLocalStorage({ publishStatus: JSON.stringify(status) });
-                Browser.sendMessage({
-                    action: 'publish',
-                    progress: status.progress,
-                    message: status.message,
-                });
-            });
+        chrome.storage.local.get(['email', 'filetype']).then((state) => {
+            const book = new ServiceWorkerEpubPress(Object.assign({}, request.book));
+            
             book.publish()
                 .then(() => {
                     const email = state.email && state.email.trim();
                     const { filetype } = state;
                     return email
                         ? book.email(email, filetype)
-                        : Browser.download({
-                            filename: `${book.getTitle()}.${filetype || book.getFiletype()}`,
+                        : book.download({
+                            filename: `${book.getTitle()}.${filetype || book.getFiletype()}`.replace(/[<>:"/\\|?*]/g, '_'),
                             url: book.getDownloadUrl(filetype),
                         });
                 })
                 .then(() => {
                     clearTimeout(timeout);
-                    Browser.setLocalStorage({ downloadState: false, publishStatus: '{}' });
-                    Browser.sendMessage({ action: 'download', status: 'complete' });
+                    chrome.storage.local.set({ downloadState: false, publishStatus: '{}' });
+                    chrome.runtime.sendMessage({ action: 'download', status: 'complete' });
                 })
                 .catch((e) => {
                     clearTimeout(timeout);
-                    Browser.setLocalStorage({ downloadState: false, publishStatus: '{}' });
-                    Browser.sendMessage({ action: 'download', status: 'failed', error: e.message });
+                    chrome.storage.local.set({ downloadState: false, publishStatus: '{}' });
+                    chrome.runtime.sendMessage({ action: 'download', status: 'failed', error: e.message });
                 });
         });
+
+        // Return true to indicate we will send a response asynchronously
+        return true;
     }
 });
