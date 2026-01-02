@@ -3,8 +3,89 @@ import $ from 'jquery';
 
 import Browser from './browser';
 import UI from './ui';
+import { buildTextExport } from './text';
 
 const manifest = Browser.getManifest();
+const TEXT_FILENAME = 'epub.txt';
+
+function downloadTextExport(book, sections) {
+    const textExport = buildTextExport(book, sections);
+    if (!textExport) {
+        return Promise.reject(new Error('No text content could be extracted.'));
+    }
+
+    const blob = new Blob([textExport], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+
+    return Browser.download({
+        url,
+        filename: TEXT_FILENAME,
+        conflictAction: 'overwrite',
+        saveAs: false,
+    }).then(() => {
+        URL.revokeObjectURL(url);
+    }).catch((error) => {
+        URL.revokeObjectURL(url);
+        throw error;
+    });
+}
+
+function getSelectedItems() {
+    const selectedItems = [];
+    $('input.article-checkbox').each((index, checkbox) => {
+        if ($(checkbox).prop('checked')) {
+            selectedItems.push({
+                url: $(checkbox).prop('value'),
+                id: Number($(checkbox).prop('name')),
+                title: $(checkbox).siblings('span').text(),
+            });
+        }
+    });
+    return selectedItems;
+}
+
+function buildBook(sections) {
+    return {
+        title: $('#book-title').val() || $('#book-title').attr('placeholder'),
+        description: $('#book-description').val() || undefined,
+        sections,
+    };
+}
+
+function handleDownload(mode) {
+    const selectedItems = getSelectedItems();
+
+    if (selectedItems.length <= 0) {
+        $('#alert-message').text('No articles selected!');
+        return;
+    }
+
+    Browser.getTabsHtml(selectedItems).then((sections) => {
+        UI.showSection('#downloadSpinner');
+        const book = buildBook(sections);
+
+        if (mode === 'text') {
+            UI.updateStatus(10, 'Generating text...');
+            downloadTextExport(book, sections)
+                .then(() => UI.updateStatus(100, 'Done!'))
+                .then(() => {
+                    UI.showSection('#downloadSuccess');
+                })
+                .catch((error) => {
+                    UI.showSection('#downloadFailed');
+                    UI.setErrorMessage(error && error.message ? error.message : String(error));
+                });
+        } else {
+            Browser.sendMessage({
+                action: 'download',
+                filetype: 'epub',
+                book,
+            });
+        }
+    }).catch((error) => {
+        UI.setErrorMessage(`Could not find tab content: ${error}`);
+    });
+}
 
 /*
 Download Form
@@ -22,36 +103,8 @@ $('#select-none').click(() => {
     });
 });
 
-$('#download').click(() => {
-    const selectedItems = [];
-    $('input.article-checkbox').each((index, checkbox) => {
-        if ($(checkbox).prop('checked')) {
-            selectedItems.push({
-                url: $(checkbox).prop('value'),
-                id: Number($(checkbox).prop('name')),
-            });
-        }
-    });
-
-
-    if (selectedItems.length <= 0) {
-        $('#alert-message').text('No articles selected!');
-    } else {
-        Browser.getTabsHtml(selectedItems).then((sections) => {
-            UI.showSection('#downloadSpinner');
-            Browser.sendMessage({
-                action: 'download',
-                book: {
-                    title: $('#book-title').val() || $('#book-title').attr('placeholder'),
-                    description: $('#book-description').val() || undefined,
-                    sections,
-                },
-            });
-        }).catch((error) => {
-            UI.setErrorMessage(`Could not find tab content: ${error}`);
-        });
-    }
-});
+$('#download-epub').click(() => handleDownload('epub'));
+$('#download-text').click(() => handleDownload('text'));
 
 
 /*
@@ -59,9 +112,8 @@ Settings Management
 */
 
 function setExistingSettings(cb) {
-    Browser.getLocalStorage(['email', 'filetype']).then((state) => {
+    Browser.getLocalStorage(['email']).then((state) => {
         $('#settings-email-text').val(state.email);
-        $('#settings-filetype-select').val(state.filetype);
         cb();
     }).catch((error) => {
         UI.setErrorMessage(`Could not load settings: ${error}`);
@@ -77,7 +129,6 @@ $('#settings-btn').click(() => {
 $('#settings-save-btn').click(() => {
     Browser.setLocalStorage({
         email: $('#settings-email-text').val(),
-        filetype: $('#settings-filetype-select').val(),
     });
     UI.showSection('#downloadForm');
 });

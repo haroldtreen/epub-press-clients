@@ -342,9 +342,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       const book = new ServiceWorkerEpubPress(Object.assign({}, request.book));
       book.publish().then(() => {
         const email = state.email && state.email.trim();
-        const {
-          filetype
-        } = state;
+        const filetype = request.filetype || state.filetype || book.getFiletype();
         return email ? book.email(email, filetype) : book.download({
           filename: `${book.getTitle()}.${filetype || book.getFiletype()}`.replace(/[<>:"/\\|?*]/g, '_'),
           url: book.getDownloadUrl(filetype)

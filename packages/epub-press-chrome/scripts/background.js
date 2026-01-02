@@ -239,7 +239,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
             book.publish()
                 .then(() => {
                     const email = state.email && state.email.trim();
-                    const { filetype } = state;
+                    const filetype = request.filetype || state.filetype || book.getFiletype();
                     return email
                         ? book.email(email, filetype)
                         : book.download({

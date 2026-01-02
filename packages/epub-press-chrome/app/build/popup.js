@@ -81,7 +81,7 @@
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 8);
+/******/ 	return __webpack_require__(__webpack_require__.s = 16);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -16704,7 +16704,7 @@ module.exports = ret;
 
 },{"./es5":13,"async_hooks":undefined}]},{},[4])(4)
 });                    ;if (typeof window !== 'undefined' && window !== null) {                               window.P = window.Promise;                                                     } else if (typeof self !== 'undefined' && self !== null) {                             self.P = self.Promise;                                                         }
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(5), __webpack_require__(4), __webpack_require__(12).setImmediate))
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(5), __webpack_require__(4), __webpack_require__(11).setImmediate))
 
 /***/ }),
 /* 4 */
@@ -16926,7 +16926,7 @@ process.umask = function() { return 0; };
 /* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
-!function(t,e){ true?module.exports=e(__webpack_require__(9),__webpack_require__(11)):undefined}(this,function(t,e){return function(t){function e(r){if(n[r])return n[r].exports;var i=n[r]={exports:{},id:r,loaded:!1};return t[r].call(i.exports,i,i.exports,e),i.loaded=!0,i.exports}var n={};return e.m=t,e.c=n,e.p="",e(0)}([function(t,e,n){n(1),t.exports=n(2)},function(e,n){e.exports=t},function(t,e,n){"use strict";function r(t){return t&&t.__esModule?t:{default:t}}function i(){return"undefined"!=typeof window}function o(){if(F.DEBUG){var t;(t=console).log.apply(t,arguments)}}function s(t){if(!t.getId())throw new Error("Book has no id. Have you published?")}function a(t,e){if(i()){var r=void 0;r="function"==typeof File?new File([e],t):new Blob([e],{type:"application/octet-stream"}),(0,k.saveAs)(r,t)}else{var o=n(55);o.writeFileSync(t,e)}}function c(t){var e={title:t.title,description:t.description};return t.sections?e.sections=t.sections:e.urls=t.urls.slice(),{method:"POST",headers:{Accept:"application/json","Content-Type":"application/json"},body:(0,w.default)(e)}}function u(t){return new C.default(function(e,n){var r=function r(i){t.checkStatus().then(function(o){t.emit("statusUpdate",o),Number(o.progress)>=100?e(t):i>=F.CHECK_STATUS_LIMIT?n(new Error(F.ERROR_CODES[503])):setTimeout(r,F.POLL_RATE,i+1)}).catch(n)};r(1)})}function l(t){var e=F.ERROR_CODES[t.status];if(t.status>=200&&t.status<300)return t;if(t.body)return t.json().then(function(t){var n=t.errors&&t.errors.length>0,r=n?t.errors[0].detail:e;return C.default.reject(new Error(r))});var n=new Error(e);return C.default.reject(n)}function f(t){var e=F.ERROR_CODES[t.message]||F.ERROR_CODES[t.name];return e?new Error(e):t}function p(t,e){var n=Number(e.minCompatible.replace(".","")),r=Number(t.replace(".",""));return n>r?e.message:null}function h(t){var e=["email","filetype"].map(function(e){return t[e]?e+"="+encodeURIComponent(t[e]):""}).filter(function(t){return t}).join("&");return e?"?"+e:""}var d=n(3),_=r(d),v=n(40),y=r(v),m=n(41),g=r(m),b=n(45),w=r(b),E=n(47),C=r(E),k=n(51),j=n(54),x=r(j),F=function(){function t(e){(0,y.default)(this,t);var n=Date().slice(0,Date().match(/\d{4}/).index+4),r={title:"EpubPress - "+n,description:void 0,sections:void 0,urls:void 0,filetype:"epub"};this.bookData=(0,_.default)({},r,e),this.events={}}return(0,g.default)(t,null,[{key:"checkForUpdates",value:function(){var e=arguments.length<=0||void 0===arguments[0]?"epub-press-js":arguments[0],n=arguments.length<=1||void 0===arguments[1]?t.getVersion():arguments[1];return new C.default(function(r,i){fetch(t.getVersionUrl()).then(l).then(function(t){return t.json()}).then(function(t){var o=t.clients[e];o?r(p(n,o)):i(new Error("Version data for "+e+" not found."))}).catch(function(t){var e=f(t);o("Version check failed",e),i(e)})})}},{key:"getPublishUrl",value:function(){return this.prototype.getPublishUrl()}},{key:"getVersionUrl",value:function(){return t.BASE_API+"/version"}},{key:"getVersion",value:function(){return t.VERSION}}]),(0,g.default)(t,[{key:"on",value:function(t,e){return this.events[t]||(this.events[t]=[]),this.events[t].push(e),e}},{key:"emit",value:function(t){for(var e=arguments.length,n=Array(e>1?e-1:0),r=1;r<e;r++)n[r-1]=arguments[r];this.events[t]&&this.events[t].forEach(function(t){t.apply(void 0,n)})}},{key:"removeListener",value:function(t,e){if(this.events[t]){var n=this.events[t].indexOf(e);n>=0&&this.events[t].splice(n,1)}}},{key:"getUrls",value:function(){var t=[],e=this.bookData,n=e.urls,r=e.sections;return n?t=n.slice():r&&(t=r.map(function(t){return t.url})),t}},{key:"getFiletype",value:function(t){var e=t||this.bookData.filetype;return e?["mobi","epub"].find(function(t){return e.toLowerCase()===t})||"epub":"epub"}},{key:"getEmail",value:function(){return this.bookData.email}},{key:"getTitle",value:function(){return this.bookData.title}},{key:"getDescription",value:function(){return this.bookData.description}},{key:"getId",value:function(){return this.bookData.id}},{key:"getStatusUrl",value:function(){return t.getPublishUrl()+"/"+this.getId()+"/status"}},{key:"getPublishUrl",value:function(){return t.BASE_API+"/books"}},{key:"getDownloadUrl",value:function(){var t=arguments.length<=0||void 0===arguments[0]?this.getFiletype():arguments[0],e=h({filetype:t});return this.getPublishUrl()+"/"+this.getId()+"/download"+e}},{key:"getEmailUrl",value:function(){var t=arguments.length<=0||void 0===arguments[0]?this.getEmail():arguments[0],e=arguments.length<=1||void 0===arguments[1]?this.getFiletype():arguments[1],n=h({email:t,filetype:e});return this.getPublishUrl()+"/"+this.getId()+"/email"+n}},{key:"checkStatus",value:function(){var t=this;return new C.default(function(e,n){fetch(t.getStatusUrl()).then(l).then(function(t){return t.json()}).then(function(t){e(t)}).catch(function(t){var e=f(t);n(e)})})}},{key:"publish",value:function(){var t=this;return this.isPublishing?C.default.reject(new Error("Publishing in progress")):this.getId()?C.default.resolve(this.getId()):(this.isPublishing=!0,new C.default(function(e,n){fetch(t.getPublishUrl(),c(t.bookData)).then(l).then(function(t){return t.json()}).then(function(n){var r=n.id;return t.bookData.id=r,u(t).then(function(){e(r)})}).catch(function(e){t.isPublishing=!1;var r=f(e);o("EbupPress: Publish failed",r),n(r)})}))}},{key:"download",value:function(t){var e=this;return new C.default(function(n,r){s(e),fetch(e.getDownloadUrl(t)).then(l).then(function(t){return t.blob?t.blob():t.buffer()}).then(function(r){var i=e.getTitle()+"."+(t||e.getFiletype());a(i,r),n()}).catch(function(t){var e=f(t);o("EpubPress: Download failed",e),r(e)})})}},{key:"email",value:function(t,e){var n=this;return new C.default(function(r,i){return t?(s(n),fetch(n.getEmailUrl(t,e)).then(l).then(function(){o("EpubPress: Book delivered."),r()}).catch(function(t){var e=f(t);o("EpubPress: Email delivery failed."),i(e)})):i(new Error("EpubPress: No email provided."))})}}]),t}();F.BASE_URL=x.default.baseUrl,F.BASE_API=F.BASE_URL+"/api/v1",F.VERSION=x.default.version,F.POLL_RATE=3e3,F.CHECK_STATUS_LIMIT=40,F.ERROR_CODES={0:"Server is down. Please try again later.","Failed to fetch":"Server is down. Please try again later.",FetchError:"Server is down. Please try again later.",400:"There was a problem with the request. Is EpubPress up to date?",404:"Resource not found.",422:"Request contained invalid data.",500:"Unexpected server error.",503:"Server took too long to respond.",timeout:"Request took too long to complete.",error:void 0,SERVER_FAILED:"Server error while downloading.",SERVER_BAD_CONTENT:"Book could not be found"},t.exports=F},function(t,e,n){t.exports={default:n(4),__esModule:!0}},function(t,e,n){n(5),t.exports=n(8).Object.assign},function(t,e,n){var r=n(6);r(r.S+r.F,"Object",{assign:n(21)})},function(t,e,n){var r=n(7),i=n(8),o=n(9),s=n(11),a="prototype",c=function(t,e,n){var u,l,f,p=t&c.F,h=t&c.G,d=t&c.S,_=t&c.P,v=t&c.B,y=t&c.W,m=h?i:i[e]||(i[e]={}),g=m[a],b=h?r:d?r[e]:(r[e]||{})[a];h&&(n=e);for(u in n)l=!p&&b&&void 0!==b[u],l&&u in m||(f=l?b[u]:n[u],m[u]=h&&"function"!=typeof b[u]?n[u]:v&&l?o(f,r):y&&b[u]==f?function(t){var e=function(e,n,r){if(this instanceof t){switch(arguments.length){case 0:return new t;case 1:return new t(e);case 2:return new t(e,n)}return new t(e,n,r)}return t.apply(this,arguments)};return e[a]=t[a],e}(f):_&&"function"==typeof f?o(Function.call,f):f,_&&((m.virtual||(m.virtual={}))[u]=f,t&c.R&&g&&!g[u]&&s(g,u,f)))};c.F=1,c.G=2,c.S=4,c.P=8,c.B=16,c.W=32,c.U=64,c.R=128,t.exports=c},function(t,e){var n=t.exports="undefined"!=typeof window&&window.Math==Math?window:"undefined"!=typeof self&&self.Math==Math?self:Function("return this")();"number"==typeof __g&&(__g=n)},function(t,e){var n=t.exports={version:"2.4.0"};"number"==typeof __e&&(__e=n)},function(t,e,n){var r=n(10);t.exports=function(t,e,n){if(r(t),void 0===e)return t;switch(n){case 1:return function(n){return t.call(e,n)};case 2:return function(n,r){return t.call(e,n,r)};case 3:return function(n,r,i){return t.call(e,n,r,i)}}return function(){return t.apply(e,arguments)}}},function(t,e){t.exports=function(t){if("function"!=typeof t)throw TypeError(t+" is not a function!");return t}},function(t,e,n){var r=n(12),i=n(20);t.exports=n(16)?function(t,e,n){return r.f(t,e,i(1,n))}:function(t,e,n){return t[e]=n,t}},function(t,e,n){var r=n(13),i=n(15),o=n(19),s=Object.defineProperty;e.f=n(16)?Object.defineProperty:function(t,e,n){if(r(t),e=o(e,!0),r(n),i)try{return s(t,e,n)}catch(t){}if("get"in n||"set"in n)throw TypeError("Accessors not supported!");return"value"in n&&(t[e]=n.value),t}},function(t,e,n){var r=n(14);t.exports=function(t){if(!r(t))throw TypeError(t+" is not an object!");return t}},function(t,e){t.exports=function(t){return"object"==typeof t?null!==t:"function"==typeof t}},function(t,e,n){t.exports=!n(16)&&!n(17)(function(){return 7!=Object.defineProperty(n(18)("div"),"a",{get:function(){return 7}}).a})},function(t,e,n){t.exports=!n(17)(function(){return 7!=Object.defineProperty({},"a",{get:function(){return 7}}).a})},function(t,e){t.exports=function(t){try{return!!t()}catch(t){return!0}}},function(t,e,n){var r=n(14),i=n(7).document,o=r(i)&&r(i.createElement);t.exports=function(t){return o?i.createElement(t):{}}},function(t,e,n){var r=n(14);t.exports=function(t,e){if(!r(t))return t;var n,i;if(e&&"function"==typeof(n=t.toString)&&!r(i=n.call(t)))return i;if("function"==typeof(n=t.valueOf)&&!r(i=n.call(t)))return i;if(!e&&"function"==typeof(n=t.toString)&&!r(i=n.call(t)))return i;throw TypeError("Can't convert object to primitive value")}},function(t,e){t.exports=function(t,e){return{enumerable:!(1&t),configurable:!(2&t),writable:!(4&t),value:e}}},function(t,e,n){"use strict";var r=n(22),i=n(37),o=n(38),s=n(39),a=n(26),c=Object.assign;t.exports=!c||n(17)(function(){var t={},e={},n=Symbol(),r="abcdefghijklmnopqrst";return t[n]=7,r.split("").forEach(function(t){e[t]=t}),7!=c({},t)[n]||Object.keys(c({},e)).join("")!=r})?function(t,e){for(var n=s(t),c=arguments.length,u=1,l=i.f,f=o.f;c>u;)for(var p,h=a(arguments[u++]),d=l?r(h).concat(l(h)):r(h),_=d.length,v=0;_>v;)f.call(h,p=d[v++])&&(n[p]=h[p]);return n}:c},function(t,e,n){var r=n(23),i=n(36);t.exports=Object.keys||function(t){return r(t,i)}},function(t,e,n){var r=n(24),i=n(25),o=n(29)(!1),s=n(33)("IE_PROTO");t.exports=function(t,e){var n,a=i(t),c=0,u=[];for(n in a)n!=s&&r(a,n)&&u.push(n);for(;e.length>c;)r(a,n=e[c++])&&(~o(u,n)||u.push(n));return u}},function(t,e){var n={}.hasOwnProperty;t.exports=function(t,e){return n.call(t,e)}},function(t,e,n){var r=n(26),i=n(28);t.exports=function(t){return r(i(t))}},function(t,e,n){var r=n(27);t.exports=Object("z").propertyIsEnumerable(0)?Object:function(t){return"String"==r(t)?t.split(""):Object(t)}},function(t,e){var n={}.toString;t.exports=function(t){return n.call(t).slice(8,-1)}},function(t,e){t.exports=function(t){if(void 0==t)throw TypeError("Can't call method on  "+t);return t}},function(t,e,n){var r=n(25),i=n(30),o=n(32);t.exports=function(t){return function(e,n,s){var a,c=r(e),u=i(c.length),l=o(s,u);if(t&&n!=n){for(;u>l;)if(a=c[l++],a!=a)return!0}else for(;u>l;l++)if((t||l in c)&&c[l]===n)return t||l||0;return!t&&-1}}},function(t,e,n){var r=n(31),i=Math.min;t.exports=function(t){return t>0?i(r(t),9007199254740991):0}},function(t,e){var n=Math.ceil,r=Math.floor;t.exports=function(t){return isNaN(t=+t)?0:(t>0?r:n)(t)}},function(t,e,n){var r=n(31),i=Math.max,o=Math.min;t.exports=function(t,e){return t=r(t),t<0?i(t+e,0):o(t,e)}},function(t,e,n){var r=n(34)("keys"),i=n(35);t.exports=function(t){return r[t]||(r[t]=i(t))}},function(t,e,n){var r=n(7),i="__core-js_shared__",o=r[i]||(r[i]={});t.exports=function(t){return o[t]||(o[t]={})}},function(t,e){var n=0,r=Math.random();t.exports=function(t){return"Symbol(".concat(void 0===t?"":t,")_",(++n+r).toString(36))}},function(t,e){t.exports="constructor,hasOwnProperty,isPrototypeOf,propertyIsEnumerable,toLocaleString,toString,valueOf".split(",")},function(t,e){e.f=Object.getOwnPropertySymbols},function(t,e){e.f={}.propertyIsEnumerable},function(t,e,n){var r=n(28);t.exports=function(t){return Object(r(t))}},function(t,e){"use strict";e.__esModule=!0,e.default=function(t,e){if(!(t instanceof e))throw new TypeError("Cannot call a class as a function")}},function(t,e,n){"use strict";function r(t){return t&&t.__esModule?t:{default:t}}e.__esModule=!0;var i=n(42),o=r(i);e.default=function(){function t(t,e){for(var n=0;n<e.length;n++){var r=e[n];r.enumerable=r.enumerable||!1,r.configurable=!0,"value"in r&&(r.writable=!0),(0,o.default)(t,r.key,r)}}return function(e,n,r){return n&&t(e.prototype,n),r&&t(e,r),e}}()},function(t,e,n){t.exports={default:n(43),__esModule:!0}},function(t,e,n){n(44);var r=n(8).Object;t.exports=function(t,e,n){return r.defineProperty(t,e,n)}},function(t,e,n){var r=n(6);r(r.S+r.F*!n(16),"Object",{defineProperty:n(12).f})},function(t,e,n){t.exports={default:n(46),__esModule:!0}},function(t,e,n){var r=n(8),i=r.JSON||(r.JSON={stringify:JSON.stringify});t.exports=function(t){return i.stringify.apply(i,arguments)}},function(t,e,n){(function(e,n,r){/* @preserve
+!function(t,e){ true?module.exports=e(__webpack_require__(8),__webpack_require__(10)):undefined}(this,function(t,e){return function(t){function e(r){if(n[r])return n[r].exports;var i=n[r]={exports:{},id:r,loaded:!1};return t[r].call(i.exports,i,i.exports,e),i.loaded=!0,i.exports}var n={};return e.m=t,e.c=n,e.p="",e(0)}([function(t,e,n){n(1),t.exports=n(2)},function(e,n){e.exports=t},function(t,e,n){"use strict";function r(t){return t&&t.__esModule?t:{default:t}}function i(){return"undefined"!=typeof window}function o(){if(F.DEBUG){var t;(t=console).log.apply(t,arguments)}}function s(t){if(!t.getId())throw new Error("Book has no id. Have you published?")}function a(t,e){if(i()){var r=void 0;r="function"==typeof File?new File([e],t):new Blob([e],{type:"application/octet-stream"}),(0,k.saveAs)(r,t)}else{var o=n(55);o.writeFileSync(t,e)}}function c(t){var e={title:t.title,description:t.description};return t.sections?e.sections=t.sections:e.urls=t.urls.slice(),{method:"POST",headers:{Accept:"application/json","Content-Type":"application/json"},body:(0,w.default)(e)}}function u(t){return new C.default(function(e,n){var r=function r(i){t.checkStatus().then(function(o){t.emit("statusUpdate",o),Number(o.progress)>=100?e(t):i>=F.CHECK_STATUS_LIMIT?n(new Error(F.ERROR_CODES[503])):setTimeout(r,F.POLL_RATE,i+1)}).catch(n)};r(1)})}function l(t){var e=F.ERROR_CODES[t.status];if(t.status>=200&&t.status<300)return t;if(t.body)return t.json().then(function(t){var n=t.errors&&t.errors.length>0,r=n?t.errors[0].detail:e;return C.default.reject(new Error(r))});var n=new Error(e);return C.default.reject(n)}function f(t){var e=F.ERROR_CODES[t.message]||F.ERROR_CODES[t.name];return e?new Error(e):t}function p(t,e){var n=Number(e.minCompatible.replace(".","")),r=Number(t.replace(".",""));return n>r?e.message:null}function h(t){var e=["email","filetype"].map(function(e){return t[e]?e+"="+encodeURIComponent(t[e]):""}).filter(function(t){return t}).join("&");return e?"?"+e:""}var d=n(3),_=r(d),v=n(40),y=r(v),m=n(41),g=r(m),b=n(45),w=r(b),E=n(47),C=r(E),k=n(51),j=n(54),x=r(j),F=function(){function t(e){(0,y.default)(this,t);var n=Date().slice(0,Date().match(/\d{4}/).index+4),r={title:"EpubPress - "+n,description:void 0,sections:void 0,urls:void 0,filetype:"epub"};this.bookData=(0,_.default)({},r,e),this.events={}}return(0,g.default)(t,null,[{key:"checkForUpdates",value:function(){var e=arguments.length<=0||void 0===arguments[0]?"epub-press-js":arguments[0],n=arguments.length<=1||void 0===arguments[1]?t.getVersion():arguments[1];return new C.default(function(r,i){fetch(t.getVersionUrl()).then(l).then(function(t){return t.json()}).then(function(t){var o=t.clients[e];o?r(p(n,o)):i(new Error("Version data for "+e+" not found."))}).catch(function(t){var e=f(t);o("Version check failed",e),i(e)})})}},{key:"getPublishUrl",value:function(){return this.prototype.getPublishUrl()}},{key:"getVersionUrl",value:function(){return t.BASE_API+"/version"}},{key:"getVersion",value:function(){return t.VERSION}}]),(0,g.default)(t,[{key:"on",value:function(t,e){return this.events[t]||(this.events[t]=[]),this.events[t].push(e),e}},{key:"emit",value:function(t){for(var e=arguments.length,n=Array(e>1?e-1:0),r=1;r<e;r++)n[r-1]=arguments[r];this.events[t]&&this.events[t].forEach(function(t){t.apply(void 0,n)})}},{key:"removeListener",value:function(t,e){if(this.events[t]){var n=this.events[t].indexOf(e);n>=0&&this.events[t].splice(n,1)}}},{key:"getUrls",value:function(){var t=[],e=this.bookData,n=e.urls,r=e.sections;return n?t=n.slice():r&&(t=r.map(function(t){return t.url})),t}},{key:"getFiletype",value:function(t){var e=t||this.bookData.filetype;return e?["mobi","epub"].find(function(t){return e.toLowerCase()===t})||"epub":"epub"}},{key:"getEmail",value:function(){return this.bookData.email}},{key:"getTitle",value:function(){return this.bookData.title}},{key:"getDescription",value:function(){return this.bookData.description}},{key:"getId",value:function(){return this.bookData.id}},{key:"getStatusUrl",value:function(){return t.getPublishUrl()+"/"+this.getId()+"/status"}},{key:"getPublishUrl",value:function(){return t.BASE_API+"/books"}},{key:"getDownloadUrl",value:function(){var t=arguments.length<=0||void 0===arguments[0]?this.getFiletype():arguments[0],e=h({filetype:t});return this.getPublishUrl()+"/"+this.getId()+"/download"+e}},{key:"getEmailUrl",value:function(){var t=arguments.length<=0||void 0===arguments[0]?this.getEmail():arguments[0],e=arguments.length<=1||void 0===arguments[1]?this.getFiletype():arguments[1],n=h({email:t,filetype:e});return this.getPublishUrl()+"/"+this.getId()+"/email"+n}},{key:"checkStatus",value:function(){var t=this;return new C.default(function(e,n){fetch(t.getStatusUrl()).then(l).then(function(t){return t.json()}).then(function(t){e(t)}).catch(function(t){var e=f(t);n(e)})})}},{key:"publish",value:function(){var t=this;return this.isPublishing?C.default.reject(new Error("Publishing in progress")):this.getId()?C.default.resolve(this.getId()):(this.isPublishing=!0,new C.default(function(e,n){fetch(t.getPublishUrl(),c(t.bookData)).then(l).then(function(t){return t.json()}).then(function(n){var r=n.id;return t.bookData.id=r,u(t).then(function(){e(r)})}).catch(function(e){t.isPublishing=!1;var r=f(e);o("EbupPress: Publish failed",r),n(r)})}))}},{key:"download",value:function(t){var e=this;return new C.default(function(n,r){s(e),fetch(e.getDownloadUrl(t)).then(l).then(function(t){return t.blob?t.blob():t.buffer()}).then(function(r){var i=e.getTitle()+"."+(t||e.getFiletype());a(i,r),n()}).catch(function(t){var e=f(t);o("EpubPress: Download failed",e),r(e)})})}},{key:"email",value:function(t,e){var n=this;return new C.default(function(r,i){return t?(s(n),fetch(n.getEmailUrl(t,e)).then(l).then(function(){o("EpubPress: Book delivered."),r()}).catch(function(t){var e=f(t);o("EpubPress: Email delivery failed."),i(e)})):i(new Error("EpubPress: No email provided."))})}}]),t}();F.BASE_URL=x.default.baseUrl,F.BASE_API=F.BASE_URL+"/api/v1",F.VERSION=x.default.version,F.POLL_RATE=3e3,F.CHECK_STATUS_LIMIT=40,F.ERROR_CODES={0:"Server is down. Please try again later.","Failed to fetch":"Server is down. Please try again later.",FetchError:"Server is down. Please try again later.",400:"There was a problem with the request. Is EpubPress up to date?",404:"Resource not found.",422:"Request contained invalid data.",500:"Unexpected server error.",503:"Server took too long to respond.",timeout:"Request took too long to complete.",error:void 0,SERVER_FAILED:"Server error while downloading.",SERVER_BAD_CONTENT:"Book could not be found"},t.exports=F},function(t,e,n){t.exports={default:n(4),__esModule:!0}},function(t,e,n){n(5),t.exports=n(8).Object.assign},function(t,e,n){var r=n(6);r(r.S+r.F,"Object",{assign:n(21)})},function(t,e,n){var r=n(7),i=n(8),o=n(9),s=n(11),a="prototype",c=function(t,e,n){var u,l,f,p=t&c.F,h=t&c.G,d=t&c.S,_=t&c.P,v=t&c.B,y=t&c.W,m=h?i:i[e]||(i[e]={}),g=m[a],b=h?r:d?r[e]:(r[e]||{})[a];h&&(n=e);for(u in n)l=!p&&b&&void 0!==b[u],l&&u in m||(f=l?b[u]:n[u],m[u]=h&&"function"!=typeof b[u]?n[u]:v&&l?o(f,r):y&&b[u]==f?function(t){var e=function(e,n,r){if(this instanceof t){switch(arguments.length){case 0:return new t;case 1:return new t(e);case 2:return new t(e,n)}return new t(e,n,r)}return t.apply(this,arguments)};return e[a]=t[a],e}(f):_&&"function"==typeof f?o(Function.call,f):f,_&&((m.virtual||(m.virtual={}))[u]=f,t&c.R&&g&&!g[u]&&s(g,u,f)))};c.F=1,c.G=2,c.S=4,c.P=8,c.B=16,c.W=32,c.U=64,c.R=128,t.exports=c},function(t,e){var n=t.exports="undefined"!=typeof window&&window.Math==Math?window:"undefined"!=typeof self&&self.Math==Math?self:Function("return this")();"number"==typeof __g&&(__g=n)},function(t,e){var n=t.exports={version:"2.4.0"};"number"==typeof __e&&(__e=n)},function(t,e,n){var r=n(10);t.exports=function(t,e,n){if(r(t),void 0===e)return t;switch(n){case 1:return function(n){return t.call(e,n)};case 2:return function(n,r){return t.call(e,n,r)};case 3:return function(n,r,i){return t.call(e,n,r,i)}}return function(){return t.apply(e,arguments)}}},function(t,e){t.exports=function(t){if("function"!=typeof t)throw TypeError(t+" is not a function!");return t}},function(t,e,n){var r=n(12),i=n(20);t.exports=n(16)?function(t,e,n){return r.f(t,e,i(1,n))}:function(t,e,n){return t[e]=n,t}},function(t,e,n){var r=n(13),i=n(15),o=n(19),s=Object.defineProperty;e.f=n(16)?Object.defineProperty:function(t,e,n){if(r(t),e=o(e,!0),r(n),i)try{return s(t,e,n)}catch(t){}if("get"in n||"set"in n)throw TypeError("Accessors not supported!");return"value"in n&&(t[e]=n.value),t}},function(t,e,n){var r=n(14);t.exports=function(t){if(!r(t))throw TypeError(t+" is not an object!");return t}},function(t,e){t.exports=function(t){return"object"==typeof t?null!==t:"function"==typeof t}},function(t,e,n){t.exports=!n(16)&&!n(17)(function(){return 7!=Object.defineProperty(n(18)("div"),"a",{get:function(){return 7}}).a})},function(t,e,n){t.exports=!n(17)(function(){return 7!=Object.defineProperty({},"a",{get:function(){return 7}}).a})},function(t,e){t.exports=function(t){try{return!!t()}catch(t){return!0}}},function(t,e,n){var r=n(14),i=n(7).document,o=r(i)&&r(i.createElement);t.exports=function(t){return o?i.createElement(t):{}}},function(t,e,n){var r=n(14);t.exports=function(t,e){if(!r(t))return t;var n,i;if(e&&"function"==typeof(n=t.toString)&&!r(i=n.call(t)))return i;if("function"==typeof(n=t.valueOf)&&!r(i=n.call(t)))return i;if(!e&&"function"==typeof(n=t.toString)&&!r(i=n.call(t)))return i;throw TypeError("Can't convert object to primitive value")}},function(t,e){t.exports=function(t,e){return{enumerable:!(1&t),configurable:!(2&t),writable:!(4&t),value:e}}},function(t,e,n){"use strict";var r=n(22),i=n(37),o=n(38),s=n(39),a=n(26),c=Object.assign;t.exports=!c||n(17)(function(){var t={},e={},n=Symbol(),r="abcdefghijklmnopqrst";return t[n]=7,r.split("").forEach(function(t){e[t]=t}),7!=c({},t)[n]||Object.keys(c({},e)).join("")!=r})?function(t,e){for(var n=s(t),c=arguments.length,u=1,l=i.f,f=o.f;c>u;)for(var p,h=a(arguments[u++]),d=l?r(h).concat(l(h)):r(h),_=d.length,v=0;_>v;)f.call(h,p=d[v++])&&(n[p]=h[p]);return n}:c},function(t,e,n){var r=n(23),i=n(36);t.exports=Object.keys||function(t){return r(t,i)}},function(t,e,n){var r=n(24),i=n(25),o=n(29)(!1),s=n(33)("IE_PROTO");t.exports=function(t,e){var n,a=i(t),c=0,u=[];for(n in a)n!=s&&r(a,n)&&u.push(n);for(;e.length>c;)r(a,n=e[c++])&&(~o(u,n)||u.push(n));return u}},function(t,e){var n={}.hasOwnProperty;t.exports=function(t,e){return n.call(t,e)}},function(t,e,n){var r=n(26),i=n(28);t.exports=function(t){return r(i(t))}},function(t,e,n){var r=n(27);t.exports=Object("z").propertyIsEnumerable(0)?Object:function(t){return"String"==r(t)?t.split(""):Object(t)}},function(t,e){var n={}.toString;t.exports=function(t){return n.call(t).slice(8,-1)}},function(t,e){t.exports=function(t){if(void 0==t)throw TypeError("Can't call method on  "+t);return t}},function(t,e,n){var r=n(25),i=n(30),o=n(32);t.exports=function(t){return function(e,n,s){var a,c=r(e),u=i(c.length),l=o(s,u);if(t&&n!=n){for(;u>l;)if(a=c[l++],a!=a)return!0}else for(;u>l;l++)if((t||l in c)&&c[l]===n)return t||l||0;return!t&&-1}}},function(t,e,n){var r=n(31),i=Math.min;t.exports=function(t){return t>0?i(r(t),9007199254740991):0}},function(t,e){var n=Math.ceil,r=Math.floor;t.exports=function(t){return isNaN(t=+t)?0:(t>0?r:n)(t)}},function(t,e,n){var r=n(31),i=Math.max,o=Math.min;t.exports=function(t,e){return t=r(t),t<0?i(t+e,0):o(t,e)}},function(t,e,n){var r=n(34)("keys"),i=n(35);t.exports=function(t){return r[t]||(r[t]=i(t))}},function(t,e,n){var r=n(7),i="__core-js_shared__",o=r[i]||(r[i]={});t.exports=function(t){return o[t]||(o[t]={})}},function(t,e){var n=0,r=Math.random();t.exports=function(t){return"Symbol(".concat(void 0===t?"":t,")_",(++n+r).toString(36))}},function(t,e){t.exports="constructor,hasOwnProperty,isPrototypeOf,propertyIsEnumerable,toLocaleString,toString,valueOf".split(",")},function(t,e){e.f=Object.getOwnPropertySymbols},function(t,e){e.f={}.propertyIsEnumerable},function(t,e,n){var r=n(28);t.exports=function(t){return Object(r(t))}},function(t,e){"use strict";e.__esModule=!0,e.default=function(t,e){if(!(t instanceof e))throw new TypeError("Cannot call a class as a function")}},function(t,e,n){"use strict";function r(t){return t&&t.__esModule?t:{default:t}}e.__esModule=!0;var i=n(42),o=r(i);e.default=function(){function t(t,e){for(var n=0;n<e.length;n++){var r=e[n];r.enumerable=r.enumerable||!1,r.configurable=!0,"value"in r&&(r.writable=!0),(0,o.default)(t,r.key,r)}}return function(e,n,r){return n&&t(e.prototype,n),r&&t(e,r),e}}()},function(t,e,n){t.exports={default:n(43),__esModule:!0}},function(t,e,n){n(44);var r=n(8).Object;t.exports=function(t,e,n){return r.defineProperty(t,e,n)}},function(t,e,n){var r=n(6);r(r.S+r.F*!n(16),"Object",{defineProperty:n(12).f})},function(t,e,n){t.exports={default:n(46),__esModule:!0}},function(t,e,n){var r=n(8),i=r.JSON||(r.JSON={stringify:JSON.stringify});t.exports=function(t){return i.stringify.apply(i,arguments)}},function(t,e,n){(function(e,n,r){/* @preserve
 	 * The MIT License (MIT)
 	 * 
 	 * Copyright (c) 2013-2015 Petka Antonov
@@ -16989,7 +16989,7 @@ return r._run(e.spawn),i}}},{"./errors":12,"./util":36}],17:[function(t,e,n){"us
  * @return {String}         Sanitized filename
  */
 
-var truncate = __webpack_require__(14);
+var truncate = __webpack_require__(13);
 
 var illegalRe = /[\/\?<>\\:\*\|"]/g;
 var controlRe = /[\x00-\x1f\x80-\x9f]/g;
@@ -17022,155 +17022,18 @@ module.exports = function (input, options) {
 
 /***/ }),
 /* 8 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony import */ var epub_press_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(6);
-/* harmony import */ var epub_press_js__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(epub_press_js__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(0);
-/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _browser__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(2);
-/* harmony import */ var _ui__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(1);
-
-
-
-
-const manifest = _browser__WEBPACK_IMPORTED_MODULE_2__[/* default */ "a"].getManifest();
-/*
-Download Form
-*/
-
-jquery__WEBPACK_IMPORTED_MODULE_1___default()('#select-all').click(() => {
-  jquery__WEBPACK_IMPORTED_MODULE_1___default()('input.article-checkbox').each((index, checkbox) => {
-    jquery__WEBPACK_IMPORTED_MODULE_1___default()(checkbox).prop('checked', true);
-  });
-});
-jquery__WEBPACK_IMPORTED_MODULE_1___default()('#select-none').click(() => {
-  jquery__WEBPACK_IMPORTED_MODULE_1___default()('input.article-checkbox').each((index, checkbox) => {
-    jquery__WEBPACK_IMPORTED_MODULE_1___default()(checkbox).prop('checked', false);
-  });
-});
-jquery__WEBPACK_IMPORTED_MODULE_1___default()('#download').click(() => {
-  const selectedItems = [];
-  jquery__WEBPACK_IMPORTED_MODULE_1___default()('input.article-checkbox').each((index, checkbox) => {
-    if (jquery__WEBPACK_IMPORTED_MODULE_1___default()(checkbox).prop('checked')) {
-      selectedItems.push({
-        url: jquery__WEBPACK_IMPORTED_MODULE_1___default()(checkbox).prop('value'),
-        id: Number(jquery__WEBPACK_IMPORTED_MODULE_1___default()(checkbox).prop('name'))
-      });
-    }
-  });
-
-  if (selectedItems.length <= 0) {
-    jquery__WEBPACK_IMPORTED_MODULE_1___default()('#alert-message').text('No articles selected!');
-  } else {
-    _browser__WEBPACK_IMPORTED_MODULE_2__[/* default */ "a"].getTabsHtml(selectedItems).then(sections => {
-      _ui__WEBPACK_IMPORTED_MODULE_3__[/* default */ "a"].showSection('#downloadSpinner');
-      _browser__WEBPACK_IMPORTED_MODULE_2__[/* default */ "a"].sendMessage({
-        action: 'download',
-        book: {
-          title: jquery__WEBPACK_IMPORTED_MODULE_1___default()('#book-title').val() || jquery__WEBPACK_IMPORTED_MODULE_1___default()('#book-title').attr('placeholder'),
-          description: jquery__WEBPACK_IMPORTED_MODULE_1___default()('#book-description').val() || undefined,
-          sections
-        }
-      });
-    }).catch(error => {
-      _ui__WEBPACK_IMPORTED_MODULE_3__[/* default */ "a"].setErrorMessage(`Could not find tab content: ${error}`);
-    });
-  }
-});
-/*
-Settings Management
-*/
-
-function setExistingSettings(cb) {
-  _browser__WEBPACK_IMPORTED_MODULE_2__[/* default */ "a"].getLocalStorage(['email', 'filetype']).then(state => {
-    jquery__WEBPACK_IMPORTED_MODULE_1___default()('#settings-email-text').val(state.email);
-    jquery__WEBPACK_IMPORTED_MODULE_1___default()('#settings-filetype-select').val(state.filetype);
-    cb();
-  }).catch(error => {
-    _ui__WEBPACK_IMPORTED_MODULE_3__[/* default */ "a"].setErrorMessage(`Could not load settings: ${error}`);
-  });
-}
-
-jquery__WEBPACK_IMPORTED_MODULE_1___default()('#settings-btn').click(() => {
-  setExistingSettings(() => {
-    _ui__WEBPACK_IMPORTED_MODULE_3__[/* default */ "a"].showSection('#settingsForm');
-  });
-});
-jquery__WEBPACK_IMPORTED_MODULE_1___default()('#settings-save-btn').click(() => {
-  _browser__WEBPACK_IMPORTED_MODULE_2__[/* default */ "a"].setLocalStorage({
-    email: jquery__WEBPACK_IMPORTED_MODULE_1___default()('#settings-email-text').val(),
-    filetype: jquery__WEBPACK_IMPORTED_MODULE_1___default()('#settings-filetype-select').val()
-  });
-  _ui__WEBPACK_IMPORTED_MODULE_3__[/* default */ "a"].showSection('#downloadForm');
-});
-jquery__WEBPACK_IMPORTED_MODULE_1___default()('#settings-cancel-btn').click(() => {
-  _ui__WEBPACK_IMPORTED_MODULE_3__[/* default */ "a"].showSection('#downloadForm');
-});
-/*
-Messaging
-*/
-
-_browser__WEBPACK_IMPORTED_MODULE_2__[/* default */ "a"].onBackgroundMessage(request => {
-  if (request.action === 'download') {
-    if (request.status === 'complete') {
-      _ui__WEBPACK_IMPORTED_MODULE_3__[/* default */ "a"].updateStatus(100, 'Done!').then(() => {
-        _ui__WEBPACK_IMPORTED_MODULE_3__[/* default */ "a"].showSection('#downloadSuccess');
-      });
-    } else {
-      _ui__WEBPACK_IMPORTED_MODULE_3__[/* default */ "a"].showSection('#downloadFailed');
-
-      if (request.error) {
-        _ui__WEBPACK_IMPORTED_MODULE_3__[/* default */ "a"].setErrorMessage(request.error);
-      }
-    }
-  } else if (request.action === 'publish') {
-    _ui__WEBPACK_IMPORTED_MODULE_3__[/* default */ "a"].updateStatus(request.progress, request.message);
-  }
-});
-/*
-Startup
-*/
-
-window.onload = () => {
-  _ui__WEBPACK_IMPORTED_MODULE_3__[/* default */ "a"].initializeUi();
-  _browser__WEBPACK_IMPORTED_MODULE_2__[/* default */ "a"].getLocalStorage('downloadState').then(state => {
-    if (state.downloadState) {
-      _browser__WEBPACK_IMPORTED_MODULE_2__[/* default */ "a"].getLocalStorage('publishStatus').then(publishState => {
-        const status = JSON.parse(publishState.publishStatus);
-        _ui__WEBPACK_IMPORTED_MODULE_3__[/* default */ "a"].updateStatus(status.progress, status.message);
-        _ui__WEBPACK_IMPORTED_MODULE_3__[/* default */ "a"].showSection('#downloadSpinner');
-      });
-    } else {
-      epub_press_js__WEBPACK_IMPORTED_MODULE_0___default.a.checkForUpdates('epub-press-chrome', manifest.version).then(message => {
-        if (message) {
-          _ui__WEBPACK_IMPORTED_MODULE_3__[/* default */ "a"].setAlertMessage(message);
-        }
-      });
-      _ui__WEBPACK_IMPORTED_MODULE_3__[/* default */ "a"].showSection('#downloadForm');
-      _ui__WEBPACK_IMPORTED_MODULE_3__[/* default */ "a"].initializeTabList();
-    }
-
-    return null;
-  });
-};
-
-/***/ }),
-/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // the whatwg-fetch polyfill installs the fetch() function
 // on the global object (window or self)
 //
 // Return that as the export for use in Webpack, Browserify etc.
-__webpack_require__(10);
+__webpack_require__(9);
 module.exports = self.fetch.bind(self);
 
 
 /***/ }),
-/* 10 */
+/* 9 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -17699,13 +17562,13 @@ if (!self.fetch) {
 
 
 /***/ }),
-/* 11 */
+/* 10 */
 /***/ (function(module, exports) {
 
 
 
 /***/ }),
-/* 12 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global) {var scope = (typeof global !== "undefined" && global) ||
@@ -17761,7 +17624,7 @@ exports._unrefActive = exports.active = function(item) {
 };
 
 // setimmediate attaches itself to the global object
-__webpack_require__(13);
+__webpack_require__(12);
 // On some exotic environments, it's not clear which object `setimmediate` was
 // able to install onto.  Search each possibility in the same order as the
 // `setimmediate` library.
@@ -17775,7 +17638,7 @@ exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(4)))
 
 /***/ }),
-/* 13 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* WEBPACK VAR INJECTION */(function(global, process) {(function (global, undefined) {
@@ -17968,19 +17831,19 @@ exports.clearImmediate = (typeof self !== "undefined" && self.clearImmediate) ||
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(4), __webpack_require__(5)))
 
 /***/ }),
-/* 14 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var truncate = __webpack_require__(15);
-var getLength = __webpack_require__(16);
+var truncate = __webpack_require__(14);
+var getLength = __webpack_require__(15);
 module.exports = truncate.bind(null, getLength);
 
 
 /***/ }),
-/* 15 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18030,7 +17893,7 @@ module.exports = function truncate(getLength, string, byteLength) {
 
 
 /***/ }),
-/* 16 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -18082,6 +17945,277 @@ module.exports = function getByteLength(string) {
   return byteLength;
 };
 
+
+/***/ }),
+/* 16 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+// ESM COMPAT FLAG
+__webpack_require__.r(__webpack_exports__);
+
+// EXTERNAL MODULE: ./node_modules/epub-press-js/build/index.js
+var build = __webpack_require__(6);
+var build_default = /*#__PURE__*/__webpack_require__.n(build);
+
+// EXTERNAL MODULE: ./node_modules/jquery/dist/jquery.js
+var jquery = __webpack_require__(0);
+var jquery_default = /*#__PURE__*/__webpack_require__.n(jquery);
+
+// EXTERNAL MODULE: ./scripts/browser.js
+var browser = __webpack_require__(2);
+
+// EXTERNAL MODULE: ./scripts/ui.js
+var ui = __webpack_require__(1);
+
+// CONCATENATED MODULE: ./scripts/text.js
+const REMOVE_SELECTORS = ['script', 'style', 'noscript', 'header', 'footer', 'nav', 'aside', 'form', 'button', 'svg', 'canvas', 'iframe', 'object'];
+
+function extractTextFromHtml(html) {
+  if (!html) {
+    return '';
+  }
+
+  const parser = new DOMParser();
+  const doc = parser.parseFromString(html, 'text/html');
+  REMOVE_SELECTORS.forEach(selector => {
+    doc.querySelectorAll(selector).forEach(node => node.remove());
+  });
+  const root = doc.querySelector('article') || doc.querySelector('main') || doc.body || doc.documentElement;
+  return root && root.textContent ? root.textContent : '';
+}
+
+function normalizeTextForTts(text) {
+  if (!text) {
+    return '';
+  }
+
+  let out = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+  out = out.normalize('NFKC');
+  out = out.replace(/[\u2018\u2019]/g, "'").replace(/[\u201C\u201D]/g, '"').replace(/[\u2013\u2014]/g, '-').replace(/\u2026/g, '...').replace(/\u00A0/g, ' ');
+  out = out.replace(/\[cite_start\]/gi, '');
+  out = out.replace(/\[cite:\s*\d+(?:\s*,\s*\d+)*\]/gi, '');
+  out = out.replace(/(\w)-\n(?=\w)/g, '$1');
+  out = out.replace(/\[\s*\d+(?:\s*,\s*\d+)*\s*\]/g, '');
+  out = out.replace(/([.!?"])\s*\d{1,2}(?=\s|$)/g, '$1');
+  out = out.replace(/\b\[([A-Za-z])\]([a-z]+)/g, '$1$2');
+  out = out.replace(/\s*\(\s*/g, ', ').replace(/\s*\)\s*/g, ', ');
+  out = out.replace(/\s+,/g, ',').replace(/,\s*,/g, ', ');
+  out = out.replace(/[ \t\f\v]+/g, ' ');
+  out = out.replace(/\n{3,}/g, '\n\n');
+  const paragraphs = out.split('\n\n').map(p => p.replace(/\s+/g, ' ').trim()).filter(Boolean);
+  return paragraphs.join('\n\n').trim();
+}
+
+function buildTextExport(book, sections) {
+  const headerParts = [];
+
+  if (book && book.title) {
+    headerParts.push(normalizeTextForTts(book.title));
+  }
+
+  if (book && book.description) {
+    headerParts.push(normalizeTextForTts(book.description));
+  }
+
+  const header = headerParts.length ? `${headerParts.join('\n')}\n\n` : '';
+  const sectionParts = (sections || []).map(section => {
+    const rawText = extractTextFromHtml(section.html);
+    const cleanText = normalizeTextForTts(rawText);
+
+    if (!cleanText) {
+      return null;
+    }
+
+    const title = section.title ? normalizeTextForTts(section.title) : '';
+    return title ? `${title}\n\n${cleanText}` : cleanText;
+  }).filter(Boolean);
+
+  if (!sectionParts.length) {
+    return '';
+  }
+
+  return `${header}${sectionParts.join('\n\n\n')}\n`;
+}
+
+
+// CONCATENATED MODULE: ./scripts/popup.js
+
+
+
+
+
+const manifest = browser["a" /* default */].getManifest();
+const TEXT_FILENAME = 'epub.txt';
+
+function downloadTextExport(book, sections) {
+  const textExport = buildTextExport(book, sections);
+
+  if (!textExport) {
+    return Promise.reject(new Error('No text content could be extracted.'));
+  }
+
+  const blob = new Blob([textExport], {
+    type: 'text/plain;charset=utf-8'
+  });
+  const url = URL.createObjectURL(blob);
+  return browser["a" /* default */].download({
+    url,
+    filename: TEXT_FILENAME,
+    conflictAction: 'overwrite',
+    saveAs: false
+  }).then(() => {
+    URL.revokeObjectURL(url);
+  }).catch(error => {
+    URL.revokeObjectURL(url);
+    throw error;
+  });
+}
+
+function getSelectedItems() {
+  const selectedItems = [];
+  jquery_default()('input.article-checkbox').each((index, checkbox) => {
+    if (jquery_default()(checkbox).prop('checked')) {
+      selectedItems.push({
+        url: jquery_default()(checkbox).prop('value'),
+        id: Number(jquery_default()(checkbox).prop('name')),
+        title: jquery_default()(checkbox).siblings('span').text()
+      });
+    }
+  });
+  return selectedItems;
+}
+
+function buildBook(sections) {
+  return {
+    title: jquery_default()('#book-title').val() || jquery_default()('#book-title').attr('placeholder'),
+    description: jquery_default()('#book-description').val() || undefined,
+    sections
+  };
+}
+
+function handleDownload(mode) {
+  const selectedItems = getSelectedItems();
+
+  if (selectedItems.length <= 0) {
+    jquery_default()('#alert-message').text('No articles selected!');
+    return;
+  }
+
+  browser["a" /* default */].getTabsHtml(selectedItems).then(sections => {
+    ui["a" /* default */].showSection('#downloadSpinner');
+    const book = buildBook(sections);
+
+    if (mode === 'text') {
+      ui["a" /* default */].updateStatus(10, 'Generating text...');
+      downloadTextExport(book, sections).then(() => ui["a" /* default */].updateStatus(100, 'Done!')).then(() => {
+        ui["a" /* default */].showSection('#downloadSuccess');
+      }).catch(error => {
+        ui["a" /* default */].showSection('#downloadFailed');
+        ui["a" /* default */].setErrorMessage(error && error.message ? error.message : String(error));
+      });
+    } else {
+      browser["a" /* default */].sendMessage({
+        action: 'download',
+        filetype: 'epub',
+        book
+      });
+    }
+  }).catch(error => {
+    ui["a" /* default */].setErrorMessage(`Could not find tab content: ${error}`);
+  });
+}
+/*
+Download Form
+*/
+
+
+jquery_default()('#select-all').click(() => {
+  jquery_default()('input.article-checkbox').each((index, checkbox) => {
+    jquery_default()(checkbox).prop('checked', true);
+  });
+});
+jquery_default()('#select-none').click(() => {
+  jquery_default()('input.article-checkbox').each((index, checkbox) => {
+    jquery_default()(checkbox).prop('checked', false);
+  });
+});
+jquery_default()('#download-epub').click(() => handleDownload('epub'));
+jquery_default()('#download-text').click(() => handleDownload('text'));
+/*
+Settings Management
+*/
+
+function setExistingSettings(cb) {
+  browser["a" /* default */].getLocalStorage(['email']).then(state => {
+    jquery_default()('#settings-email-text').val(state.email);
+    cb();
+  }).catch(error => {
+    ui["a" /* default */].setErrorMessage(`Could not load settings: ${error}`);
+  });
+}
+
+jquery_default()('#settings-btn').click(() => {
+  setExistingSettings(() => {
+    ui["a" /* default */].showSection('#settingsForm');
+  });
+});
+jquery_default()('#settings-save-btn').click(() => {
+  browser["a" /* default */].setLocalStorage({
+    email: jquery_default()('#settings-email-text').val()
+  });
+  ui["a" /* default */].showSection('#downloadForm');
+});
+jquery_default()('#settings-cancel-btn').click(() => {
+  ui["a" /* default */].showSection('#downloadForm');
+});
+/*
+Messaging
+*/
+
+browser["a" /* default */].onBackgroundMessage(request => {
+  if (request.action === 'download') {
+    if (request.status === 'complete') {
+      ui["a" /* default */].updateStatus(100, 'Done!').then(() => {
+        ui["a" /* default */].showSection('#downloadSuccess');
+      });
+    } else {
+      ui["a" /* default */].showSection('#downloadFailed');
+
+      if (request.error) {
+        ui["a" /* default */].setErrorMessage(request.error);
+      }
+    }
+  } else if (request.action === 'publish') {
+    ui["a" /* default */].updateStatus(request.progress, request.message);
+  }
+});
+/*
+Startup
+*/
+
+window.onload = () => {
+  ui["a" /* default */].initializeUi();
+  browser["a" /* default */].getLocalStorage('downloadState').then(state => {
+    if (state.downloadState) {
+      browser["a" /* default */].getLocalStorage('publishStatus').then(publishState => {
+        const status = JSON.parse(publishState.publishStatus);
+        ui["a" /* default */].updateStatus(status.progress, status.message);
+        ui["a" /* default */].showSection('#downloadSpinner');
+      });
+    } else {
+      build_default.a.checkForUpdates('epub-press-chrome', manifest.version).then(message => {
+        if (message) {
+          ui["a" /* default */].setAlertMessage(message);
+        }
+      });
+      ui["a" /* default */].showSection('#downloadForm');
+      ui["a" /* default */].initializeTabList();
+    }
+
+    return null;
+  });
+};
 
 /***/ })
 /******/ ]);
