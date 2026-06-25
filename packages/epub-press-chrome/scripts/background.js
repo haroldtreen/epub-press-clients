@@ -10,6 +10,7 @@ Browser.onPortConnection(() => {});
 EpubPress.BASE_API = `${manifest.homepage_url}api/v1`;
 
 function timeoutDownload() {
+    Browser.stopKeepAlive();
     Browser.setLocalStorage({ downloadState: false, publishStatus: '{}' });
     Browser.sendMessage({
         action: 'download',
@@ -20,6 +21,7 @@ function timeoutDownload() {
 
 Browser.onForegroundMessage((request) => {
     if (request.action === 'download') {
+        Browser.keepAlive();
         Browser.setLocalStorage({ downloadState: true, publishStatus: '{}' });
         const timeout = setTimeout(timeoutDownload, DOWNLOAD_TIMEOUT);
 
@@ -46,11 +48,13 @@ Browser.onForegroundMessage((request) => {
                 })
                 .then(() => {
                     clearTimeout(timeout);
+                    Browser.stopKeepAlive();
                     Browser.setLocalStorage({ downloadState: false, publishStatus: '{}' });
                     Browser.sendMessage({ action: 'download', status: 'complete' });
                 })
                 .catch((e) => {
                     clearTimeout(timeout);
+                    Browser.stopKeepAlive();
                     Browser.setLocalStorage({ downloadState: false, publishStatus: '{}' });
                     Browser.sendMessage({ action: 'download', status: 'failed', error: e.message });
                 });

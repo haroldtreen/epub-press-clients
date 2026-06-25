@@ -192,7 +192,15 @@ class Browser {
   }
 
   static sendMessage(...args) {
-    chrome.runtime.sendMessage(...args);
+    // In MV3 sendMessage returns a promise that rejects with "Receiving
+    // end does not exist" when no popup is open. These are best-effort UI
+    // updates (the popup restores state from storage on reopen), so the
+    // rejection is expected and safe to ignore.
+    const result = chrome.runtime.sendMessage(...args);
+
+    if (result && typeof result.catch === 'function') {
+      result.catch(() => {});
+    }
   }
 
   static onBackgroundMessage(cb) {
@@ -219,6 +227,28 @@ class Browser {
 
   static onPortConnection(cb) {
     chrome.runtime.onConnect.addListener(cb);
+  } // A MV3 service worker is evicted after ~30s idle. The popup port only
+  // keeps it alive while the popup is open, but the popup closes as soon as
+  // it loses focus — so a long publish (e.g. "Fetching Images") can outlive
+  // the worker and stall. Pinging an extension API under the idle limit
+  // resets the timer, keeping the worker alive for the whole publish.
+
+
+  static keepAlive() {
+    if (Browser.keepAliveInterval) {
+      return;
+    }
+
+    Browser.keepAliveInterval = setInterval(() => {
+      chrome.runtime.getPlatformInfo(() => {});
+    }, Browser.KEEP_ALIVE_INTERVAL);
+  }
+
+  static stopKeepAlive() {
+    if (Browser.keepAliveInterval) {
+      clearInterval(Browser.keepAliveInterval);
+      Browser.keepAliveInterval = null;
+    }
   }
 
   static download(params) {
@@ -267,6 +297,9 @@ class Browser {
   }
 
 }
+
+Browser.keepAliveInterval = null;
+Browser.KEEP_ALIVE_INTERVAL = 20000; // ping under the ~30s service worker idle limit
 
 Browser.ERROR_CODES = {
   // Book Create Errors
@@ -12109,6 +12142,7 @@ _browser__WEBPACK_IMPORTED_MODULE_1__[/* default */ "a"].onPortConnection(() => 
 epub_press_js__WEBPACK_IMPORTED_MODULE_0__[/* default */ "a"].BASE_API = `${manifest.homepage_url}api/v1`;
 
 function timeoutDownload() {
+  _browser__WEBPACK_IMPORTED_MODULE_1__[/* default */ "a"].stopKeepAlive();
   _browser__WEBPACK_IMPORTED_MODULE_1__[/* default */ "a"].setLocalStorage({
     downloadState: false,
     publishStatus: '{}'
@@ -12122,6 +12156,7 @@ function timeoutDownload() {
 
 _browser__WEBPACK_IMPORTED_MODULE_1__[/* default */ "a"].onForegroundMessage(request => {
   if (request.action === 'download') {
+    _browser__WEBPACK_IMPORTED_MODULE_1__[/* default */ "a"].keepAlive();
     _browser__WEBPACK_IMPORTED_MODULE_1__[/* default */ "a"].setLocalStorage({
       downloadState: true,
       publishStatus: '{}'
@@ -12150,6 +12185,7 @@ _browser__WEBPACK_IMPORTED_MODULE_1__[/* default */ "a"].onForegroundMessage(req
         });
       }).then(() => {
         clearTimeout(timeout);
+        _browser__WEBPACK_IMPORTED_MODULE_1__[/* default */ "a"].stopKeepAlive();
         _browser__WEBPACK_IMPORTED_MODULE_1__[/* default */ "a"].setLocalStorage({
           downloadState: false,
           publishStatus: '{}'
@@ -12160,6 +12196,7 @@ _browser__WEBPACK_IMPORTED_MODULE_1__[/* default */ "a"].onForegroundMessage(req
         });
       }).catch(e => {
         clearTimeout(timeout);
+        _browser__WEBPACK_IMPORTED_MODULE_1__[/* default */ "a"].stopKeepAlive();
         _browser__WEBPACK_IMPORTED_MODULE_1__[/* default */ "a"].setLocalStorage({
           downloadState: false,
           publishStatus: '{}'
