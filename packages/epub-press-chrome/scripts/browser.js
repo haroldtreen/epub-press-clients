@@ -24,11 +24,11 @@ class Browser {
     }
 
     static isBackgroundMsg(sender) {
-        return sender.url.indexOf('popup') < 0;
+        return !sender.url || sender.url.indexOf('popup') < 0;
     }
 
     static isPopupMsg(sender) {
-        return sender.url.indexOf('popup') > -1;
+        return sender.url && sender.url.indexOf('popup') > -1;
     }
 
     static getCurrentWindowTabs() {
@@ -53,18 +53,22 @@ class Browser {
     }
 
     static getTabsHtml(tabs) {
-        const code = 'document.documentElement.outerHTML';
+        const func = () => document.documentElement.outerHTML;
         const htmlPromises = tabs.map(
             tab => new Promise((resolve) => {
-                chrome.tabs.executeScript(tab.id, { code }, (html) => {
-                    const updatedTab = tab;
-                    if (html && html[0] && html[0].match(/html/i)) {
-                        updatedTab.html = html[0];
-                    } else {
-                        updatedTab.html = null;
+                chrome.scripting.executeScript(
+                    { target: { tabId: tab.id }, func },
+                    (results) => {
+                        const updatedTab = tab;
+                        const html = results && results[0] && results[0].result;
+                        if (html && html.match(/html/i)) {
+                            updatedTab.html = html;
+                        } else {
+                            updatedTab.html = null;
+                        }
+                        resolve(updatedTab);
                     }
-                    resolve(updatedTab);
-                });
+                );
             }),
         );
 
