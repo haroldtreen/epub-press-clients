@@ -1,5 +1,14 @@
 # Changelog
 
+### 0.13.1
+
+-   Fix service worker crashing on load under Manifest V3 (`file-saver` touches `document` at import time, which is unavailable in a service worker).
+-   Fix publishing stalling at "Sending Pages" by keeping the service worker alive while the popup is open.
+
+### 0.13.0
+
+-   Migrate to Manifest V3.
+
 ### 0.12.1
 
 -   Unminified to simplify extension store review process.

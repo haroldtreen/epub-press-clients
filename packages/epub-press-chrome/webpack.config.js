@@ -38,6 +38,14 @@ if (process.env.ENV !== 'test') {
         ],
         resolve: {
             extensions: ['.js'],
+            alias: {
+                // Compile epub-press-js from source instead of its prebuilt UMD
+                // bundle, which inlines file-saver and crashes a MV3 service
+                // worker (file-saver touches `document` at import time).
+                'epub-press-js$': path.join(__dirname, '../epub-press-js/epub-press.js'),
+                // The extension downloads via chrome.downloads, never file-saver.
+                'file-saver': path.join(__dirname, 'scripts/file-saver-stub.js'),
+            },
         },
         devServer: {
             hostname: 'localhost',
