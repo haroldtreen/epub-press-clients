@@ -1,5 +1,4 @@
 import Promise from 'bluebird';
-import { saveAs } from 'file-saver';
 
 import packageInfo from './package.json';
 
@@ -21,13 +20,15 @@ function isDownloadable(book) {
 
 function saveFile(filename, data) {
     if (isBrowser()) {
-        let file;
-        if (typeof File === 'function') {
-            file = new File([data], filename);
-        } else {
-            file = new Blob([data], { type: 'application/octet-stream' });
-        }
-        saveAs(file, filename);
+        const blob = data instanceof Blob ? data : new Blob([data], { type: 'application/octet-stream' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
     } else {
         const fs = require('fs');
         fs.writeFileSync(filename, data);
