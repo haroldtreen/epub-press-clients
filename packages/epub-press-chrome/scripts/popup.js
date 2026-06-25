@@ -112,6 +112,7 @@ Startup
 */
 
 window.onload = () => {
+    Browser.connect();
     UI.initializeUi();
     Browser.getLocalStorage('downloadState').then((state) => {
         if (state.downloadState) {

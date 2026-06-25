@@ -111,6 +111,14 @@ class Browser {
         });
     }
 
+    static connect(name = 'epub-press') {
+        return chrome.runtime.connect({ name });
+    }
+
+    static onPortConnection(cb) {
+        chrome.runtime.onConnect.addListener(cb);
+    }
+
     static download(params) {
         let promise;
         const sanitizedParams = { ...params, filename: sanitize(params.filename) };

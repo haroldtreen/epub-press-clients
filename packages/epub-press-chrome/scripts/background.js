@@ -2,7 +2,10 @@ import EpubPress from 'epub-press-js';
 import Browser from './browser';
 
 const manifest = Browser.getManifest();
-const DOWNLOAD_TIMEOUT = 300000; // 30 second timeout for downloads
+const DOWNLOAD_TIMEOUT = 300000; // 5-minute timeout for downloads
+
+// Keep the service worker alive while the popup is connected
+Browser.onPortConnection(() => {});
 
 EpubPress.BASE_API = `${manifest.homepage_url}api/v1`;
 
