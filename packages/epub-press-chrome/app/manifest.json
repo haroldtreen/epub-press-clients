@@ -12,7 +12,14 @@
     },
     "default_locale": "en",
     "background": {
-        "service_worker": "build/background.js"
+        "service_worker": "build/background.js",
+        "scripts": ["build/background.js"]
+    },
+    "browser_specific_settings": {
+        "gecko": {
+            "id": "epub-press@epub.press",
+            "strict_min_version": "128.0"
+        }
     },
     "permissions": [
         "tabs",
