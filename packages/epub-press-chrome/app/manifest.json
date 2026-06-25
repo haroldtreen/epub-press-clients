@@ -12,7 +12,14 @@
     },
     "default_locale": "en",
     "background": {
-        "service_worker": "build/background.js"
+        "service_worker": "build/background.js",
+        "scripts": ["build/background.js"]
+    },
+    "browser_specific_settings": {
+        "gecko": {
+            "id": "{8f64ef8c-eaa3-4609-a494-1f1b9126efce}",
+            "strict_min_version": "128.0"
+        }
     },
     "permissions": [
         "tabs",
