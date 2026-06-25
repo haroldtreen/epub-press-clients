@@ -9,45 +9,63 @@ const MODULE_RULES = [
     },
 ];
 
+const COMMON_CONFIG = {
+    mode: 'production',
+    output: {
+        filename: '[name].js',
+        path: path.join(__dirname, 'app', 'build'),
+    },
+    optimization: {
+        minimize: false,
+    },
+    module: {
+        rules: MODULE_RULES,
+    },
+    resolve: {
+        extensions: ['.js'],
+    },
+    node: {
+        fs: 'empty',
+    },
+};
+
 let WebpackConfig;
 if (process.env.ENV !== 'test') {
-    WebpackConfig = {
-        mode: 'production',
-        entry: {
-            popup: ['./scripts/popup.js'],
-            background: ['./scripts/background.js'],
+    WebpackConfig = [
+        {
+            ...COMMON_CONFIG,
+            entry: { popup: ['./scripts/popup.js'] },
+            plugins: [
+                new webpack.DefinePlugin({
+                    'process.env.ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
+                }),
+                new webpack.ProvidePlugin({
+                    $: 'jquery',
+                    jQuery: 'jquery',
+                }),
+            ],
+            devServer: {
+                hostname: 'localhost',
+                port: '5000',
+                inline: true,
+            },
         },
-        output: {
-            filename: '[name].js',
-            path: path.join(__dirname, 'app', 'build'),
+        {
+            ...COMMON_CONFIG,
+            entry: { background: ['./scripts/background.js'] },
+            plugins: [
+                new webpack.DefinePlugin({
+                    'process.env.ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
+                }),
+            ],
+            resolve: {
+                extensions: ['.js'],
+                alias: {
+                    'epub-press-js': path.resolve(__dirname, '../epub-press-js/build/index.js'),
+                },
+            },
         },
-        optimization: {
-            minimize: false,
-        },
-        module: {
-            rules: MODULE_RULES,
-        },
-        plugins: [
-            new webpack.DefinePlugin({
-                'process.env.ENV': JSON.stringify(process.env.NODE_ENV || 'development'),
-            }),
-            new webpack.ProvidePlugin({
-                $: 'jquery',
-                jQuery: 'jquery',
-            }),
-        ],
-        resolve: {
-            extensions: ['.js'],
-        },
-        devServer: {
-            hostname: 'localhost',
-            port: '5000',
-            inline: true,
-        },
-        node: {
-            fs: 'empty',
-        },
-    };
+    ];
 } else {
     WebpackConfig = {
         mode: 'development',
