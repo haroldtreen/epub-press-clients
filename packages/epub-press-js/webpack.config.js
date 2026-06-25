@@ -20,6 +20,7 @@ if (process.env.NODE_ENV !== 'test') {
             path: path.join(__dirname, 'build'),
             library: 'EpubPress',
             libraryTarget: 'umd',
+            globalObject: 'typeof self !== "undefined" ? self : this',
         },
         module: {
             rules: MODULE_RULES,
