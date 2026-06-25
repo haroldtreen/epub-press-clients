@@ -1,5 +1,10 @@
 # Changelog
 
+### 0.13.2
+
+-   Fix publishing stalling on long steps (e.g. "Fetching Images") by keeping the service worker alive for the whole publish, even when the popup is closed.
+-   Ignore the expected "Receiving end does not exist" rejection when the background messages a closed popup.
+
 ### 0.13.1
 
 -   Fix service worker crashing on load under Manifest V3 (`file-saver` touches `document` at import time, which is unavailable in a service worker).
