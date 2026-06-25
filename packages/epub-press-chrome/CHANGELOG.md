@@ -1,5 +1,9 @@
 # Changelog
 
+### 0.13.0
+
+-   Updated to Manifest V3
+
 ### 0.12.1
 
 -   Unminified to simplify extension store review process.

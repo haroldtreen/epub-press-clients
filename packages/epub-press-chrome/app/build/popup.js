@@ -116,11 +116,11 @@ class Browser {
   }
 
   static isBackgroundMsg(sender) {
-    return sender.url.indexOf('popup') < 0;
+    return !sender.url || sender.url.indexOf('popup') < 0;
   }
 
   static isPopupMsg(sender) {
-    return sender.url.indexOf('popup') > -1;
+    return sender.url && sender.url.indexOf('popup') > -1;
   }
 
   static getCurrentWindowTabs() {
@@ -149,15 +149,20 @@ class Browser {
   }
 
   static getTabsHtml(tabs) {
-    const code = 'document.documentElement.outerHTML';
-    const htmlPromises = tabs.map(tab => new bluebird__WEBPACK_IMPORTED_MODULE_0___default.a(resolve => {
-      chrome.tabs.executeScript(tab.id, {
-        code
-      }, html => {
-        const updatedTab = tab;
+    const func = () => document.documentElement.outerHTML;
 
-        if (html && html[0] && html[0].match(/html/i)) {
-          updatedTab.html = html[0];
+    const htmlPromises = tabs.map(tab => new bluebird__WEBPACK_IMPORTED_MODULE_0___default.a(resolve => {
+      chrome.scripting.executeScript({
+        target: {
+          tabId: tab.id
+        },
+        func
+      }, results => {
+        const updatedTab = tab;
+        const html = results && results[0] && results[0].result;
+
+        if (html && html.match(/html/i)) {
+          updatedTab.html = html;
         } else {
           updatedTab.html = null;
         }
