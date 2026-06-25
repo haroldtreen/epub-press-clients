@@ -17,7 +17,7 @@
     },
     "browser_specific_settings": {
         "gecko": {
-            "id": "epub-press@epub.press",
+            "id": "{8f64ef8c-eaa3-4609-a494-1f1b9126efce}",
             "strict_min_version": "128.0"
         }
     },
